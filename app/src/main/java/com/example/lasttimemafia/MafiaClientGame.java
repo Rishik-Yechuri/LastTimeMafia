@@ -22,8 +22,8 @@ import java.util.ArrayList;
  */
 public class MafiaClientGame extends AppCompatActivity implements View.OnClickListener {
     String numOfPeople="";
-    int numOfMafia;
-    int numOfAngels;
+   public static int numOfMafia;
+    public static int numOfAngels;
     int numOfVillagers;
     int mafiaTime=30;
     int angelTime;
@@ -56,6 +56,7 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
             mafiaTime = Integer.parseInt(receiveMessage());
             angelTime = Integer.parseInt(receiveMessage());
             villagerTime = Integer.parseInt(receiveMessage());
+            receiveMessage();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -98,7 +99,6 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
 
     public void sendMessage(String message){
         out.println(message);
-        Log.d("clientGsame2","This is the sent message: " + message);
 }
 
     public String receiveMessage() throws IOException, InterruptedException {

@@ -19,7 +19,11 @@ public class OpenYourEyes extends AppCompatActivity {
             setContentView(R.layout.activity_close_your_eyes);
         }
         playAudio();
-        new CountDownTimer(2*1000, 500) {
+        double time = getTime.returnTime();
+        double timeLeft = 18.6 - time;
+        double tempConversion = timeLeft * 1000;
+        long countdownTimer = (int)tempConversion;
+        new CountDownTimer(countdownTimer, 500) {
             public void onTick(long millisUntilFinished) {
 
             }

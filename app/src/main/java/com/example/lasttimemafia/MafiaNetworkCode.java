@@ -31,11 +31,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
+
 public class MafiaNetworkCode extends AppCompatActivity {
     ProgressBar progressBar;
     int totalNumOfPlayers = hostGame.totalNumOfPlayers;
     int currentNumOfPlayers = 1;
     Socket socket;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         progressBar = findViewById(R.id.progressBar2);
@@ -54,7 +57,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
         String totalistic = "";
 
         String ipAddress = getIPAddress(true);
-        Log.d("IP","This is What is returned from getIPAddress:" + ipAddress);
+        Log.d("IP", "This is What is returned from getIPAddress:" + ipAddress);
         String[] IPSplit = ipAddress.split("\\.");
         if (IPSplit[0].equals("192") && IPSplit[1].equals("168")) {
             String first = "";
@@ -149,9 +152,9 @@ public class MafiaNetworkCode extends AppCompatActivity {
         Log.d("random", "PlaceOfRoleInList: " + placeOfRoleInList);
         String role = (String) MafiaServerGame.role.get(placeOfRoleInList);
         //sendMessage("Trash");
-        Log.d("rolecheck","RoleSentPre");
+        Log.d("rolecheck", "RoleSentPre");
         sendMessage(role);//Role
-        Log.d("rolecheck","RoleSentPost");
+        Log.d("rolecheck", "RoleSentPost");
         sendMessage(String.valueOf(MafiaServerGame.players.size()));//Number of players
         sendMessage("1");//Number of Mafia
         sendMessage("1");//Number of Guardian Angel
@@ -159,7 +162,10 @@ public class MafiaNetworkCode extends AppCompatActivity {
         sendMessage("30");//Seconds for mafia to talk
         sendMessage("10");//Time for guardian angel
         sendMessage("30");//time for village to talk
-
+        boolean keepLoopRunning = true;
+        while (keepLoopRunning) {
+            receiveMessage(socket);
+        }
     }
 
     public char convertIntToChar(int number) {
@@ -219,6 +225,10 @@ public class MafiaNetworkCode extends AppCompatActivity {
                 loopRecceiveMessage = false;
             }
         }
+        if (receivedMessage.startsWith("time")) {
+            sendMessage(String.valueOf(returnTime()));
+            receivedMessage = "nothing";
+        }
         return receivedMessage;
     }
 
@@ -261,12 +271,24 @@ public class MafiaNetworkCode extends AppCompatActivity {
                 String[] split;
                 split = message.split(",");
                 Log.d("hostGame2", "Value of message: " + message);
-                Log.d("hostGame3","value of split[0]: " + split[0]);
-                Log.d("hostGame3","value of split[1]: " + split[1]);
+                Log.d("hostGame3", "value of split[0]: " + split[0]);
+                Log.d("hostGame3", "value of split[1]: " + split[1]);
                 //MafiaServerGame.textMessages.add(position, split[0]);
                 //MafiaServerGame.textMessageSender.add(position, split[1]);
             }
             sendMessage(send);
         }
     }
+
+    public double returnTime() {
+        long timeTemp = System.currentTimeMillis() - MafiaServerGame.startingTime;
+        Log.d("almostdone", "timeTempInHost:" + timeTemp);
+        timeTemp = timeTemp / 100;
+        Log.d("almostdone", "timeTempInHost2:" + timeTemp);
+        double actualTime = ((double)timeTemp);
+        actualTime = actualTime/10;
+        Log.d("almostdone", "timeTempInHost3:" + actualTime);
+        return actualTime;
+    }
+
 }

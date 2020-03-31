@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.TextView;
 
@@ -19,7 +20,11 @@ public class ReavealRole extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reaveal_role);
-
+        double time = getTime.returnTime();
+        Log.d("successtest","Time:" + time);
+        double timeLeft = 12.4 - time;
+        double tempConversion = timeLeft * 1000;
+        long countdownTimer = (int)tempConversion;
         //Store role name to what they should be formatted to in a Hashmap
 
         HashMap<String,String> roleToFormatted = new HashMap<>();
@@ -34,7 +39,7 @@ public class ReavealRole extends AppCompatActivity {
         TextView role = findViewById(R.id.roleText);
         role.setText(roleToFormatted.get(roleString));
         role.setText(roleString);
-        new CountDownTimer(3*1000, 500) {
+        new CountDownTimer(countdownTimer, 500) {
             public void onTick(long millisUntilFinished) {
             }
             public void onFinish() {

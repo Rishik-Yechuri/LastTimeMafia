@@ -21,7 +21,7 @@ import java.net.Socket;
 
 public class joinedGame extends AppCompatActivity {
     public static String name = "";
-    Socket socket;
+    public static Socket socket;
     Button button2;
     EditText nameText;
     public static PrintWriter out;

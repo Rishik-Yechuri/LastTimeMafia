@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class MafiaServerGame extends AppCompatActivity {
+    public static long startingTime = System.currentTimeMillis();
     public static ArrayList players = new ArrayList();
     public static ArrayList role = new ArrayList<>();
     public static boolean sendRole = false;
