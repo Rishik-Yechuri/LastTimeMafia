@@ -38,6 +38,11 @@ public class MafiaNetworkCode extends AppCompatActivity {
     int totalNumOfPlayers = hostGame.totalNumOfPlayers;
     int currentNumOfPlayers = 1;
     Socket socket;
+    public static long startTimeOfTimer = System.currentTimeMillis();
+    public static long totalTimePassed = 0;
+    public static long alarmLength = 0;
+    public static long alarmEndTime = 0;
+    public static long lastAlarmEndTime = 0;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,6 +145,8 @@ public class MafiaNetworkCode extends AppCompatActivity {
             Log.d("hostGame2", "Total number of players: " + totalNumOfPlayers);
             if (currentNumOfPlayers == totalNumOfPlayers) {
                 Log.d("hostGame2", "Loop Is Set To False");
+                // startTimeOfTimer = System.currentTimeMillis();
+                Log.d("synccheck", "This is when the server timer is started");
                 loop = false;
             }
         }
@@ -228,6 +235,28 @@ public class MafiaNetworkCode extends AppCompatActivity {
         if (receivedMessage.startsWith("time")) {
             sendMessage(String.valueOf(returnTime()));
             receivedMessage = "nothing";
+        } else if (receivedMessage.startsWith("startalarmandchecktime")) {
+            double input = Double.parseDouble(receivedMessage.split(" ")[1]);
+            startAlarm(input);
+            long time = getAlarmTimeRemaining();
+            Log.d("synccheck","Server side time value: " + time);
+            if(time<0){
+                time=0;
+            }
+            sendMessage(String.valueOf(time));
+            receivedMessage = "nothing";
+        } else if (receivedMessage.startsWith("startalarm")) {
+            double input = Double.parseDouble(receivedMessage.split(" ")[1]);
+            startAlarm(input);
+            receivedMessage = "nothing";
+        } else if (receivedMessage.startsWith("checkalarmtime")) {
+            long time = getAlarmTimeRemaining();
+            sendMessage(String.valueOf(time));
+            receivedMessage = "nothing";
+        } else if (receivedMessage.startsWith("checkalarm")) {
+            boolean alarmOnOrOff = checkAlarm();
+            sendMessage(String.valueOf(alarmOnOrOff));
+            receivedMessage = "nothing";
         }
         return receivedMessage;
     }
@@ -285,10 +314,33 @@ public class MafiaNetworkCode extends AppCompatActivity {
         Log.d("almostdone", "timeTempInHost:" + timeTemp);
         timeTemp = timeTemp / 100;
         Log.d("almostdone", "timeTempInHost2:" + timeTemp);
-        double actualTime = ((double)timeTemp);
-        actualTime = actualTime/10;
+        double actualTime = ((double) timeTemp);
+        actualTime = actualTime / 10;
         Log.d("almostdone", "timeTempInHost3:" + actualTime);
         return actualTime;
     }
 
+    public void startAlarm(double numOfSeconds) {
+        totalTimePassed = System.currentTimeMillis() - startTimeOfTimer;
+        alarmLength = (long) (numOfSeconds * 1000);
+        alarmEndTime = alarmLength + lastAlarmEndTime;
+        lastAlarmEndTime += alarmLength;
+    }
+
+    public boolean checkAlarm() {
+        totalTimePassed = System.currentTimeMillis() - startTimeOfTimer;
+        if (totalTimePassed <= alarmEndTime) {
+            return true;
+        } else {
+            alarmLength = 0;
+            return false;
+        }
+    }
+
+    public long getAlarmTimeRemaining() {
+        totalTimePassed = System.currentTimeMillis() - startTimeOfTimer;
+        Log.d("serversync","alarmEndTime:" + alarmEndTime);
+        Log.d("serversync","totalTimePassed:" + totalTimePassed);
+        return alarmEndTime - totalTimePassed;
+    }
 }

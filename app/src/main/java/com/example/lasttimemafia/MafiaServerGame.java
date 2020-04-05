@@ -41,6 +41,7 @@ public class MafiaServerGame extends AppCompatActivity {
                 e.printStackTrace();
             }
             if(players.size()==hostGame.totalNumOfPlayers){
+                MafiaNetworkCode.startTimeOfTimer = System.currentTimeMillis();
                 pauseForPlayers=false;
             }
         }

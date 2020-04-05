@@ -8,6 +8,12 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 
+import java.io.IOException;
+
+import static com.example.lasttimemafia.ReavealRole.receiveMessage;
+import static com.example.lasttimemafia.joinedGame.sendMessage;
+import static com.example.lasttimemafia.joinedGame.socket;
+
 public class OpenYourEyes extends AppCompatActivity {
     public static MediaPlayer openEyesAudio;
     @Override
@@ -19,10 +25,18 @@ public class OpenYourEyes extends AppCompatActivity {
             setContentView(R.layout.activity_close_your_eyes);
         }
         playAudio();
-        double time = getTime.returnTime();
+        /*double time = getTime.returnTime();
         double timeLeft = 18.6 - time;
         double tempConversion = timeLeft * 1000;
-        long countdownTimer = (int)tempConversion;
+        long countdownTimer = (int)tempConversion;*/
+        sendMessage("startalarmandchecktime 1.2");
+        long countdownTimer = 0;
+        try {
+            countdownTimer = Long.parseLong(receiveMessage(socket));
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        Log.d("synccheck","Value of RevealRole countdowntimer:"+ countdownTimer);
         new CountDownTimer(countdownTimer, 500) {
             public void onTick(long millisUntilFinished) {
 

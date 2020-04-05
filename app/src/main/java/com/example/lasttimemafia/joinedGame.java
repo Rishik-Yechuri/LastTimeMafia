@@ -196,7 +196,7 @@ public class joinedGame extends AppCompatActivity {
         Log.d("formatting","Made it to JoinedGame10");
         finalConnection(host,portToUse);
     }
-    public void sendMessage(String message){
+    public static void sendMessage(String message){
         out.println(message);
     }
 

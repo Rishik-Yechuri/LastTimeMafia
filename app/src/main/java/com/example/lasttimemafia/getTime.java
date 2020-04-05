@@ -46,7 +46,7 @@ static Socket socket = joinedGame.socket;
     public static double returnTime(){
         sendMessage("time");
         String timeTemp = "";
-        try { timeTemp = receiveMessage(socket); } catch (IOException e) { e.printStackTrace(); } catch (InterruptedException e) { e.printStackTrace(); }
+        try { timeTemp = receiveMessage(socket); } catch (IOException | InterruptedException e) { e.printStackTrace(); }
         Log.d("almostdone","Time2:" + timeTemp);
         double time = Double.valueOf(timeTemp);
         Log.d("almostdone","Time3:" + time);
