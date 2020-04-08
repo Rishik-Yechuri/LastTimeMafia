@@ -21,11 +21,11 @@ import java.util.ArrayList;
  * status bar and navigation/system bar) with user interaction.
  */
 public class MafiaClientGame extends AppCompatActivity implements View.OnClickListener {
-    String numOfPeople="";
-   public static int numOfMafia;
+    public static String numOfPeople = "";
+    public static int numOfMafia;
     public static int numOfAngels;
     int numOfVillagers;
-    int mafiaTime=30;
+    int mafiaTime = 30;
     int angelTime;
     int villagerTime;
     public static String role = "";
@@ -33,23 +33,24 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
     BufferedReader br;
     PrintWriter out;
     ArrayList players = new ArrayList();
+
     public void onCreate(Bundle savedInstanceState) {
         StrictMode.ThreadPolicy policy = new
                 StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        Log.d("formatting","Made it to MafiaClientGameStart");
+        Log.d("formatting", "Made it to MafiaClientGameStart");
         final EditText editText4 = findViewById(R.id.editText4);
         super.onCreate(savedInstanceState);
-        Log.d("clientGame2","Set the game view!");
+        Log.d("clientGame2", "Set the game view!");
         setContentView(R.layout.activity_mafia_client_game);
         Button button6 = findViewById(R.id.button6);
         button6.setOnClickListener(this);
         br = joinedGame.br;
         out = joinedGame.out;
         //String trash = receiveMessage();
-        Log.d("receiveCheck","Pre");
+        Log.d("receiveCheck", "Pre");
         try {
-            role=receiveMessage();
+            role = receiveMessage();
             numOfMafia = Integer.parseInt(receiveMessage());
             numOfAngels = Integer.parseInt(receiveMessage());
             numOfVillagers = Integer.parseInt(receiveMessage());
@@ -62,11 +63,11 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Log.d("receiveCheck","Post");
-        Log.d("recInfo","At The Top Line");
+        Log.d("receiveCheck", "Post");
+        Log.d("recInfo", "At The Top Line");
         //numOfPeople = receiveMessage();
         numOfPeople = "2";
-        Log.d("recInfo","numOfPeople:" + numOfPeople);
+        Log.d("recInfo", "numOfPeople:" + numOfPeople);
         //numOfMafia = Integer.parseInt(receiveMessage());
         //numOfAngels = Integer.parseInt(receiveMessage());
         // numOfVillagers = Integer.parseInt(receiveMessage());
@@ -76,7 +77,7 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
         TextView textMessage = findViewById(R.id.textMessage);
         textMessage.setText(role);
         CountdownTimer.countdownTime = mafiaTime;
-        Log.d("formatting","Made it to MafiaClientGameEnd");
+        Log.d("formatting", "Made it to MafiaClientGameEnd");
         openGameStarting();
        /* new java.util.Timer().schedule(
                 new java.util.TimerTask() {
@@ -97,34 +98,35 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
         );*/
     }
 
-    public void sendMessage(String message){
+    public void sendMessage(String message) {
         out.println(message);
-}
+    }
 
     public String receiveMessage() throws IOException, InterruptedException {
         boolean loop = true;
         String receivedMessage = "";
-        while(loop) {
+        while (loop) {
             Thread.sleep(200);
-            Log.d("messageforrole","Message: " + receivedMessage);
+            Log.d("messageforrole", "Message: " + receivedMessage);
             receivedMessage = br.readLine();
-            Log.d("messageforrole","Message2: " + receivedMessage);
-            if(receivedMessage!=null){
+            Log.d("messageforrole", "Message2: " + receivedMessage);
+            if (receivedMessage != null) {
                 loop = false;
             }
         }
         return receivedMessage;
     }
+
     public String quickReceive() throws IOException, InterruptedException {
         boolean loop = true;
         int repeat = 0;
         String receivedMessage = "";
-        while(loop&&repeat<3) {
+        while (loop && repeat < 3) {
             Thread.sleep(65);
-            Log.d("clientGame2","Message: " + receivedMessage);
+            Log.d("clientGame2", "Message: " + receivedMessage);
             receivedMessage = br.readLine();
-            Log.d("clientGame2","Message2: " + receivedMessage);
-            if(receivedMessage!=null){
+            Log.d("clientGame2", "Message2: " + receivedMessage);
+            if (receivedMessage != null) {
                 loop = false;
             }
             repeat++;
@@ -159,8 +161,9 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
         sendSomething = true;
     }
-    public void openGameStarting(){
-        Intent intent = new Intent(this,GameIsStarting.class);
+
+    public void openGameStarting() {
+        Intent intent = new Intent(this, GameIsStarting.class);
         startActivity(intent);
     }
 }

@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +24,7 @@ public class ReavealRole extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reaveal_role);
+        View tempView = findViewById(R.id.revealRoleRoot);
         /*double time = getTime.returnTime();
         Log.d("successtest","Time:" + time);
         double timeLeft = 12.4 - time;

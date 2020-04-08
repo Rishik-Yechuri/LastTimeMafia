@@ -29,7 +29,7 @@ public class OpenYourEyes extends AppCompatActivity {
         double timeLeft = 18.6 - time;
         double tempConversion = timeLeft * 1000;
         long countdownTimer = (int)tempConversion;*/
-        sendMessage("startalarmandchecktime 1.2");
+        sendMessage("startalarmandchecktime 1.8");
         long countdownTimer = 0;
         try {
             countdownTimer = Long.parseLong(receiveMessage(socket));
