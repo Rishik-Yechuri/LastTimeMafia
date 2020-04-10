@@ -26,7 +26,7 @@ public class joinedGame extends AppCompatActivity {
     EditText nameText;
     public static PrintWriter out;
     public static BufferedReader br;
-    String totalNumOfPlayers = "";
+    public static String totalNumOfPlayers = "";
     boolean start = false;
     boolean loop2 = true;
     ProgressBar progressBar;

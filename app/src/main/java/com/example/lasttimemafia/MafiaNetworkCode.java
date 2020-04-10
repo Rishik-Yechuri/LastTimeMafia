@@ -155,7 +155,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
         while (MafiaServerGame.sendRole == false) {
             Thread.sleep(250);
         }
-        int placeOfRoleInList = MafiaServerGame.players.indexOf(playerName);
+        int placeOfRoleInList = MafiaServerGame.players.indexOf(playerName)-1;
         Log.d("random", "PlaceOfRoleInList: " + placeOfRoleInList);
         String role = (String) MafiaServerGame.role.get(placeOfRoleInList);
         //sendMessage("Trash");
@@ -257,6 +257,10 @@ public class MafiaNetworkCode extends AppCompatActivity {
             boolean alarmOnOrOff = checkAlarm();
             sendMessage(String.valueOf(alarmOnOrOff));
             receivedMessage = "nothing";
+        }else if(receivedMessage.startsWith("getplayers")){
+            String listOfPlayers = returnPlayers();
+            sendMessage(listOfPlayers);
+            receivedMessage = "nothing";
         }
         return receivedMessage;
     }
@@ -342,5 +346,24 @@ public class MafiaNetworkCode extends AppCompatActivity {
         Log.d("serversync","alarmEndTime:" + alarmEndTime);
         Log.d("serversync","totalTimePassed:" + totalTimePassed);
         return alarmEndTime - totalTimePassed;
+    }
+    public String returnPlayers(){
+        Log.d("textdebug","ServerGame Player list 0:" + MafiaServerGame.players.get(0));
+        Log.d("textdebug","ServerGame Player list 1:" + MafiaServerGame.players.get(1));
+        String playerList = "";
+        for(int x=0;x<totalNumOfPlayers;x++){
+            playerList +=  MafiaServerGame.players.get(x) + " ";
+        }
+        Log.d("textdebug","Value of playerList:" + playerList);
+        return playerList;
+    }
+    public String updateMessages(){
+        return "supp";
+    }
+    public void setVote(){
+
+    }
+    public void setMessage(){
+
     }
 }

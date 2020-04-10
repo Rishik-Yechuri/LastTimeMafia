@@ -31,6 +31,7 @@ public class MafiaServerGame extends AppCompatActivity {
         setContentView(R.layout.activity_mafia_server_game);
         //Looper.prepare();
         players.add("Vihaan");
+        players.add("Prathad");
         textMessageSender.add("Prathad");
         textMessages.add("Sup!");
         boolean pauseForPlayers = true;
