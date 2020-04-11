@@ -2,6 +2,7 @@ package com.example.lasttimemafia;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
@@ -21,5 +22,7 @@ public class TextMessages extends AppCompatActivity {
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
+        tabs.getTabAt(0).setText("Voting");
+        tabs.getTabAt(1).setText("Messages");
     }
 }
