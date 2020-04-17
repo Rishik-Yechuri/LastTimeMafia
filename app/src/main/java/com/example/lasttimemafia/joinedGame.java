@@ -197,6 +197,7 @@ public class joinedGame extends AppCompatActivity {
         finalConnection(host,portToUse);
     }
     public static void sendMessage(String message){
+        Log.d("conflict","Message Sent:" + message);
         out.println(message);
     }
 

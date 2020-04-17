@@ -89,6 +89,7 @@ public class ReavealRole extends AppCompatActivity {
                 loopRecceiveMessage = false;
             }
         }
+        Log.d("conflict","Message Received:" + receivedMessage);
         return receivedMessage;
     }
 }

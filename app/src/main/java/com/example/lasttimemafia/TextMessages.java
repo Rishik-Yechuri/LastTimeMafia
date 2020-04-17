@@ -1,6 +1,8 @@
 package com.example.lasttimemafia;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Gravity;
 
@@ -9,6 +11,12 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.lasttimemafia.main.SectionsPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
+
+import java.io.IOException;
+
+import static com.example.lasttimemafia.ReavealRole.receiveMessage;
+import static com.example.lasttimemafia.joinedGame.sendMessage;
+import static com.example.lasttimemafia.joinedGame.socket;
 
 public class TextMessages extends AppCompatActivity {
 
@@ -24,5 +32,28 @@ public class TextMessages extends AppCompatActivity {
         tabs.setupWithViewPager(viewPager);
         tabs.getTabAt(0).setText("Voting");
         tabs.getTabAt(1).setText("Messages");
+       /* sendMessage("startalarmandchecktime 35");
+        long countdownTimer = 0;
+        try {
+            countdownTimer = Long.parseLong(receiveMessage(socket));
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        new CountDownTimer(countdownTimer, 500) {
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            public void onFinish() {
+                closeEyes();
+            }
+        }.start();*/
+    }
+
+    public void closeEyes() {
+        Log.d("testtabs", "openeyes 1");
+        Intent intent = new Intent(this, CloseYourEyes.class);
+        Log.d("testtabs", "openeyes 2");
+        startActivity(intent);
     }
 }

@@ -27,9 +27,12 @@ import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 
@@ -43,12 +46,22 @@ public class MafiaNetworkCode extends AppCompatActivity {
     public static long alarmLength = 0;
     public static long alarmEndTime = 0;
     public static long lastAlarmEndTime = 0;
+    String playerName;
+    //Code for storing text messages and info
+    HashMap<String, String> holdVotingInfo; //= new HashMap();
+    ArrayList textMessageHistory;
+    ArrayList textMessageHistorySender;
+    int numberOfTextMessages = 0;
 
+    //End of Code for storing text messages and info
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         progressBar = findViewById(R.id.progressBar2);
         progressBar.setMax(Integer.valueOf(totalNumOfPlayers));
         progressBar.setProgress(2);
+        holdVotingInfo = new HashMap<>();
+        textMessageHistory = new ArrayList();
+        textMessageHistorySender = new ArrayList();
         Log.d("hostingGame", "It Works!");
     }
 
@@ -150,12 +163,12 @@ public class MafiaNetworkCode extends AppCompatActivity {
                 loop = false;
             }
         }
-        String playerName = receiveMessage(socket);
+        playerName = receiveMessage(socket);
         MafiaServerGame.players.add(playerName);
         while (MafiaServerGame.sendRole == false) {
             Thread.sleep(250);
         }
-        int placeOfRoleInList = MafiaServerGame.players.indexOf(playerName)-1;
+        int placeOfRoleInList = MafiaServerGame.players.indexOf(playerName);
         Log.d("random", "PlaceOfRoleInList: " + placeOfRoleInList);
         String role = (String) MafiaServerGame.role.get(placeOfRoleInList);
         //sendMessage("Trash");
@@ -171,6 +184,8 @@ public class MafiaNetworkCode extends AppCompatActivity {
         sendMessage("30");//time for village to talk
         boolean keepLoopRunning = true;
         while (keepLoopRunning) {
+            Log.d("conflict", "receiveMessage called");
+            Log.d("lifecycle", "in loop");
             receiveMessage(socket);
         }
     }
@@ -217,21 +232,35 @@ public class MafiaNetworkCode extends AppCompatActivity {
     }
 
     public static void sendMessage(String message) {
+        Log.d("conflict", "Sent Message:" + message);
         out.println(message);
-        Log.d("hostGame2", "This is the Message:" + message);
     }
 
     public String receiveMessage(Socket socket) throws IOException, InterruptedException {
-        br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        Log.d("lifecycle", "in receive message");
+        Log.d("insidereceiver", "1");
+        if (br == null) {
+            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        }
+        Log.d("insidereceiver", "2");
         boolean loopRecceiveMessage = true;
         String receivedMessage = "";
+        Log.d("insidereceiver", "3");
         while (loopRecceiveMessage) {
+            Log.d("insidereceiver", "4");
             Thread.sleep(200);
+            Log.d("insidereceiver", "5");
+            Log.d("insidereceiver", "Reader Check:" + br.ready());
             receivedMessage = br.readLine();
+            Log.d("insidereceiver", "6");
             if (receivedMessage != null) {
+                Log.d("insidereceiver", "7");
                 loopRecceiveMessage = false;
+                Log.d("insidereceiver", "8");
             }
+            Log.d("insidereceiver", "9");
         }
+        Log.d("conflict", "Received Message:" + receivedMessage);
         if (receivedMessage.startsWith("time")) {
             sendMessage(String.valueOf(returnTime()));
             receivedMessage = "nothing";
@@ -239,9 +268,9 @@ public class MafiaNetworkCode extends AppCompatActivity {
             double input = Double.parseDouble(receivedMessage.split(" ")[1]);
             startAlarm(input);
             long time = getAlarmTimeRemaining();
-            Log.d("synccheck","Server side time value: " + time);
-            if(time<0){
-                time=0;
+            Log.d("synccheck", "Server side time value: " + time);
+            if (time < 0) {
+                time = 0;
             }
             sendMessage(String.valueOf(time));
             receivedMessage = "nothing";
@@ -257,10 +286,33 @@ public class MafiaNetworkCode extends AppCompatActivity {
             boolean alarmOnOrOff = checkAlarm();
             sendMessage(String.valueOf(alarmOnOrOff));
             receivedMessage = "nothing";
-        }else if(receivedMessage.startsWith("getplayers")){
+        } else if (receivedMessage.startsWith("getplayers")) {
             String listOfPlayers = returnPlayers();
             sendMessage(listOfPlayers);
             receivedMessage = "nothing";
+        }
+        Log.d("updatemessages", "before else statement");
+        Log.d("updatemessages", "What it is:" + receivedMessage);
+        Log.d("lifecycle", "pre if condition");
+        /*else*/
+        if (receivedMessage.startsWith("updatemessages")) {
+            Log.d("lifecycle", "inside if");
+            Log.d("updatemessages", "in method");
+            String listOfMessages = updateMessages();
+            Log.d("updatemessages", "pre send");
+            Log.d("lifecycle", "pre send");
+            sendMessage(listOfMessages);
+            Log.d("lifecycle", "post send");
+            Log.d("updatemessages", "post send");
+            receivedMessage = "nothing";
+        } else if (receivedMessage.startsWith("setvote")) {
+            //setVote(String.valueOf(receivedMessage.split(" ")[1]));
+        } else if (receivedMessage.startsWith("setmessage")) {
+            Log.d("messagesmafia", "in else statement");
+            String combinedMessage = receivedMessage.substring(11);
+            Log.d("messagesmafia", "calling method");
+            setMessage(combinedMessage);
+            Log.d("messagesmafia", "called method");
         }
         return receivedMessage;
     }
@@ -343,27 +395,64 @@ public class MafiaNetworkCode extends AppCompatActivity {
 
     public long getAlarmTimeRemaining() {
         totalTimePassed = System.currentTimeMillis() - startTimeOfTimer;
-        Log.d("serversync","alarmEndTime:" + alarmEndTime);
-        Log.d("serversync","totalTimePassed:" + totalTimePassed);
+        Log.d("serversync", "alarmEndTime:" + alarmEndTime);
+        Log.d("serversync", "totalTimePassed:" + totalTimePassed);
         return alarmEndTime - totalTimePassed;
     }
-    public String returnPlayers(){
-        Log.d("textdebug","ServerGame Player list 0:" + MafiaServerGame.players.get(0));
-        Log.d("textdebug","ServerGame Player list 1:" + MafiaServerGame.players.get(1));
-        String playerList = "";
-        for(int x=0;x<totalNumOfPlayers;x++){
-            playerList +=  MafiaServerGame.players.get(x) + " ";
+
+    public String returnPlayers() {
+        Log.d("textdebug", "ServerGame Player list 0:" + MafiaServerGame.players.get(0));
+        Log.d("textdebug", "ServerGame Player list 1:" + MafiaServerGame.players.get(1));
+        String playerList = "playerlist";
+        for (int x = 0; x < totalNumOfPlayers; x++) {
+            playerList += " " + MafiaServerGame.players.get(x);
         }
-        Log.d("textdebug","Value of playerList:" + playerList);
+        Log.d("textdebug", "Value of playerList:" + playerList);
         return playerList;
     }
-    public String updateMessages(){
-        return "supp";
-    }
-    public void setVote(){
 
+    public String updateMessages() {
+        String returnedMessage = "";
+        if (textMessageHistory == null) {
+            textMessageHistory = new ArrayList();
+        }
+        if (textMessageHistorySender == null) {
+            textMessageHistorySender = new ArrayList();
+        }
+        for (int x = 0; x < textMessageHistory.size(); x++) {
+            Log.d("breakitdown", "textMessageTriggered");
+            returnedMessage += textMessageHistory.get(x) + "\uD800\uDF0C" + textMessageHistorySender.get(x) + "\uD800\uDF0C";
+        }
+        Log.d("breakitdown", "ReturnedMessage:" + returnedMessage);
+        return returnedMessage;
     }
-    public void setMessage(){
 
+    public void setVote(String personToKill) {
+        if (holdVotingInfo == null) {
+            holdVotingInfo = new HashMap<>();
+        }
+        Log.d("sender", "PlayerName:" + playerName);
+        if (playerName != null) {
+            holdVotingInfo.put(playerName, personToKill);
+        }
+        Log.d("sender", "holdVotingInfo:" + holdVotingInfo);
+    }
+
+    public void setMessage(String message) {
+        if (textMessageHistory == null) {
+            textMessageHistory = new ArrayList();
+        }
+        if (textMessageHistorySender == null) {
+            textMessageHistorySender = new ArrayList();
+        }
+        if (playerName != null) {
+            textMessageHistory.add(message);
+            textMessageHistorySender.add(playerName);
+            Log.d("messagesmafia", "added to array");
+            Log.d("sender", "textmessagessent:" + textMessageHistory);
+            Log.d("sender", "textmessagesenders:" + textMessageHistorySender);
+            numberOfTextMessages++;
+            Log.d("messagesmafia", "end of method");
+        }
     }
 }

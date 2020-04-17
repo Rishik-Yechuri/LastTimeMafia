@@ -48,8 +48,8 @@ public class MafiaServerGame extends AppCompatActivity {
         }
         Collections.shuffle(players);
         Log.d("random","Players: " + players);
-        role.add("mafia");
         role.add("guardian angel");
+        role.add("mafia");
         sendRole = true;
         TextView textView5 = findViewById(R.id.textView5);
         String playerName = (String) players.get(0);
