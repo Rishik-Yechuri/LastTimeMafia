@@ -16,12 +16,22 @@ import static com.example.lasttimemafia.joinedGame.socket;
 
 public class OpenYourEyes extends AppCompatActivity {
     public static MediaPlayer openEyesAudio;
+    String nextThing;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(MafiaClientGame.role.equals("mafia")){
+        nextThing = LifecycleTracker.returnNextActivity();
+       /* if(MafiaClientGame.role.equals("mafia")){
         setContentView(R.layout.activity_open_your_eyes);
         }else{
+            setContentView(R.layout.activity_close_your_eyes);
+        }*/
+        if(nextThing.equals("showdeath")){
+            setContentView(R.layout.activity_open_your_eyes);
+        }else if(nextThing.equals("mafiatextmessages")){
+            setContentView(R.layout.activity_open_your_eyes);
+        }
+        else{
             setContentView(R.layout.activity_close_your_eyes);
         }
         playAudio();
@@ -42,19 +52,28 @@ public class OpenYourEyes extends AppCompatActivity {
 
             }
             public void onFinish() {
-                openTextMessages();
+                if(nextThing.equals("mafiatextmessages")){
+                openTextMessages();}
+                else if(nextThing.equals("closeeyes")){
+                    openCloseEyes();
+                }
             }
         }.start();
     }
     public void playAudio(){
-        if(openEyesAudio==null){
+        if(openEyesAudio!=null){
+            openEyesAudio.start();
         }
-        openEyesAudio.start();
     }
     public void openTextMessages(){
         Log.d("testtabs","openeyes 1");
         Intent intent = new Intent(this,TextMessages.class);
         Log.d("testtabs","openeyes 2");
+        startActivity(intent);
+    }
+    public void openCloseEyes() {
+        CloseYourEyes.closeEyesAudio = MediaPlayer.create(this, R.raw.closeeyes);
+        Intent intent = new Intent(this, CloseYourEyes.class);
         startActivity(intent);
     }
 }

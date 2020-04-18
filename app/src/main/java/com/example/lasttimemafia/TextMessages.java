@@ -19,6 +19,7 @@ import static com.example.lasttimemafia.joinedGame.sendMessage;
 import static com.example.lasttimemafia.joinedGame.socket;
 
 public class TextMessages extends AppCompatActivity {
+    String nextThing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +33,7 @@ public class TextMessages extends AppCompatActivity {
         tabs.setupWithViewPager(viewPager);
         tabs.getTabAt(0).setText("Voting");
         tabs.getTabAt(1).setText("Messages");
-       /* sendMessage("startalarmandchecktime 35");
+        sendMessage("startalarmandchecktime 35");
         long countdownTimer = 0;
         try {
             countdownTimer = Long.parseLong(receiveMessage(socket));
@@ -45,9 +46,14 @@ public class TextMessages extends AppCompatActivity {
             }
 
             public void onFinish() {
-                closeEyes();
+                nextThing = LifecycleTracker.returnNextActivity();
+                if (nextThing.equals("closeeyes")) {
+                    closeEyes();
+                }else{
+                    Log.d("failure","failure in Textmessages");
+                }
             }
-        }.start();*/
+        }.start();
     }
 
     public void closeEyes() {

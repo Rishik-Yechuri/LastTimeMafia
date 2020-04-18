@@ -218,7 +218,7 @@ public class Frag2 extends Fragment {
         //textView.setTextColor(selectedColor);
         textView.setTextSize(16);
         String finaltext = "";
-        if (lastSender != senderName) {
+        if (!lastSender.equals(senderName)) {
             finaltext = senderName + "\n" + messageToSend;
         } else {
             finaltext = messageToSend;
