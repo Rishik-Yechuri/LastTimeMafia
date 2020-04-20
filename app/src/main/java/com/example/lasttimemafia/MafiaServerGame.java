@@ -14,14 +14,16 @@ import com.example.lasttimemafia.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 public class MafiaServerGame extends AppCompatActivity {
     public static long startingTime = System.currentTimeMillis();
     public static ArrayList players = new ArrayList();
-    public static ArrayList role = new ArrayList<>();
+    public static ArrayList<String> role = new ArrayList();
     public static boolean sendRole = false;
     public static ArrayList<String> textMessageSender = new ArrayList();
     public static ArrayList<String> textMessages = new ArrayList<>();
+    public static HashMap<String,String> holdVotingInfo = new HashMap<>();
     protected void onCreate(Bundle savedInstanceState) {
         StrictMode.ThreadPolicy policy = new
                 StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -32,8 +34,10 @@ public class MafiaServerGame extends AppCompatActivity {
         //Looper.prepare();
         players.add("Vihaan");
         players.add("Prathad");
+        role.add("mafia");
+        role.add("guardian angel");
         textMessageSender.add("Prathad");
-        textMessages.add("Sup!");
+        //textMessages.add("");
         boolean pauseForPlayers = true;
         while(pauseForPlayers){
             try {
@@ -46,10 +50,8 @@ public class MafiaServerGame extends AppCompatActivity {
                 pauseForPlayers=false;
             }
         }
-        Collections.shuffle(players);
+        //Collections.shuffle(players);
         Log.d("random","Players: " + players);
-        role.add("guardian angel");
-        role.add("mafia");
         sendRole = true;
         TextView textView5 = findViewById(R.id.textView5);
         String playerName = (String) players.get(0);

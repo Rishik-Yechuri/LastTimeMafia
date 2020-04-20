@@ -55,9 +55,9 @@ public class ReavealRole extends AppCompatActivity {
         role.setText(roleString);
         ArrayList<String> playerLifecycle;
         if (role.getText().toString().equals("Mafia")) {
-            playerLifecycle = new ArrayList<>(Arrays.asList("closeeyes", "mafiaopeneyes", "mafiatextmessages", "closeeyes", "openeyes", "showdeath"));
+            playerLifecycle = new ArrayList<>(Arrays.asList("closeeyes", "mafiaopeneyes", "mafiatextmessages", "closeeyes", "openeyes", "showdeath","villagetalk"));
         } else if (role.getText().toString().equals("Guardian Angel")) {
-            playerLifecycle = new ArrayList<>(Arrays.asList("closeeyes", "mafiaopeneyes", "closeeyes", "closeeyes", "openeyes", "showdeath"));
+            playerLifecycle = new ArrayList<>(Arrays.asList("closeeyes", "mafiaopeneyes", "closeeyes", "closeeyes", "openeyes", "showdeath","villagetalk"));
         }else{
             playerLifecycle = new ArrayList<>(Arrays.asList("failure"));
         }

@@ -6,6 +6,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.os.StrictMode;
+import android.telephony.CarrierConfigManager;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.widget.LinearLayout;
@@ -34,6 +35,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 
 public class MafiaNetworkCode extends AppCompatActivity {
@@ -41,6 +43,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
     int totalNumOfPlayers = hostGame.totalNumOfPlayers;
     int currentNumOfPlayers = 1;
     Socket socket;
+    boolean personKilled = false;
     public static long startTimeOfTimer = System.currentTimeMillis();
     public static long totalTimePassed = 0;
     public static long alarmLength = 0;
@@ -170,6 +173,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
         }
         int placeOfRoleInList = MafiaServerGame.players.indexOf(playerName);
         Log.d("random", "PlaceOfRoleInList: " + placeOfRoleInList);
+        Log.d("removeplayers", "Value of Roles before death:" + MafiaServerGame.role);
         String role = (String) MafiaServerGame.role.get(placeOfRoleInList);
         //sendMessage("Trash");
         Log.d("rolecheck", "RoleSentPre");
@@ -290,29 +294,29 @@ public class MafiaNetworkCode extends AppCompatActivity {
             String listOfPlayers = returnPlayers();
             sendMessage(listOfPlayers);
             receivedMessage = "nothing";
-        }
-        Log.d("updatemessages", "before else statement");
-        Log.d("updatemessages", "What it is:" + receivedMessage);
-        Log.d("lifecycle", "pre if condition");
-        /*else*/
-        if (receivedMessage.startsWith("updatemessages")) {
-            Log.d("lifecycle", "inside if");
-            Log.d("updatemessages", "in method");
+        } else if (receivedMessage.startsWith("updatemessages")) {
             String listOfMessages = updateMessages();
-            Log.d("updatemessages", "pre send");
-            Log.d("lifecycle", "pre send");
             sendMessage(listOfMessages);
-            Log.d("lifecycle", "post send");
-            Log.d("updatemessages", "post send");
             receivedMessage = "nothing";
         } else if (receivedMessage.startsWith("setvote")) {
-            //setVote(String.valueOf(receivedMessage.split(" ")[1]));
+            setVote(String.valueOf(receivedMessage.split(" ")[1]));
+            receivedMessage = "nothing";
         } else if (receivedMessage.startsWith("setmessage")) {
-            Log.d("messagesmafia", "in else statement");
             String combinedMessage = receivedMessage.substring(11);
-            Log.d("messagesmafia", "calling method");
             setMessage(combinedMessage);
-            Log.d("messagesmafia", "called method");
+            receivedMessage = "nothing";
+        } else if (receivedMessage.startsWith("getdead")) {
+            Log.d("predeadthing", "votinginfo:" + MafiaServerGame.holdVotingInfo);
+            String deadPerson = getDead(MafiaServerGame.holdVotingInfo);
+            Log.d("players", "deadperson:" + deadPerson);
+            sendMessage(deadPerson);
+            if (!personKilled) {
+                removePlayer(deadPerson);
+                personKilled = true;
+            }
+            receivedMessage = "nothing";
+        } else if (receivedMessage.startsWith("removeplayer")) {
+            removePlayer(receivedMessage.split(" ")[1]);
         }
         return receivedMessage;
     }
@@ -322,18 +326,13 @@ public class MafiaNetworkCode extends AppCompatActivity {
         int currentNumberInLoop = 0;
         String receivedMessage = "";
         while (loopRecceiveMessage && (currentNumberInLoop < 3)) {
-            Log.d("hostGame2", "value of currentNumberInLoop: " + currentNumberInLoop);
             Thread.sleep(65);
-            Log.d("hostGame2", "we got past the thread sleep");
             receivedMessage = br.readLine();
-            Log.d("hostGame2", "we read the nextLine");
-            Log.d("hostGame2", "value of the nextLine: " + receivedMessage);
             if (receivedMessage != null) {
                 loopRecceiveMessage = false;
             }
             currentNumberInLoop++;
         }
-        Log.d("hostGame2", "quickReceive has finished");
         return receivedMessage;
     }
 
@@ -413,46 +412,116 @@ public class MafiaNetworkCode extends AppCompatActivity {
 
     public String updateMessages() {
         String returnedMessage = "";
-        if (textMessageHistory == null) {
-            textMessageHistory = new ArrayList();
+        if (MafiaServerGame.textMessages == null) {
+            MafiaServerGame.textMessages = new ArrayList();
         }
-        if (textMessageHistorySender == null) {
-            textMessageHistorySender = new ArrayList();
+        if (MafiaServerGame.textMessageSender == null) {
+            MafiaServerGame.textMessageSender = new ArrayList();
         }
-        for (int x = 0; x < textMessageHistory.size(); x++) {
+        for (int x = 0; x < MafiaServerGame.textMessages.size(); x++) {
             Log.d("breakitdown", "textMessageTriggered");
-            returnedMessage += textMessageHistory.get(x) + "\uD800\uDF0C" + textMessageHistorySender.get(x) + "\uD800\uDF0C";
+            returnedMessage += MafiaServerGame.textMessages.get(x) + "\uD800\uDF0C" + MafiaServerGame.textMessageSender.get(x) + "\uD800\uDF0C";
         }
         Log.d("breakitdown", "ReturnedMessage:" + returnedMessage);
         return returnedMessage;
     }
 
     public void setVote(String personToKill) {
-        if (holdVotingInfo == null) {
-            holdVotingInfo = new HashMap<>();
+        if (MafiaServerGame.holdVotingInfo == null) {
+            MafiaServerGame.holdVotingInfo = new HashMap<>();
         }
         Log.d("sender", "PlayerName:" + playerName);
         if (playerName != null) {
-            holdVotingInfo.put(playerName, personToKill);
+            MafiaServerGame.holdVotingInfo.put(playerName, personToKill);
         }
-        Log.d("sender", "holdVotingInfo:" + holdVotingInfo);
+        Log.d("sender", "holdVotingInfo:" + MafiaServerGame.holdVotingInfo);
     }
 
     public void setMessage(String message) {
-        if (textMessageHistory == null) {
-            textMessageHistory = new ArrayList();
+        if (MafiaServerGame.textMessages == null) {
+            MafiaServerGame.textMessages = new ArrayList();
         }
-        if (textMessageHistorySender == null) {
-            textMessageHistorySender = new ArrayList();
+        if (MafiaServerGame.textMessageSender == null) {
+            MafiaServerGame.textMessageSender = new ArrayList();
         }
         if (playerName != null) {
-            textMessageHistory.add(message);
-            textMessageHistorySender.add(playerName);
+            //textMessageHistory.add(message);
+            // textMessageHistorySender.add(playerName);
+            MafiaServerGame.textMessages.add(message);
+            MafiaServerGame.textMessageSender.add(playerName);
             Log.d("messagesmafia", "added to array");
-            Log.d("sender", "textmessagessent:" + textMessageHistory);
-            Log.d("sender", "textmessagesenders:" + textMessageHistorySender);
+            Log.d("sender", "textmessagessent:" + MafiaServerGame.textMessages);
+            Log.d("sender", "textmessagesenders:" + MafiaServerGame.textMessageSender);
             numberOfTextMessages++;
             Log.d("messagesmafia", "end of method");
         }
+    }
+
+    public static String getDead(Map mp) {
+        ArrayList<String> personGettingVotedFor = new ArrayList<>();
+        ArrayList<String> numberOfVotes = new ArrayList<>();
+        if (mp == null) {
+            Log.d("dead", "Its RANDOM 1");
+            ArrayList<String> playerList = new ArrayList<>();
+            for (int x = 0; x < MafiaServerGame.players.size(); x++) {
+                playerList.add(x, (String) MafiaServerGame.players.get(x));
+            }
+            Collections.shuffle(playerList);
+            String randomThing = playerList.get(0);
+            return randomThing;
+        }
+        Iterator it = mp.entrySet().iterator();
+        while (it.hasNext()) {
+            Log.d("deadvoting", "has next");
+            Map.Entry pair = (Map.Entry) it.next();
+            Log.d("deadvoting", "Pair Value:" + pair.getValue());
+            if (personGettingVotedFor.contains(pair.getValue())) {
+                Log.d("deadvoting", "in if statement");
+                int index = personGettingVotedFor.indexOf(pair.getValue());
+                numberOfVotes.add(index, String.valueOf(Integer.parseInt(numberOfVotes.get(index)) + 1));
+            } else {
+                Log.d("deadvoting", "in else statement");
+                personGettingVotedFor.add((String) pair.getValue());
+            }
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+        int highestVotes = 0;
+        int locationOfHighestVote = 0;
+        for (int x = 0; x < numberOfVotes.size(); x++) {
+            if (Integer.parseInt(numberOfVotes.get(x)) > highestVotes) {
+                highestVotes = Integer.parseInt(numberOfVotes.get(x));
+                locationOfHighestVote = x;
+            }
+        }
+        String deadPerson = "";
+        if (personGettingVotedFor.size() == 0) {
+            Log.d("deadvoting", "Its RANDOM 2");
+            ArrayList<String> playerList = new ArrayList<>();
+            for (int x = 0; x < MafiaServerGame.players.size(); x++) {
+                playerList.add(x, (String) MafiaServerGame.players.get(x));
+            }
+            Collections.shuffle(playerList);
+            String randomThing = playerList.get(0);
+            return randomThing;
+        }
+        Log.d("deadvoting", "locationOfHighestVote:" + locationOfHighestVote);
+        deadPerson = personGettingVotedFor.get(locationOfHighestVote);
+        return deadPerson;
+    }
+
+    public void removePlayer(String player) {
+        Log.d("players", "Player being killed" + player);
+        Log.d("players", "We here");
+        int positionOfPlayerInArray = MafiaServerGame.players.indexOf(player);
+        Log.d("players", "positionOfPlayerInArray:" + positionOfPlayerInArray);
+        if (positionOfPlayerInArray >= 0) {
+            Log.d("players", "We here 2");
+            Log.d("players", "Players Left Before removing:" + MafiaServerGame.players);
+            MafiaServerGame.players.remove(player);
+            Log.d("players", "We here 3");
+            MafiaServerGame.role.remove(positionOfPlayerInArray);
+            Log.d("players", "Players Left After removing:" + MafiaServerGame.players);
+        }
+        Log.d("players", "We here 4");
     }
 }

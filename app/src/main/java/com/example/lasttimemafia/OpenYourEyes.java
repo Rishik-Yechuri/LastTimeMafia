@@ -56,6 +56,8 @@ public class OpenYourEyes extends AppCompatActivity {
                 openTextMessages();}
                 else if(nextThing.equals("closeeyes")){
                     openCloseEyes();
+                }else if(nextThing.equals("showdeath")){
+                    openRevealDead();
                 }
             }
         }.start();
@@ -74,6 +76,10 @@ public class OpenYourEyes extends AppCompatActivity {
     public void openCloseEyes() {
         CloseYourEyes.closeEyesAudio = MediaPlayer.create(this, R.raw.closeeyes);
         Intent intent = new Intent(this, CloseYourEyes.class);
+        startActivity(intent);
+    }
+    public void openRevealDead() {
+        Intent intent = new Intent(this, RevealDeadAfterMafia.class);
         startActivity(intent);
     }
 }

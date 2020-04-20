@@ -31,7 +31,7 @@ public class CloseYourEyes extends AppCompatActivity {
         if (nextThing.equals("openeyes")) {
             sendMessage("startalarmandchecktime 4.0");
         } else if (nextThing.equals("closeeyes")) {
-            sendMessage("startalarmandchecktime 35.0");
+            sendMessage("startalarmandchecktime 5.0");
         }
         else if (nextThing.equals("mafiaopeneyes")) {
             sendMessage("startalarmandchecktime 4.0");
