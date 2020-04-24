@@ -46,6 +46,10 @@ public class TextMessages extends AppCompatActivity {
             }
 
             public void onFinish() {
+                //Frag2.thread.interrupt();
+                Frag2.keepThreadRunning = false;
+                Log.d("faker","value of nextThing:" + LifecycleTracker.getNumberOfActivity());
+                Log.d("faker","Called from TextMessages");
                 nextThing = LifecycleTracker.returnNextActivity();
                 if (nextThing.equals("closeeyes")) {
                     closeEyes();

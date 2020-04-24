@@ -21,6 +21,7 @@ String nextThing = "";
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reveal_dead_after_mafia);
+        Log.d("heheblock","We made it into RevealDead");
         TextView ripThem = findViewById(R.id.ripThem);
         sendMessage("getdead");
         String personThatDied = "";
@@ -30,7 +31,6 @@ String nextThing = "";
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        //sendMessage("getdead");
         sendMessage("startalarmandchecktime 5");
         long countdownTimer = 0;
         try {
@@ -44,7 +44,12 @@ String nextThing = "";
             }
 
             public void onFinish() {
+                Log.d("faker","value of nextThing:" + LifecycleTracker.getNumberOfActivity());
+                Log.d("faker","Called from ShowDeath");
                 nextThing = LifecycleTracker.returnNextActivity();
+                //int valueOfCurrent = LifecycleTracker.getNumberOfActivity();
+                //Log.d("outbounds","value of currentActivity in Reveal Dead:" + valueOfCurrent);
+                //Log.d("days","does this even wrk!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 if (nextThing.equals("villagetalk")) {
                     openVillageTalk();
                 }else{
@@ -58,7 +63,7 @@ String nextThing = "";
 //        MafiaServerGame.role.remove(positionOfPlayerInArray);
     }
     public void openVillageTalk() {
-        Intent intent = new Intent(this, VillagerVoting.class);
+        Intent intent = new Intent(this, VillageVoting.class);
         startActivity(intent);
     }
 }

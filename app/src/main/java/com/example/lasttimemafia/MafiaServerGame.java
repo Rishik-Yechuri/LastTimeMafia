@@ -17,10 +17,20 @@ import java.util.Collections;
 import java.util.HashMap;
 
 public class MafiaServerGame extends AppCompatActivity {
+    public static int numOfConfirms = 0;
+    public static boolean personKilled = false;
+    public static long startTimeOfTimer = System.currentTimeMillis();
+    public static long totalTimePassed = 0;
+    public static long alarmLength = 0;
+    public static long alarmEndTime = 0;
+    public static long lastAlarmEndTime = 0;
+    ////////////////////////////////////////////
+    public static int numOfPlayersAlive = 0;
     public static long startingTime = System.currentTimeMillis();
     public static ArrayList players = new ArrayList();
     public static ArrayList<String> role = new ArrayList();
     public static boolean sendRole = false;
+    public static int lastActivityRestartCalledNumber = -1;
     public static ArrayList<String> textMessageSender = new ArrayList();
     public static ArrayList<String> textMessages = new ArrayList<>();
     public static HashMap<String,String> holdVotingInfo = new HashMap<>();

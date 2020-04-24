@@ -20,6 +20,8 @@ public class OpenYourEyes extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("faker","value of nextThing:" + LifecycleTracker.getNumberOfActivity());
+        Log.d("faker","Called from OpenYourEyes");
         nextThing = LifecycleTracker.returnNextActivity();
        /* if(MafiaClientGame.role.equals("mafia")){
         setContentView(R.layout.activity_open_your_eyes);

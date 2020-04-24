@@ -40,10 +40,10 @@ public class Frag2 extends Fragment {
     String lastSender;
     int textsSent;
     boolean boolLoop;
-    Thread thread;
+    public static Thread thread;
     Handler handler;
     long lastTimeMessageSent = 0;
-
+    public static boolean keepThreadRunning = true;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,6 +54,8 @@ public class Frag2 extends Fragment {
         Button votingButton = lowerView.findViewById(R.id.button7);
         thread = new Thread(new MyThread());
         thread.start();
+        //keepThreadRunning = false;
+        Log.d("intstatus","Status of Interuptted:" + thread.isInterrupted());
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -156,7 +158,7 @@ public class Frag2 extends Fragment {
         public void run() {
             Message messageOfficial = Message.obtain();
             Object kring = "lel Akash";
-            while (true) {
+            while (keepThreadRunning) {
                 try {
                     Thread.sleep(100);
                     Log.d("receiverApp", "Text Message request sent");
@@ -188,6 +190,11 @@ public class Frag2 extends Fragment {
                     Log.d("receiverApp", "Message is in second thread");
                     handler.sendMessage(messageOfficial);
                 }
+                /*Log.d("intstatus","Inside thread check:" + Thread.currentThread().isInterrupted());
+                if(Thread.currentThread().isInterrupted()){
+                    Log.d("intstatus","Thread is Interupted");
+                    keepRunning = false;
+                }*/
             }
         }
     }

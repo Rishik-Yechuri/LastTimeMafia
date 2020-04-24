@@ -52,8 +52,8 @@ public class MafiaNetworkCode extends AppCompatActivity {
     String playerName;
     //Code for storing text messages and info
     HashMap<String, String> holdVotingInfo; //= new HashMap();
-    ArrayList textMessageHistory;
-    ArrayList textMessageHistorySender;
+    // ArrayList textMessageHistory;
+    //ArrayList textMessageHistorySender;
     int numberOfTextMessages = 0;
 
     //End of Code for storing text messages and info
@@ -63,8 +63,8 @@ public class MafiaNetworkCode extends AppCompatActivity {
         progressBar.setMax(Integer.valueOf(totalNumOfPlayers));
         progressBar.setProgress(2);
         holdVotingInfo = new HashMap<>();
-        textMessageHistory = new ArrayList();
-        textMessageHistorySender = new ArrayList();
+        //textMessageHistory = new ArrayList();
+        //textMessageHistorySender = new ArrayList();
         Log.d("hostingGame", "It Works!");
     }
 
@@ -167,7 +167,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
             }
         }
         playerName = receiveMessage(socket);
-        MafiaServerGame.players.add(playerName);
+        //MafiaServerGame.players.add(playerName);
         while (MafiaServerGame.sendRole == false) {
             Thread.sleep(250);
         }
@@ -248,7 +248,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
         }
         Log.d("insidereceiver", "2");
         boolean loopRecceiveMessage = true;
-        String receivedMessage = "";
+        String receivedMessage = "nothing";
         Log.d("insidereceiver", "3");
         while (loopRecceiveMessage) {
             Log.d("insidereceiver", "4");
@@ -293,7 +293,6 @@ public class MafiaNetworkCode extends AppCompatActivity {
         } else if (receivedMessage.startsWith("getplayers")) {
             String listOfPlayers = returnPlayers();
             sendMessage(listOfPlayers);
-            receivedMessage = "nothing";
         } else if (receivedMessage.startsWith("updatemessages")) {
             String listOfMessages = updateMessages();
             sendMessage(listOfMessages);
@@ -311,12 +310,23 @@ public class MafiaNetworkCode extends AppCompatActivity {
             Log.d("players", "deadperson:" + deadPerson);
             sendMessage(deadPerson);
             if (!personKilled) {
+                Log.d("textdebug","In removing player");
                 removePlayer(deadPerson);
                 personKilled = true;
             }
             receivedMessage = "nothing";
         } else if (receivedMessage.startsWith("removeplayer")) {
             removePlayer(receivedMessage.split(" ")[1]);
+        } else if (receivedMessage.startsWith("restartvoting")) {
+            restartVoting(Integer.parseInt(receivedMessage.split(" ")[1]));
+        } else if (receivedMessage.startsWith("confirmclick")) {
+            Log.d("finallap","Pre changeTimer call");
+            changeTimerWhenConfirmed(Boolean.parseBoolean(receivedMessage.split(" ")[1]));
+        }else if(receivedMessage.startsWith("checkconfirmstatus")){
+            Log.d("confirmcheck","Pre isItConfirmed");
+            String booleanToreturn = String.valueOf(isItConfirmed());
+            Log.d("confirmcheck","Value of Confirm Check:" + booleanToreturn);
+            sendMessage(booleanToreturn);
         }
         return receivedMessage;
     }
@@ -400,10 +410,10 @@ public class MafiaNetworkCode extends AppCompatActivity {
     }
 
     public String returnPlayers() {
-        Log.d("textdebug", "ServerGame Player list 0:" + MafiaServerGame.players.get(0));
-        Log.d("textdebug", "ServerGame Player list 1:" + MafiaServerGame.players.get(1));
+        //Log.d("textdebug", "ServerGame Player list 0:" + MafiaServerGame.players.get(0));
+        //Log.d("textdebug", "ServerGame Player list 1:" + MafiaServerGame.players.get(1));
         String playerList = "playerlist";
-        for (int x = 0; x < totalNumOfPlayers; x++) {
+        for (int x = 0; x < currentNumOfPlayers; x++) {
             playerList += " " + MafiaServerGame.players.get(x);
         }
         Log.d("textdebug", "Value of playerList:" + playerList);
@@ -520,8 +530,37 @@ public class MafiaNetworkCode extends AppCompatActivity {
             MafiaServerGame.players.remove(player);
             Log.d("players", "We here 3");
             MafiaServerGame.role.remove(positionOfPlayerInArray);
+            currentNumOfPlayers--;
             Log.d("players", "Players Left After removing:" + MafiaServerGame.players);
         }
         Log.d("players", "We here 4");
+    }
+
+    public void restartVoting(int numOfActivity) {
+        if (!(MafiaServerGame.lastActivityRestartCalledNumber == numOfActivity)) {
+            MafiaServerGame.holdVotingInfo = new HashMap<>();
+        }
+        MafiaServerGame.lastActivityRestartCalledNumber = numOfActivity;
+    }
+
+    public void changeTimerWhenConfirmed(boolean confirmed) {
+        Log.d("finallap","value of confirmed:" + confirmed);
+        if (confirmed) {
+            MafiaServerGame.numOfConfirms++;
+        } else {
+            MafiaServerGame.numOfConfirms--;
+        }
+        if (MafiaServerGame.numOfConfirms == /*totalNumOfPlayers*/1) {
+            totalTimePassed = System.currentTimeMillis();
+            lastAlarmEndTime = totalTimePassed;
+        }
+    }
+    public boolean isItConfirmed(){
+        Log.d("confirmcheck","isItConfirmedCalled");
+        Log.d("numberconfirm","value Of numOfConfirms::" + MafiaServerGame.numOfConfirms);
+        if (MafiaServerGame.numOfConfirms == /*totalNumOfPlayers*/1) {
+            return true;
+        }
+        return false;
     }
 }

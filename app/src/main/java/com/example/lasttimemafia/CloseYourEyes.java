@@ -27,6 +27,8 @@ public class CloseYourEyes extends AppCompatActivity {
         double tempConversion = timeLeft * 1000;
         long countdownTimer = (int)tempConversion;
         Log.d("successtest","Time2:" + getTime.returnTime());*/
+        Log.d("faker","value of nextThing:" + LifecycleTracker.getNumberOfActivity());
+        Log.d("faker","Called from CloseYourEyes");
         nextThing = LifecycleTracker.returnNextActivity();
         if (nextThing.equals("openeyes")) {
             sendMessage("startalarmandchecktime 4.0");
