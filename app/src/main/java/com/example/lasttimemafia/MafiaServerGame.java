@@ -47,8 +47,8 @@ public class MafiaServerGame extends AppCompatActivity {
        /* players.add("kring");
         players.add("hehe");
         players.add("akash");*/
-        role.add("mafia");
         role.add("guardian angel");
+        role.add("mafia");
         //textMessageSender.add("Prathad");
         //textMessages.add("");
         boolean pauseForPlayers = true;

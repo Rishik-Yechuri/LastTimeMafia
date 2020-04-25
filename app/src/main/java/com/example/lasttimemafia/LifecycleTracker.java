@@ -40,4 +40,7 @@ public class LifecycleTracker {
         int pos = getNumberOfActivity();
         return lifeCycle.get(pos);
     }
+    public static String returnSpecificActivity(int place){
+       return lifeCycle.get(place);
+    }
 }

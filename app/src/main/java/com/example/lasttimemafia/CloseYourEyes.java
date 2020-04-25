@@ -27,15 +27,29 @@ public class CloseYourEyes extends AppCompatActivity {
         double tempConversion = timeLeft * 1000;
         long countdownTimer = (int)tempConversion;
         Log.d("successtest","Time2:" + getTime.returnTime());*/
-        Log.d("faker","value of nextThing:" + LifecycleTracker.getNumberOfActivity());
-        Log.d("faker","Called from CloseYourEyes");
+        Log.d("faker", "value of nextThing:" + LifecycleTracker.getNumberOfActivity());
+        Log.d("faker", "Called from CloseYourEyes");
         nextThing = LifecycleTracker.returnNextActivity();
         if (nextThing.equals("openeyes")) {
             sendMessage("startalarmandchecktime 4.0");
         } else if (nextThing.equals("closeeyes")) {
-            sendMessage("startalarmandchecktime 5.0");
-        }
-        else if (nextThing.equals("mafiaopeneyes")) {
+            int howLong = LifecycleTracker.getNumberOfActivity();
+            for(int x =0; x<2;x++){
+                if(howLong!=0){
+                    howLong--;
+                }else{
+                    howLong = LifecycleTracker.lifeCycle.size()-1;
+                }
+            }
+            String whereWeWas = LifecycleTracker.returnSpecificActivity(howLong);
+            if(whereWeWas.equals("mafiaopeneyes")){
+                sendMessage("startalarmandchecktime 5.0");
+            }else if(whereWeWas.equals("angelopeneyes")){
+                sendMessage("startalarmandchecktime 10.0");
+            }
+        } else if (nextThing.equals("mafiaopeneyes")) {
+            sendMessage("startalarmandchecktime 4.0");
+        } else if (nextThing.equals("angelopeneyes")) {
             sendMessage("startalarmandchecktime 4.0");
         }
         long countdownTimer = 0;
@@ -45,14 +59,13 @@ public class CloseYourEyes extends AppCompatActivity {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        if (nextThing.equals("mafiaopeneyes")) {
-            playAudio();
-        } else if(nextThing.equals("closeeyes")){
-            //Do nothing
-        }else if(nextThing.equals("openeyes")){
+        boolean playAudio = true;
+        if (nextThing.equals("closeeyes")) {
+            playAudio = false;
+        }
+        if (playAudio) {
             playAudio();
         }
-        //playAudio();
         new CountDownTimer(countdownTimer, 500) {
             public void onTick(long millisUntilFinished) {
 
@@ -63,8 +76,10 @@ public class CloseYourEyes extends AppCompatActivity {
                     openOpenEyes();
                 } else if (nextThing.equals("closeeyes")) {
                     openCloseEyes();
-                }else if(nextThing.equals("mafiaopeneyes")){
+                } else if (nextThing.equals("mafiaopeneyes")) {
                     openOpenEyes();
+                } else if (nextThing.equals("angelopeneyes")) {
+                    openAngelOpenEyes();
                 }
             }
         }.start();
@@ -89,6 +104,12 @@ public class CloseYourEyes extends AppCompatActivity {
     public void openCloseEyes() {
         CloseYourEyes.closeEyesAudio = MediaPlayer.create(this, R.raw.closeeyes);
         Intent intent = new Intent(this, CloseYourEyes.class);
+        startActivity(intent);
+    }
+
+    public void openAngelOpenEyes() {
+        OpenYourEyes.openEyesAudio = MediaPlayer.create(this, R.raw.guardianangelopeneyes);
+        Intent intent = new Intent(this, OpenYourEyes.class);
         startActivity(intent);
     }
 }

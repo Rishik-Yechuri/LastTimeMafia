@@ -336,6 +336,9 @@ public class MafiaNetworkCode extends AppCompatActivity {
             sendMessage(String.valueOf(isItGoing));
         }else if(receivedMessage.startsWith("whowonthegame")){
             sendMessage(whoWon());
+        }else if(receivedMessage.startsWith("getroleofperson")){
+            String role = getRoleOfPerson(receivedMessage.split(" ")[1]);
+            sendMessage(role);
         }
         return receivedMessage;
     }
@@ -620,5 +623,10 @@ public class MafiaNetworkCode extends AppCompatActivity {
             whoWon = "the village";
         }
         return  whoWon;
+    }
+    public String getRoleOfPerson(String personToGetRoleOf){
+        int place = MafiaServerGame.players.indexOf(personToGetRoleOf);
+        String role = MafiaServerGame.role.get(place);
+        return  role;
     }
 }

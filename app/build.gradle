@@ -5,8 +5,8 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.example.lasttimemafia"
-        minSdkVersion 23
+        applicationId "give.up.lasttimemafia"
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
