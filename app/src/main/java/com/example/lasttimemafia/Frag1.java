@@ -45,7 +45,8 @@ int endNumber;
         space2.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         space2.setMinimumHeight(dpToPx(20));
         rootView.addView(space2);
-        String[] playerNames = new String[Integer.parseInt(joinedGame.totalNumOfPlayers)];
+        ArrayList<String> playerNames = new ArrayList<>();
+        //String[] playerNames = new String[Integer.parseInt(joinedGame.totalNumOfPlayers)];
         sendMessage("getplayers");
         String tempPlayerList = "";
         try {
@@ -58,10 +59,10 @@ int endNumber;
         Log.d("textdebug", "cutplayers:" + Arrays.toString(cutPlayers));
         if (cutPlayers[0].equals("playerlist")) {
             for (int y = 1; y < cutPlayers.length; y++) {
-                playerNames[y - 1] = cutPlayers[y];
+                playerNames.add(cutPlayers[y]);
             }
         }
-        Log.d("textdebug", "playerNames:" + Arrays.toString(playerNames));
+        Log.d("textdebug", "playerNames:" + playerNames);
         /*for(int p=0;p<playerNames.length;p++){
             holdButtons.get(p).setText(playerNames[p]);
         }*/
@@ -70,7 +71,7 @@ int endNumber;
             Button thick = holdButtons.get(0);
             //thick.setText("BP");
         }*/
-        for (int x = 0; x < Integer.parseInt(MafiaClientGame.numOfPeople); x++) {
+        for (int x = 0; x < playerNames.size(); x++) {
             btnTag = new Button(getContext());
             btnTag.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             btnTag.setBackgroundResource(R.drawable.circularbutton);
@@ -82,10 +83,10 @@ int endNumber;
             space.setMinimumHeight(dpToPx(20));
             rootView.addView(space);
         }
-        for (int p = 0; p < playerNames.length; p++) {
-            Log.d("textdebug", "PlayName.length:" + playerNames.length);
-            Log.d("textdebug", "playerName value:" + playerNames[p]);
-            holdButtons.get(p).setText(playerNames[p]);
+        for (int p = 0; p < playerNames.size(); p++) {
+            Log.d("textdebug", "PlayName.length:" + playerNames.size());
+            Log.d("textdebug", "playerName value:" + playerNames.get(p));
+            holdButtons.get(p).setText(playerNames.get(p));
         }
         for (Button btn : holdButtons) {
             btn.setOnClickListener(sendVote);

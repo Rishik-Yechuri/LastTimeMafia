@@ -15,33 +15,29 @@ public class LifecycleTracker {
     public static String returnNextActivity() {
         Log.d("plain3", "Called");
         Log.d("outbounds", "placeinlifecyclereal:" + placeInLifecycle);
-       /* String returnThis = lifeCycle.get(placeInLifecycle);
-        if (placeInLifecycle + 1 >= lifeCycle.size()) {
-            placeInLifecycle = 0;
-
-        } else {
-            placeInLifecycle++;
-
-        }
-        return returnThis;*
-        */
         String returnThis = "";
         if (placeInLifecycle + 1 >= lifeCycle.size()) {
             returnThis = lifeCycle.get(0);
+            placeInLifecycle = 0;
         }else{
             returnThis = lifeCycle.get(placeInLifecycle+1);
+            placeInLifecycle++;
         }
-        placeInLifecycle++;
+        Log.d("loopflex","ReturnThis:" + returnThis);
         return returnThis;
     }
 
     public static void setLifecycle(ArrayList lifecycle) {
         lifeCycle = lifecycle;
+        placeInLifecycle = 0;
     }
 
     public static int getNumberOfActivity() {
-        //Log.d("outbounds","placeinlifecycle:" + placeInLifecycle);
         int position = placeInLifecycle;//lifeCycle.indexOf(lifeCycle.get(placeInLifecycle/*-1*/));
         return position;
+    }
+    public static String returnCurrentActivity(){
+        int pos = getNumberOfActivity();
+        return lifeCycle.get(pos);
     }
 }

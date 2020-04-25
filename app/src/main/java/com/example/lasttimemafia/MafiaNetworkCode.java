@@ -310,7 +310,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
             Log.d("players", "deadperson:" + deadPerson);
             sendMessage(deadPerson);
             if (!personKilled) {
-                Log.d("textdebug","In removing player");
+                Log.d("textdebug", "In removing player");
                 removePlayer(deadPerson);
                 personKilled = true;
             }
@@ -320,13 +320,22 @@ public class MafiaNetworkCode extends AppCompatActivity {
         } else if (receivedMessage.startsWith("restartvoting")) {
             restartVoting(Integer.parseInt(receivedMessage.split(" ")[1]));
         } else if (receivedMessage.startsWith("confirmclick")) {
-            Log.d("finallap","Pre changeTimer call");
+            Log.d("finallap", "Pre changeTimer call");
             changeTimerWhenConfirmed(Boolean.parseBoolean(receivedMessage.split(" ")[1]));
-        }else if(receivedMessage.startsWith("checkconfirmstatus")){
-            Log.d("confirmcheck","Pre isItConfirmed");
+        } else if (receivedMessage.startsWith("checkconfirmstatus")) {
+            Log.d("confirmcheck", "Pre isItConfirmed");
             String booleanToreturn = String.valueOf(isItConfirmed());
-            Log.d("confirmcheck","Value of Confirm Check:" + booleanToreturn);
+            Log.d("confirmcheck", "Value of Confirm Check:" + booleanToreturn);
             sendMessage(booleanToreturn);
+        } else if (receivedMessage.startsWith("resetnumofconfirms")) {
+            resetConfirms();
+        } else if (receivedMessage.startsWith("amistillinthegame")) {
+            sendMessage(String.valueOf(amIStillIn(playerName)));
+        } else if (receivedMessage.startsWith("isgamestillgoing")) {
+            boolean isItGoing = isGameStillGoing(Boolean.parseBoolean(receivedMessage.split(" ")[1]));
+            sendMessage(String.valueOf(isItGoing));
+        }else if(receivedMessage.startsWith("whowonthegame")){
+            sendMessage(whoWon());
         }
         return receivedMessage;
     }
@@ -404,8 +413,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
 
     public long getAlarmTimeRemaining() {
         totalTimePassed = System.currentTimeMillis() - startTimeOfTimer;
-        Log.d("serversync", "alarmEndTime:" + alarmEndTime);
-        Log.d("serversync", "totalTimePassed:" + totalTimePassed);
+        Log.d("inspectalarm", "totalTimePassed:" + totalTimePassed);
         return alarmEndTime - totalTimePassed;
     }
 
@@ -544,23 +552,73 @@ public class MafiaNetworkCode extends AppCompatActivity {
     }
 
     public void changeTimerWhenConfirmed(boolean confirmed) {
-        Log.d("finallap","value of confirmed:" + confirmed);
+        Log.d("finallap", "value of confirmed:" + confirmed);
         if (confirmed) {
             MafiaServerGame.numOfConfirms++;
         } else {
             MafiaServerGame.numOfConfirms--;
         }
         if (MafiaServerGame.numOfConfirms == /*totalNumOfPlayers*/1) {
-            totalTimePassed = System.currentTimeMillis();
+            totalTimePassed = System.currentTimeMillis() - startTimeOfTimer;
             lastAlarmEndTime = totalTimePassed;
         }
     }
-    public boolean isItConfirmed(){
-        Log.d("confirmcheck","isItConfirmedCalled");
-        Log.d("numberconfirm","value Of numOfConfirms::" + MafiaServerGame.numOfConfirms);
+
+    public boolean isItConfirmed() {
+        Log.d("confirmcheck", "isItConfirmedCalled");
+        Log.d("numberconfirm", "value Of numOfConfirms::" + MafiaServerGame.numOfConfirms);
         if (MafiaServerGame.numOfConfirms == /*totalNumOfPlayers*/1) {
             return true;
         }
         return false;
+    }
+
+    public void resetConfirms() {
+        MafiaServerGame.numOfConfirms = 0;
+    }
+
+    public boolean amIStillIn(String name) {
+        return MafiaServerGame.players.contains(name);
+    }
+
+    public boolean isGameStillGoing(boolean afterVillageKill) {
+        int numOfMafia = 0;
+        int numOfInnocent = 0;
+        boolean keepPlaying = true;
+        for (int x = 0; x < MafiaServerGame.role.size(); x++) {
+            if (MafiaServerGame.role.get(x).equals("mafia")) {
+                numOfMafia++;
+            } else {
+                numOfInnocent++;
+            }
+        }
+        if (afterVillageKill && numOfMafia >= numOfInnocent) {
+            keepPlaying = false;
+        } else if (numOfMafia > numOfInnocent) {
+            keepPlaying = false;
+        }
+        if (numOfInnocent == 0 || numOfMafia == 0) {
+            keepPlaying = false;
+        }
+        return keepPlaying;
+    }
+
+    public String whoWon() {
+        int numOfMafia = 0;
+        int numOfInnocent = 0;
+        String whoWon = "";
+        for (int x = 0; x < MafiaServerGame.role.size(); x++) {
+            if (MafiaServerGame.role.get(x).equals("mafia")) {
+                numOfMafia++;
+            } else {
+                numOfInnocent++;
+            }
+        }
+        if(numOfMafia>numOfInnocent){
+            whoWon = "the mafia";
+        }else{
+            whoWon = "the village";
+        }
+        return  whoWon;
     }
 }

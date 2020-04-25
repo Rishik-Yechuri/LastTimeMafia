@@ -36,14 +36,18 @@ import java.util.Arrays;
 
 
 public class VillageVoting extends AppCompatActivity {
+    String nextThing = "";
     int endNumber;
     boolean confirmed = false;
     Thread thread;
     Handler handler;
     boolean keepThreadRunning = true;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_villager_voting);
+        nextThing = LifecycleTracker.returnNextActivity();
+        Log.d("pleaseplease","NextThing:" + nextThing);
         LinearLayout rootView = findViewById(R.id.realHoldsText);
         endNumber = 0;
         ArrayList<Button> holdButtons = new ArrayList<Button>();
@@ -101,18 +105,21 @@ public class VillageVoting extends AppCompatActivity {
             btn.setOnClickListener(sendVote);
         }
         thread = new Thread(new MyThread());
-        Log.d("booleanchecker","Before thread start");
+        Log.d("booleanchecker", "Before thread start");
+        sendMessage("resetnumofconfirms");
         thread.start();
-        Log.d("booleanchecker","After thread start call");
+        Log.d("booleanchecker", "After thread start call");
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 String value = msg.obj.toString();
-                Log.d("booleanchecker","value:" + value);
+                Log.d("booleanchecker", "value:" + value);
                 if (Boolean.parseBoolean(value) && keepThreadRunning) {
-                    Log.d("nextactivity","About to open");
+                    Log.d("nextactivity", "About to open");
                     keepThreadRunning = false;
-                    openVillageDeath();
+                    if (nextThing.equals("villagedeath")) {
+                        openVillageDeath();
+                    }
                 }
             }
         };
@@ -148,7 +155,7 @@ public class VillageVoting extends AppCompatActivity {
     class MyThread implements Runnable {
         @Override
         public void run() {
-            Log.d("booleanchecker","In thread");
+            Log.d("booleanchecker", "In thread");
             Message messageOfficial = Message.obtain();
             Object kring = "true";
             while (keepThreadRunning) {
@@ -157,14 +164,14 @@ public class VillageVoting extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                Log.d("booleanchecker","Before receive");
+                Log.d("booleanchecker", "Before receive");
                 sendMessage("checkconfirmstatus");
                 try {
                     kring = receiveMessage(socket);
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
-                Log.d("booleanchecker","After receive");
+                Log.d("booleanchecker", "After receive");
                 messageOfficial = Message.obtain();
                 messageOfficial.obj = kring;
                 handler.sendMessage(messageOfficial);
@@ -173,7 +180,7 @@ public class VillageVoting extends AppCompatActivity {
     }
 
     public void openVillageDeath() {
-        Log.d("nextactivity","In openvillagedeath");
+        Log.d("nextactivity", "In openvillagedeath");
         Intent intent = new Intent(this, RevealDeadAfterMafia.class);
         startActivity(intent);
     }
