@@ -8,6 +8,9 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import static com.example.lasttimemafia.SettingsMenu.GAME_PREFERENCES;
+import static com.example.lasttimemafia.SettingsMenu.preferences;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +20,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Wifi Stuff
         //A method for the wifi that discovers peers
         //Regular Loading stuff
+        preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
         Button button2 = (Button) findViewById(R.id.button2);
         button2.setOnClickListener(this);
         Button button = (Button) findViewById(R.id.button);
@@ -35,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if(v.getId()==R.id.button2){
-            //openchangeThings();
+            openSetting();
         }
         else if(v.getId()==R.id.button){
             openhostGame();
@@ -67,6 +71,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void openJoinedGame(){
         Intent intent = new Intent(this,joinedGame.class);
+        startActivity(intent);
+    }
+
+    public void openSetting(){
+        Intent intent = new Intent(this,SettingsMenu.class);
         startActivity(intent);
     }
 }

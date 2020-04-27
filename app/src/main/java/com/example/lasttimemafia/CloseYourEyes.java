@@ -43,7 +43,7 @@ public class CloseYourEyes extends AppCompatActivity {
             }
             String whereWeWas = LifecycleTracker.returnSpecificActivity(howLong);
             if(whereWeWas.equals("mafiaopeneyes")){
-                sendMessage("startalarmandchecktime 5.0");
+                sendMessage("startalarmandchecktime 35.0");
             }else if(whereWeWas.equals("angelopeneyes")){
                 sendMessage("startalarmandchecktime 10.0");
             }

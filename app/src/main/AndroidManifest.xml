@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AngelVoting"></activity>
+        <activity android:name=".SettingsMenu"></activity>
+        <activity android:name=".AngelVoting" />
         <activity android:name=".VillageVoting" />
         <activity android:name=".RevealDeadAfterMafia" />
         <activity android:name=".OpenYourEyes" />

@@ -50,7 +50,9 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
         //String trash = receiveMessage();
         Log.d("receiveCheck", "Pre");
         try {
+            Log.d("jetski","Prerole");
             role = receiveMessage();
+            Log.d("jetski","Role:" + role);
             numOfMafia = Integer.parseInt(receiveMessage());
             numOfAngels = Integer.parseInt(receiveMessage());
             numOfVillagers = Integer.parseInt(receiveMessage());
@@ -58,9 +60,7 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
             angelTime = Integer.parseInt(receiveMessage());
             villagerTime = Integer.parseInt(receiveMessage());
             receiveMessage();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         Log.d("receiveCheck", "Post");

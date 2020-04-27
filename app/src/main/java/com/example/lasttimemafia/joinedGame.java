@@ -83,7 +83,8 @@ public class joinedGame extends AppCompatActivity {
                  ProgressBar progressBar =findViewById(R.id.progressBar4);
                 Log.d("formatting","Made it to JoinedGame8");
                  while(loop) {
-                    progressBar.setMax(/*Integer.valueOf(totalNumOfPlayers)*/2);
+                     Log.d("clientnums","TotalPlayers:" + totalNumOfPlayers);
+                    progressBar.setMax(Integer.valueOf(totalNumOfPlayers));
                     try {
                         Thread.sleep(200);
                     } catch (InterruptedException e) {

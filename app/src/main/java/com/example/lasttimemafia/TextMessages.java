@@ -33,7 +33,7 @@ public class TextMessages extends AppCompatActivity {
         tabs.setupWithViewPager(viewPager);
         tabs.getTabAt(0).setText("Voting");
         tabs.getTabAt(1).setText("Messages");
-        sendMessage("startalarmandchecktime 5");
+        sendMessage("startalarmandchecktime 35");
         long countdownTimer = 0;
         try {
             countdownTimer = Long.parseLong(receiveMessage(socket));

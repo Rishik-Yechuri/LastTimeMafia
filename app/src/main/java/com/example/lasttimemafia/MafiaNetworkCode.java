@@ -1,11 +1,13 @@
 package com.example.lasttimemafia;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.telephony.CarrierConfigManager;
 import android.text.format.Formatter;
 import android.util.Log;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -38,9 +41,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.example.lasttimemafia.SettingsMenu.GAME_PREFERENCES;
+import static com.example.lasttimemafia.SettingsMenu.editor;
+import static com.example.lasttimemafia.SettingsMenu.preferences;
+
 public class MafiaNetworkCode extends AppCompatActivity {
     ProgressBar progressBar;
-    int totalNumOfPlayers = hostGame.totalNumOfPlayers;
+   public static  int totalNumOfPlayers = 0;
     int currentNumOfPlayers = 1;
     Socket socket;
     boolean personKilled = false;
@@ -59,6 +67,18 @@ public class MafiaNetworkCode extends AppCompatActivity {
     //End of Code for storing text messages and info
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("whatevs","Go help me");
+        preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
+        SettingsMenu.editor = preferences.edit();
+        int tempMafia  = Integer.parseInt(SettingsMenu.getDefaults("mafia","0"));
+        int tempVillager  = Integer.parseInt(SettingsMenu.getDefaults("villager","0"));
+        int tempAngel  = Integer.parseInt(SettingsMenu.getDefaults("angel","0"));
+        MafiaServerGame.numOfAngels = tempAngel;
+        MafiaServerGame.numOfMafia = tempMafia;
+        MafiaServerGame.numOfVillagers = tempVillager;
+        hostGame.totalNumOfPlayers = tempAngel+tempMafia+tempVillager;
+        totalNumOfPlayers = hostGame.totalNumOfPlayers;
+        ////////////////////////////////////////////////////////////
         progressBar = findViewById(R.id.progressBar2);
         progressBar.setMax(Integer.valueOf(totalNumOfPlayers));
         progressBar.setProgress(2);
@@ -137,6 +157,9 @@ public class MafiaNetworkCode extends AppCompatActivity {
     public void permaConnection(int portNumber2) throws IOException, InterruptedException {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+        Log.d("ilolveit","Precall");
+       MafiaServerGame.addRolesToList();
+        Log.d("ilolveit","postcall");
         int portNumber = portNumber2;
         boolean run = true;
         ServerSocket serverSocket = new ServerSocket(portNumber);
@@ -150,6 +173,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
         out = new PrintWriter(os, true);
         //ProgressBar progressBar = findViewById(R.id.progressBar2);
         //progressBar.setMax(Integer.valueOf(totalNumOfPlayers));
+        Log.d("helpme","totalnum:" + totalNumOfPlayers);
         sendMessage("totalplayers " + totalNumOfPlayers);
         boolean loop = true;
         while (loop) {
@@ -167,13 +191,22 @@ public class MafiaNetworkCode extends AppCompatActivity {
             }
         }
         playerName = receiveMessage(socket);
-        //MafiaServerGame.players.add(playerName);
+        MafiaServerGame.players.add(playerName);
         while (MafiaServerGame.sendRole == false) {
             Thread.sleep(250);
         }
+        Log.d("stealyokid","playerName:" + playerName);;
         int placeOfRoleInList = MafiaServerGame.players.indexOf(playerName);
         Log.d("random", "PlaceOfRoleInList: " + placeOfRoleInList);
         Log.d("removeplayers", "Value of Roles before death:" + MafiaServerGame.role);
+        int tempMafia  = Integer.parseInt(SettingsMenu.getDefaults("mafia","0"));
+        int tempVillager  = Integer.parseInt(SettingsMenu.getDefaults("villager","0"));
+        int tempAngel  = Integer.parseInt(SettingsMenu.getDefaults("angel","0"));
+        MafiaServerGame.numOfAngels = tempAngel;
+        MafiaServerGame.numOfMafia = tempMafia;
+        MafiaServerGame.numOfVillagers = tempVillager;
+        MafiaServerGame.addRolesToList();
+        Log.d("goingcrazy","roles accessed");
         String role = (String) MafiaServerGame.role.get(placeOfRoleInList);
         //sendMessage("Trash");
         Log.d("rolecheck", "RoleSentPre");
