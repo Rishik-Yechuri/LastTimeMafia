@@ -52,8 +52,8 @@ public class MafiaServerGame extends AppCompatActivity {
         Log.d("hostGame", "Intent worked and made it!");
         setContentView(R.layout.activity_mafia_server_game);
         //Looper.prepare();
-        players.add("Vihaan");
-        players.add("Prathad");
+       // players.add("Vihaan");
+        //players.add("Prathad");
         preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
         SettingsMenu.editor = preferences.edit();
         /*int tempMafia = Integer.parseInt(SettingsMenu.getDefaults("mafia", "0"));
