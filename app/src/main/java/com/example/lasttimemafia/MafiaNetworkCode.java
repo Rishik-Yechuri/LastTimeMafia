@@ -48,8 +48,8 @@ import static com.example.lasttimemafia.SettingsMenu.preferences;
 
 public class MafiaNetworkCode extends AppCompatActivity {
     ProgressBar progressBar;
-   public static  int totalNumOfPlayers = 0;
-    int currentNumOfPlayers = 1;
+   public static  int totalNumOfPlayers = 2;
+    int currentNumOfPlayers = 0;
     Socket socket;
     boolean personKilled = false;
     public static long startTimeOfTimer = System.currentTimeMillis();

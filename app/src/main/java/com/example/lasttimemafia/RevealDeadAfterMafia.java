@@ -22,7 +22,6 @@ public class RevealDeadAfterMafia extends AppCompatActivity {
     String currentActivity = "";
     boolean canIMoveOn = true;
     boolean isTheGameGoing = true;
-    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
