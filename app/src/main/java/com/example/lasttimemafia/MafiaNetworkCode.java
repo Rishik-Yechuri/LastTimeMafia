@@ -48,8 +48,8 @@ import static com.example.lasttimemafia.SettingsMenu.preferences;
 
 public class MafiaNetworkCode extends AppCompatActivity {
     ProgressBar progressBar;
-   public static  int totalNumOfPlayers = 0;
-    int currentNumOfPlayers = 1;
+   public static  int totalNumOfPlayers = 2;
+    int currentNumOfPlayers = 0;
     Socket socket;
     boolean personKilled = false;
     public static long startTimeOfTimer = System.currentTimeMillis();
@@ -190,7 +190,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
                 loop = false;
             }
         }
-        playerName = receiveMessage(socket);
+        String setPlayerName = receiveMessage(socket);
         MafiaServerGame.players.add(playerName);
         while (MafiaServerGame.sendRole == false) {
             Thread.sleep(250);
@@ -209,7 +209,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
         Log.d("goingcrazy","roles accessed");
         String role = (String) MafiaServerGame.role.get(placeOfRoleInList);
         //sendMessage("Trash");
-        Log.d("rolecheck", "RoleSentPre");
+       /* Log.d("rolecheck", "RoleSentPre");
         sendMessage(role);//Role
         Log.d("rolecheck", "RoleSentPost");
         sendMessage(String.valueOf(MafiaServerGame.players.size()));//Number of players
@@ -218,7 +218,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
         sendMessage("0");//Number fo villager
         sendMessage("30");//Seconds for mafia to talk
         sendMessage("10");//Time for guardian angel
-        sendMessage("30");//time for village to talk
+        sendMessage("30");//time for village to talk*/
         boolean keepLoopRunning = true;
         while (keepLoopRunning) {
             Log.d("conflict", "receiveMessage called");
@@ -372,6 +372,12 @@ public class MafiaNetworkCode extends AppCompatActivity {
         }else if(receivedMessage.startsWith("getroleofperson")){
             String role = getRoleOfPerson(receivedMessage.split(" ")[1]);
             sendMessage(role);
+
+        }else if(receivedMessage.startsWith("getnumberofpeople")){
+            sendMessage(String.valueOf(totalNumOfPlayers));
+
+        }else if(receivedMessage.startsWith("setname")){
+            playerName = receivedMessage.split(" ")[1];
         }
         return receivedMessage;
     }

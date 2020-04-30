@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +16,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+
+import static com.example.lasttimemafia.ReavealRole.receiveMessage;
+import static com.example.lasttimemafia.joinedGame.name;
+import static com.example.lasttimemafia.joinedGame.socket;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -32,6 +37,7 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
     boolean sendSomething = false;
     BufferedReader br;
     PrintWriter out;
+    public static ProgressBar progressBar;
     ArrayList players = new ArrayList();
 
     public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +49,7 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         Log.d("clientGame2", "Set the game view!");
         setContentView(R.layout.activity_mafia_client_game);
+        progressBar = findViewById(R.id.progressBar4);
         Button button6 = findViewById(R.id.button6);
         button6.setOnClickListener(this);
         br = joinedGame.br;
@@ -50,23 +57,49 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
         //String trash = receiveMessage();
         Log.d("receiveCheck", "Pre");
         try {
+
+            sendMessage("getroleofperson " + joinedGame.name);
             Log.d("jetski","Prerole");
-            role = receiveMessage();
+            role = receiveMessage(socket);
             Log.d("jetski","Role:" + role);
-            numOfMafia = Integer.parseInt(receiveMessage());
-            numOfAngels = Integer.parseInt(receiveMessage());
-            numOfVillagers = Integer.parseInt(receiveMessage());
-            mafiaTime = Integer.parseInt(receiveMessage());
-            angelTime = Integer.parseInt(receiveMessage());
-            villagerTime = Integer.parseInt(receiveMessage());
-            receiveMessage();
+            //numOfMafia = Integer.parseInt(receiveMessage());
+            //numOfAngels = Integer.parseInt(receiveMessage());
+            //numOfVillagers = Integer.parseInt(receiveMessage());
+            //mafiaTime = Integer.parseInt(receiveMessage());
+            //angelTime = Integer.parseInt(receiveMessage());
+            //villagerTime = Integer.parseInt(receiveMessage());
+            //receiveMessage();
+
+            Log.d("jetski", "Prerole");
+            sendMessage("getroleofperson " + name);
+            role = receiveMessage(socket);
+            Log.d("jetski", "Role:" + role);
+            /*numOfMafia = Integer.parseInt(receiveMessage(socket));
+            numOfAngels = Integer.parseInt(receiveMessage(socket));
+            numOfVillagers = Integer.parseInt(receiveMessage(socket));
+            mafiaTime = Integer.parseInt(receiveMessage(socket));
+            angelTime = Integer.parseInt(receiveMessage(socket));
+            villagerTime = Integer.parseInt(receiveMessage(socket));
+            receiveMessage(socket);*/
+
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         Log.d("receiveCheck", "Post");
         Log.d("recInfo", "At The Top Line");
         //numOfPeople = receiveMessage();
-        numOfPeople = "2";
+
+        //sendMessage("getnumberofpeople");
+        //numOfPeople = receiveMessage();
+
+        /*try {
+            numOfPeople = receiveMessage(socket);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+
         Log.d("recInfo", "numOfPeople:" + numOfPeople);
         //numOfMafia = Integer.parseInt(receiveMessage());
         //numOfAngels = Integer.parseInt(receiveMessage());
@@ -102,7 +135,8 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
         out.println(message);
     }
 
-    public String receiveMessage() throws IOException, InterruptedException {
+    /*public String receiveMessage() throws IOException, InterruptedException {
+
         boolean loop = true;
         String receivedMessage = "";
         while (loop) {
@@ -114,8 +148,11 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
                 loop = false;
             }
         }
+        if (receivedMessage.startsWith("totalplayers")) {
+        progressBar.setMax(Integer.parseInt(receivedMessage.split(" ")[1]));
+        }
         return receivedMessage;
-    }
+    }*/
 
     public String quickReceive() throws IOException, InterruptedException {
         boolean loop = true;

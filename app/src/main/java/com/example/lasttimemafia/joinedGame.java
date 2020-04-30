@@ -92,7 +92,7 @@ public class joinedGame extends AppCompatActivity {
                     }
                      try {
                          input = receiveMessage();
-                     } catch (IOException e) {
+                     } catch (IOException | InterruptedException e) {
                          e.printStackTrace();
                      }
                      Log.d("clientGame","This is the Progress: " + input);
@@ -134,10 +134,10 @@ public class joinedGame extends AppCompatActivity {
         Thread.sleep(2000);
         Log.d("formatting","Made it to JoinedGame12");
         String receive = receiveMessage();
-        String[] splitMessage = receive.split(" ");
-        totalNumOfPlayers = splitMessage[1];
+        //String[] splitMessage = receive.split(" ");
+        //totalNumOfPlayers = splitMessage[1];
         Log.d("formatting","Made it to JoinedGame13");
-        sendMessage(name);
+        sendMessage("setname " + name);
         Log.d("formatting","Made it to JoinedGame14");
         //sendMessage("trashInfo");
         start = true;
@@ -202,9 +202,30 @@ public class joinedGame extends AppCompatActivity {
         out.println(message);
     }
 
-    public String receiveMessage() throws IOException {
+    /*public String receiveMessage() throws IOException {
         String receivedMessage = br.readLine();
-        Log.d("clientGame","The recieved message was: " + receivedMessage);
+        Log.d("conflict","The recieved message was: " + receivedMessage);
+        return receivedMessage;
+    }*/
+    public String receiveMessage() throws IOException, InterruptedException {
+        boolean loop = true;
+        String receivedMessage = "";
+        while (loop) {
+            Thread.sleep(200);
+            Log.d("messageforrole", "Message: " + receivedMessage);
+            receivedMessage = br.readLine();
+            Log.d("messageforrole", "Message2: " + receivedMessage);
+            if (receivedMessage != null) {
+                loop = false;
+            }
+        }
+        if (receivedMessage.startsWith("currentplayers")) {
+        progressBar.setProgress(Integer.parseInt(receivedMessage.split(" ")[1]));
+        }else if(receivedMessage.startsWith("totalplayers")){
+            if(progressBar == null){progressBar = findViewById(R.id.progressBar4);}
+            progressBar.setMax(Integer.parseInt(receivedMessage.split(" ")[1]));
+            totalNumOfPlayers = receivedMessage.split(" ")[1];
+        }
         return receivedMessage;
     }
     public void openMafiaGame(){
