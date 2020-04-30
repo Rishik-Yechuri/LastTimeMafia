@@ -50,23 +50,25 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
         //String trash = receiveMessage();
         Log.d("receiveCheck", "Pre");
         try {
+            sendMessage("getroleofperson " + joinedGame.name);
             Log.d("jetski","Prerole");
             role = receiveMessage();
             Log.d("jetski","Role:" + role);
-            numOfMafia = Integer.parseInt(receiveMessage());
-            numOfAngels = Integer.parseInt(receiveMessage());
-            numOfVillagers = Integer.parseInt(receiveMessage());
-            mafiaTime = Integer.parseInt(receiveMessage());
-            angelTime = Integer.parseInt(receiveMessage());
-            villagerTime = Integer.parseInt(receiveMessage());
-            receiveMessage();
+            //numOfMafia = Integer.parseInt(receiveMessage());
+            //numOfAngels = Integer.parseInt(receiveMessage());
+            //numOfVillagers = Integer.parseInt(receiveMessage());
+            //mafiaTime = Integer.parseInt(receiveMessage());
+            //angelTime = Integer.parseInt(receiveMessage());
+            //villagerTime = Integer.parseInt(receiveMessage());
+            //receiveMessage();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         Log.d("receiveCheck", "Post");
         Log.d("recInfo", "At The Top Line");
         //numOfPeople = receiveMessage();
-        numOfPeople = "2";
+        //sendMessage("getnumberofpeople");
+        //numOfPeople = receiveMessage();
         Log.d("recInfo", "numOfPeople:" + numOfPeople);
         //numOfMafia = Integer.parseInt(receiveMessage());
         //numOfAngels = Integer.parseInt(receiveMessage());
