@@ -71,16 +71,16 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
             //receiveMessage();
 
             Log.d("jetski", "Prerole");
-            //sendMessage("getroleofperson " + name);
+            sendMessage("getroleofperson " + name);
             role = receiveMessage(socket);
             Log.d("jetski", "Role:" + role);
-            numOfMafia = Integer.parseInt(receiveMessage(socket));
+            /*numOfMafia = Integer.parseInt(receiveMessage(socket));
             numOfAngels = Integer.parseInt(receiveMessage(socket));
             numOfVillagers = Integer.parseInt(receiveMessage(socket));
             mafiaTime = Integer.parseInt(receiveMessage(socket));
             angelTime = Integer.parseInt(receiveMessage(socket));
             villagerTime = Integer.parseInt(receiveMessage(socket));
-            receiveMessage(socket);
+            receiveMessage(socket);*/
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -92,13 +92,13 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
         //sendMessage("getnumberofpeople");
         //numOfPeople = receiveMessage();
 
-        try {
+        /*try {
             numOfPeople = receiveMessage(socket);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
 
         Log.d("recInfo", "numOfPeople:" + numOfPeople);
         //numOfMafia = Integer.parseInt(receiveMessage());
