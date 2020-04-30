@@ -190,7 +190,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
                 loop = false;
             }
         }
-        playerName = receiveMessage(socket);
+        String setPlayerName = receiveMessage(socket);
         MafiaServerGame.players.add(playerName);
         while (MafiaServerGame.sendRole == false) {
             Thread.sleep(250);
@@ -372,8 +372,12 @@ public class MafiaNetworkCode extends AppCompatActivity {
         }else if(receivedMessage.startsWith("getroleofperson")){
             String role = getRoleOfPerson(receivedMessage.split(" ")[1]);
             sendMessage(role);
+
         }else if(receivedMessage.startsWith("getnumberofpeople")){
             sendMessage(String.valueOf(totalNumOfPlayers));
+
+        }else if(receivedMessage.startsWith("setname")){
+            playerName = receivedMessage.split(" ")[1];
         }
         return receivedMessage;
     }

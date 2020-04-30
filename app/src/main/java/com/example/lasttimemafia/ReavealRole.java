@@ -115,6 +115,11 @@ public class ReavealRole extends AppCompatActivity {
                 loopRecceiveMessage = false;
             }
         }
+        if(receivedMessage.startsWith("totalplayers")){
+            MafiaClientGame.progressBar.setMax(Integer.parseInt(receivedMessage.split(" ")[1]));
+        }else if(receivedMessage.startsWith("currentplayers")){
+            MafiaClientGame.progressBar.setProgress(Integer.parseInt(receivedMessage.split(" ")[1]));
+        }
         Log.d("conflict", "Message Received:" + receivedMessage);
         return receivedMessage;
     }
