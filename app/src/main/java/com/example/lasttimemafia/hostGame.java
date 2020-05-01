@@ -32,29 +32,30 @@ public class hostGame extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host_game);
-        Log.d("firstorsecond","HostGame");
-        final ProgressBar progressBar = findViewById(R.id.progressBar2);
-        NetwworkCaller c1 = new NetwworkCaller();
-        String test = "";
-        final MafiaNetworkCode giveUp = new MafiaNetworkCode();
-        try {
-            test = giveUp.convertIP();
-            Log.d("IP", "This is the IP" + test);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        try {
-            c1.main();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        InetAddress inetAddress = null;
-        try {
-            inetAddress = InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        String ipAdress = inetAddress.getHostAddress();
+        if (savedInstanceState == null) {
+            Log.d("firstorsecond", "HostGame");
+            final ProgressBar progressBar = findViewById(R.id.progressBar2);
+            NetwworkCaller c1 = new NetwworkCaller();
+            String test = "";
+            final MafiaNetworkCode giveUp = new MafiaNetworkCode();
+            try {
+                test = giveUp.convertIP();
+                Log.d("IP", "This is the IP" + test);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+            try {
+                c1.main();
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+            InetAddress inetAddress = null;
+            try {
+                inetAddress = InetAddress.getLocalHost();
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+            String ipAdress = inetAddress.getHostAddress();
         /*try {
             Log.d("cuthardcoding","We're in");
             Log.d("firstplace","In hostGame");
@@ -77,39 +78,40 @@ public class hostGame extends AppCompatActivity {
         } catch (Exception ignored) {
             Log.d("caughtit","In hostagame");
         }*/
-        preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
-        int tempMafia  = Integer.parseInt(SettingsMenu.getDefaults("mafia","0"));
-        int tempVillager  = Integer.parseInt(SettingsMenu.getDefaults("villager","0"));
-        int tempAngel  = Integer.parseInt(SettingsMenu.getDefaults("angel","0"));
-        Log.d("international","Host First");
-        MafiaServerGame.numOfAngels = tempAngel;
-        MafiaServerGame.numOfMafia = tempMafia;
-        MafiaServerGame.numOfVillagers = tempVillager;
-        totalNumOfPlayers = tempAngel+tempMafia+tempVillager;
-        MafiaNetworkCode.totalNumOfPlayers = totalNumOfPlayers;
-        progressBar.setMax(Integer.valueOf(totalNumOfPlayers));
-        //Log.d("hostGame","Hey: " + ipAdress);
-        TextView code = (TextView) findViewById(R.id.textView13);
-        code.setText(test);
-        new Thread() {
-            public void run() {
-                //Looper.prepare();
-                boolean loop = true;
-                while (loop) {
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    progressBar.setProgress(currentNumOfPlayers);
-                    if (currentNumOfPlayers == totalNumOfPlayers) {
-                        loop = false;
-                        Log.d("hostGame", "OpenedMafiaGame");
-                        openMafiaGame();
+            preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
+            int tempMafia = Integer.parseInt(SettingsMenu.getDefaults("mafia", "0"));
+            int tempVillager = Integer.parseInt(SettingsMenu.getDefaults("villager", "0"));
+            int tempAngel = Integer.parseInt(SettingsMenu.getDefaults("angel", "0"));
+            Log.d("international", "Host First");
+            MafiaServerGame.numOfAngels = tempAngel;
+            MafiaServerGame.numOfMafia = tempMafia;
+            MafiaServerGame.numOfVillagers = tempVillager;
+            totalNumOfPlayers = tempAngel + tempMafia + tempVillager;
+            MafiaNetworkCode.totalNumOfPlayers = totalNumOfPlayers;
+            progressBar.setMax(Integer.valueOf(totalNumOfPlayers));
+            //Log.d("hostGame","Hey: " + ipAdress);
+            TextView code = (TextView) findViewById(R.id.textView13);
+            code.setText(test);
+            new Thread() {
+                public void run() {
+                    //Looper.prepare();
+                    boolean loop = true;
+                    while (loop) {
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        progressBar.setProgress(currentNumOfPlayers);
+                        if (currentNumOfPlayers == totalNumOfPlayers) {
+                            loop = false;
+                            Log.d("hostGame", "OpenedMafiaGame");
+                            openMafiaGame();
+                        }
                     }
                 }
-            }
-        }.start();
+            }.start();
+        }
     }
 
     public void openMafiaGame() {

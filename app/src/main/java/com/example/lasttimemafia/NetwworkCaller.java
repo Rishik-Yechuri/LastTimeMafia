@@ -17,7 +17,6 @@ public class NetwworkCaller extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
-        Log.d("slatt", String.valueOf(preferences.contains("villager")));
     }
 
     public static void main() throws UnknownHostException {

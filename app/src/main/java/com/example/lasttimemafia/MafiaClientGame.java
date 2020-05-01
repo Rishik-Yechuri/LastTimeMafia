@@ -44,36 +44,35 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
         StrictMode.ThreadPolicy policy = new
                 StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        Log.d("formatting", "Made it to MafiaClientGameStart");
-        final EditText editText4 = findViewById(R.id.editText4);
         super.onCreate(savedInstanceState);
-        Log.d("clientGame2", "Set the game view!");
         setContentView(R.layout.activity_mafia_client_game);
-        progressBar = findViewById(R.id.progressBar4);
-        Button button6 = findViewById(R.id.button6);
-        button6.setOnClickListener(this);
-        br = joinedGame.br;
-        out = joinedGame.out;
-        //String trash = receiveMessage();
-        Log.d("receiveCheck", "Pre");
-        try {
+        if (savedInstanceState == null) {
+            final EditText editText4 = findViewById(R.id.editText4);
+            progressBar = findViewById(R.id.progressBar4);
+            Button button6 = findViewById(R.id.button6);
+            button6.setOnClickListener(this);
+            br = joinedGame.br;
+            out = joinedGame.out;
+            //String trash = receiveMessage();
+            Log.d("receiveCheck", "Pre");
+            try {
 
-            sendMessage("getroleofperson " + joinedGame.name);
-            Log.d("jetski","Prerole");
-            role = receiveMessage(socket);
-            Log.d("jetski","Role:" + role);
-            //numOfMafia = Integer.parseInt(receiveMessage());
-            //numOfAngels = Integer.parseInt(receiveMessage());
-            //numOfVillagers = Integer.parseInt(receiveMessage());
-            //mafiaTime = Integer.parseInt(receiveMessage());
-            //angelTime = Integer.parseInt(receiveMessage());
-            //villagerTime = Integer.parseInt(receiveMessage());
-            //receiveMessage();
+                sendMessage("getroleofperson " + joinedGame.name);
+                Log.d("jetski", "Prerole");
+                role = receiveMessage(socket);
+                Log.d("jetski", "Role:" + role);
+                //numOfMafia = Integer.parseInt(receiveMessage());
+                //numOfAngels = Integer.parseInt(receiveMessage());
+                //numOfVillagers = Integer.parseInt(receiveMessage());
+                //mafiaTime = Integer.parseInt(receiveMessage());
+                //angelTime = Integer.parseInt(receiveMessage());
+                //villagerTime = Integer.parseInt(receiveMessage());
+                //receiveMessage();
 
-            Log.d("jetski", "Prerole");
-            sendMessage("getroleofperson " + name);
-            role = receiveMessage(socket);
-            Log.d("jetski", "Role:" + role);
+                Log.d("jetski", "Prerole");
+                sendMessage("getroleofperson " + name);
+                role = receiveMessage(socket);
+                Log.d("jetski", "Role:" + role);
             /*numOfMafia = Integer.parseInt(receiveMessage(socket));
             numOfAngels = Integer.parseInt(receiveMessage(socket));
             numOfVillagers = Integer.parseInt(receiveMessage(socket));
@@ -82,15 +81,15 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
             villagerTime = Integer.parseInt(receiveMessage(socket));
             receiveMessage(socket);*/
 
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        Log.d("receiveCheck", "Post");
-        Log.d("recInfo", "At The Top Line");
-        //numOfPeople = receiveMessage();
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            Log.d("receiveCheck", "Post");
+            Log.d("recInfo", "At The Top Line");
+            //numOfPeople = receiveMessage();
 
-        //sendMessage("getnumberofpeople");
-        //numOfPeople = receiveMessage();
+            //sendMessage("getnumberofpeople");
+            //numOfPeople = receiveMessage();
 
         /*try {
             numOfPeople = receiveMessage(socket);
@@ -100,18 +99,18 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
             e.printStackTrace();
         }*/
 
-        Log.d("recInfo", "numOfPeople:" + numOfPeople);
-        //numOfMafia = Integer.parseInt(receiveMessage());
-        //numOfAngels = Integer.parseInt(receiveMessage());
-        // numOfVillagers = Integer.parseInt(receiveMessage());
-        // mafiaTime = Integer.parseInt(receiveMessage());
-        //angelTime = Integer.parseInt(receiveMessage());
-        //villagerTime = Integer.parseInt(receiveMessage());
-        TextView textMessage = findViewById(R.id.textMessage);
-        textMessage.setText(role);
-        CountdownTimer.countdownTime = mafiaTime;
-        Log.d("formatting", "Made it to MafiaClientGameEnd");
-        openGameStarting();
+            Log.d("recInfo", "numOfPeople:" + numOfPeople);
+            //numOfMafia = Integer.parseInt(receiveMessage());
+            //numOfAngels = Integer.parseInt(receiveMessage());
+            // numOfVillagers = Integer.parseInt(receiveMessage());
+            // mafiaTime = Integer.parseInt(receiveMessage());
+            //angelTime = Integer.parseInt(receiveMessage());
+            //villagerTime = Integer.parseInt(receiveMessage());
+            TextView textMessage = findViewById(R.id.textMessage);
+            textMessage.setText(role);
+            CountdownTimer.countdownTime = mafiaTime;
+            Log.d("formatting", "Made it to MafiaClientGameEnd");
+            openGameStarting();
        /* new java.util.Timer().schedule(
                 new java.util.TimerTask() {
                     @Override
@@ -129,6 +128,7 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
                 },
                 5000
         );*/
+        }
     }
 
     public void sendMessage(String message) {

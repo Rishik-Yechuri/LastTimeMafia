@@ -46,36 +46,37 @@ public class VillageVoting extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_villager_voting);
-        nextThing = LifecycleTracker.returnNextActivity();
-        Log.d("pleaseplease","NextThing:" + nextThing);
-        LinearLayout rootView = findViewById(R.id.realHoldsText);
-        endNumber = 0;
-        ArrayList<Button> holdButtons = new ArrayList<Button>();
-        ArrayList<Button> holdButtons2 = new ArrayList<Button>();
-        Button btnTag;
-        Space space2 = new Space(this);
-        space2.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        space2.setMinimumHeight(dpToPx(20));
-        rootView.addView(space2);
-        ArrayList<String> playerNames = new ArrayList<>();
-        sendMessage("getplayers");
-        String tempPlayerList = "";
-        Button confirmButton = findViewById(R.id.button7);
-        confirmButton.setOnClickListener(updateConfirmStatus);
-        try {
-            tempPlayerList = receiveMessage(socket);
-            Log.d("textdebug", "tempPlayerList:" + tempPlayerList);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        String[] cutPlayers = tempPlayerList.split(" ");
-        Log.d("textdebug", "cutplayers:" + Arrays.toString(cutPlayers));
-        if (cutPlayers[0].equals("playerlist")) {
-            for (int y = 1; y < cutPlayers.length; y++) {
-                playerNames.add(cutPlayers[y]);
+        if (savedInstanceState == null) {
+            nextThing = LifecycleTracker.returnNextActivity();
+            Log.d("pleaseplease", "NextThing:" + nextThing);
+            LinearLayout rootView = findViewById(R.id.realHoldsText);
+            endNumber = 0;
+            ArrayList<Button> holdButtons = new ArrayList<Button>();
+            ArrayList<Button> holdButtons2 = new ArrayList<Button>();
+            Button btnTag;
+            Space space2 = new Space(this);
+            space2.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            space2.setMinimumHeight(dpToPx(20));
+            rootView.addView(space2);
+            ArrayList<String> playerNames = new ArrayList<>();
+            sendMessage("getplayers");
+            String tempPlayerList = "";
+            Button confirmButton = findViewById(R.id.button7);
+            confirmButton.setOnClickListener(updateConfirmStatus);
+            try {
+                tempPlayerList = receiveMessage(socket);
+                Log.d("textdebug", "tempPlayerList:" + tempPlayerList);
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
             }
-        }
-        Log.d("textdebug", "playerNames:" + playerNames);
+            String[] cutPlayers = tempPlayerList.split(" ");
+            Log.d("textdebug", "cutplayers:" + Arrays.toString(cutPlayers));
+            if (cutPlayers[0].equals("playerlist")) {
+                for (int y = 1; y < cutPlayers.length; y++) {
+                    playerNames.add(cutPlayers[y]);
+                }
+            }
+            Log.d("textdebug", "playerNames:" + playerNames);
         /*for(int p=0;p<playerNames.length;p++){
             holdButtons.get(p).setText(playerNames[p]);
         }*/
@@ -84,45 +85,46 @@ public class VillageVoting extends AppCompatActivity {
             Button thick = holdButtons.get(0);
             //thick.setText("BP");
         }*/
-        for (int x = 0; x < playerNames.size(); x++) {
-            btnTag = new Button(this);
-            btnTag.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            btnTag.setBackgroundResource(R.drawable.circularbutton);
-            holdButtons.add(btnTag);
-            rootView.addView(btnTag);
-            Space space = new Space(this);
-            //space.setMinimumHeight(500);
-            space.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            space.setMinimumHeight(dpToPx(20));
-            rootView.addView(space);
-        }
-        for (int p = 0; p < playerNames.size(); p++) {
-            Log.d("textdebug", "PlayName.length:" + playerNames.size());
-            Log.d("textdebug", "playerName value:" + playerNames.get(p));
-            holdButtons.get(p).setText(playerNames.get(p));
-        }
-        for (Button btn : holdButtons) {
-            btn.setOnClickListener(sendVote);
-        }
-        thread = new Thread(new MyThread());
-        Log.d("booleanchecker", "Before thread start");
-        sendMessage("resetnumofconfirms");
-        thread.start();
-        Log.d("booleanchecker", "After thread start call");
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                String value = msg.obj.toString();
-                Log.d("booleanchecker", "value:" + value);
-                if (Boolean.parseBoolean(value) && keepThreadRunning) {
-                    Log.d("nextactivity", "About to open");
-                    keepThreadRunning = false;
-                    if (nextThing.equals("villagedeath")) {
-                        openVillageDeath();
+            for (int x = 0; x < playerNames.size(); x++) {
+                btnTag = new Button(this);
+                btnTag.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                btnTag.setBackgroundResource(R.drawable.circularbutton);
+                holdButtons.add(btnTag);
+                rootView.addView(btnTag);
+                Space space = new Space(this);
+                //space.setMinimumHeight(500);
+                space.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                space.setMinimumHeight(dpToPx(20));
+                rootView.addView(space);
+            }
+            for (int p = 0; p < playerNames.size(); p++) {
+                Log.d("textdebug", "PlayName.length:" + playerNames.size());
+                Log.d("textdebug", "playerName value:" + playerNames.get(p));
+                holdButtons.get(p).setText(playerNames.get(p));
+            }
+            for (Button btn : holdButtons) {
+                btn.setOnClickListener(sendVote);
+            }
+            thread = new Thread(new MyThread());
+            Log.d("booleanchecker", "Before thread start");
+            sendMessage("resetnumofconfirms");
+            thread.start();
+            Log.d("booleanchecker", "After thread start call");
+            handler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    String value = msg.obj.toString();
+                    Log.d("booleanchecker", "value:" + value);
+                    if (Boolean.parseBoolean(value) && keepThreadRunning) {
+                        Log.d("nextactivity", "About to open");
+                        keepThreadRunning = false;
+                        if (nextThing.equals("villagedeath")) {
+                            openVillageDeath();
+                        }
                     }
                 }
-            }
-        };
+            };
+        }
     }
 
 

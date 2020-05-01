@@ -27,62 +27,62 @@ public class CloseYourEyes extends AppCompatActivity {
         double tempConversion = timeLeft * 1000;
         long countdownTimer = (int)tempConversion;
         Log.d("successtest","Time2:" + getTime.returnTime());*/
-        Log.d("faker", "value of nextThing:" + LifecycleTracker.getNumberOfActivity());
-        Log.d("faker", "Called from CloseYourEyes");
-        nextThing = LifecycleTracker.returnNextActivity();
-        if (nextThing.equals("openeyes")) {
-            sendMessage("startalarmandchecktime 4.0");
-        } else if (nextThing.equals("closeeyes")) {
-            int howLong = LifecycleTracker.getNumberOfActivity();
-            for(int x =0; x<2;x++){
-                if(howLong!=0){
-                    howLong--;
-                }else{
-                    howLong = LifecycleTracker.lifeCycle.size()-1;
+        if (savedInstanceState == null) {
+            nextThing = LifecycleTracker.returnNextActivity();
+            if (nextThing.equals("openeyes")) {
+                sendMessage("startalarmandchecktime 4.0");
+            } else if (nextThing.equals("closeeyes")) {
+                int howLong = LifecycleTracker.getNumberOfActivity();
+                for (int x = 0; x < 2; x++) {
+                    if (howLong != 0) {
+                        howLong--;
+                    } else {
+                        howLong = LifecycleTracker.lifeCycle.size() - 1;
+                    }
                 }
-            }
-            String whereWeWas = LifecycleTracker.returnSpecificActivity(howLong);
-            if(whereWeWas.equals("mafiaopeneyes")){
-                sendMessage("startalarmandchecktime 35.0");
-            }else if(whereWeWas.equals("angelopeneyes")){
-                sendMessage("startalarmandchecktime 10.0");
-            }
-        } else if (nextThing.equals("mafiaopeneyes")) {
-            sendMessage("startalarmandchecktime 4.0");
-        } else if (nextThing.equals("angelopeneyes")) {
-            sendMessage("startalarmandchecktime 4.0");
-        }
-        long countdownTimer = 0;
-        try {
-            countdownTimer = Long.parseLong(receiveMessage(socket));
-            Log.d("synccheck", "Value of RevealRole countdowntimer:" + countdownTimer);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        boolean playAudio = true;
-        if (nextThing.equals("closeeyes")) {
-            playAudio = false;
-        }
-        if (playAudio) {
-            playAudio();
-        }
-        new CountDownTimer(countdownTimer, 500) {
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            public void onFinish() {
-                if (nextThing.equals("openeyes")) {
-                    openOpenEyes();
-                } else if (nextThing.equals("closeeyes")) {
-                    openCloseEyes();
-                } else if (nextThing.equals("mafiaopeneyes")) {
-                    openOpenEyes();
-                } else if (nextThing.equals("angelopeneyes")) {
-                    openAngelOpenEyes();
+                String whereWeWas = LifecycleTracker.returnSpecificActivity(howLong);
+                if (whereWeWas.equals("mafiaopeneyes")) {
+                    sendMessage("startalarmandchecktime 35.0");
+                } else if (whereWeWas.equals("angelopeneyes")) {
+                    sendMessage("startalarmandchecktime 10.0");
                 }
+            } else if (nextThing.equals("mafiaopeneyes")) {
+                sendMessage("startalarmandchecktime 4.0");
+            } else if (nextThing.equals("angelopeneyes")) {
+                sendMessage("startalarmandchecktime 4.0");
             }
-        }.start();
+            long countdownTimer = 0;
+            try {
+                countdownTimer = Long.parseLong(receiveMessage(socket));
+                Log.d("synccheck", "Value of RevealRole countdowntimer:" + countdownTimer);
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            boolean playAudio = true;
+            if (nextThing.equals("closeeyes")) {
+                playAudio = false;
+            }
+            if (playAudio) {
+                playAudio();
+            }
+            new CountDownTimer(countdownTimer, 500) {
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                public void onFinish() {
+                    if (nextThing.equals("openeyes")) {
+                        openOpenEyes();
+                    } else if (nextThing.equals("closeeyes")) {
+                        openCloseEyes();
+                    } else if (nextThing.equals("mafiaopeneyes")) {
+                        openOpenEyes();
+                    } else if (nextThing.equals("angelopeneyes")) {
+                        openAngelOpenEyes();
+                    }
+                }
+            }.start();
+        }
     }
 
     public void playAudio() {

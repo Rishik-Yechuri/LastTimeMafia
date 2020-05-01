@@ -49,51 +49,52 @@ public class MafiaServerGame extends AppCompatActivity {
                 StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
-        Log.d("hostGame", "Intent worked and made it!");
         setContentView(R.layout.activity_mafia_server_game);
-        //Looper.prepare();
+        if (savedInstanceState == null) {
+            //Looper.prepare();
 
-       // players.add("Vihaan");
+            // players.add("Vihaan");
 
-        //players.add("Vihaan");
+            //players.add("Vihaan");
 
-        //players.add("Prathad");
-        preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
-        SettingsMenu.editor = preferences.edit();
+            //players.add("Prathad");
+            preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
+            SettingsMenu.editor = preferences.edit();
         /*int tempMafia = Integer.parseInt(SettingsMenu.getDefaults("mafia", "0"));
         int tempVillager = Integer.parseInt(SettingsMenu.getDefaults("villager", "0"));
         int tempAngel = Integer.parseInt(SettingsMenu.getDefaults("angel", "0"));
         MafiaServerGame.numOfAngels = tempAngel;
         MafiaServerGame.numOfMafia = tempMafia;
         MafiaServerGame.numOfVillagers = tempVillager;*/
-        //for(int x=0;x<numOfVillagers;x++){role.add("villager");}for(int x=0;x<numOfMafia;x++){role.add("mafia");}for(int x=0;x<numOfAngels;x++){role.add("guardian angel");}
-        boolean pauseForPlayers = true;
-        while (pauseForPlayers) {
-            try {
-                Thread.sleep(250);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            //for(int x=0;x<numOfVillagers;x++){role.add("villager");}for(int x=0;x<numOfMafia;x++){role.add("mafia");}for(int x=0;x<numOfAngels;x++){role.add("guardian angel");}
+            boolean pauseForPlayers = true;
+            while (pauseForPlayers) {
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (players.size() == hostGame.totalNumOfPlayers) {
+                    MafiaNetworkCode.startTimeOfTimer = System.currentTimeMillis();
+                    pauseForPlayers = false;
+                }
             }
-            if (players.size() == hostGame.totalNumOfPlayers) {
-                MafiaNetworkCode.startTimeOfTimer = System.currentTimeMillis();
-                pauseForPlayers = false;
-            }
+            Collections.shuffle(players);
+            Log.d("random", "Players: " + players);
+            sendRole = true;
+            TextView textView5 = findViewById(R.id.textView5);
+            String playerName = (String) players.get(0);
+
+
+            new java.util.Timer().schedule(
+                    new java.util.TimerTask() {
+                        @Override
+                        public void run() {
+                        }
+                    },
+                    5000
+            );
         }
-        Collections.shuffle(players);
-        Log.d("random", "Players: " + players);
-        sendRole = true;
-        TextView textView5 = findViewById(R.id.textView5);
-        String playerName = (String) players.get(0);
-
-
-        new java.util.Timer().schedule(
-                new java.util.TimerTask() {
-                    @Override
-                    public void run() {
-                    }
-                },
-                5000
-        );
     }
 
     public static void addRolesToList() {

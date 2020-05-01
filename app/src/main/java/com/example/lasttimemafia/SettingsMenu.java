@@ -26,23 +26,25 @@ public class SettingsMenu extends AppCompatActivity {
     TextView villagerNumbers;
     TextView mafiaNumbers;
     TextView angelNumbers;
-   public static  SharedPreferences preferences;
+    public static SharedPreferences preferences;
     public static SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_menu);
-        preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
-        editor = preferences.edit();
-        villagerNumbers = findViewById(R.id.villagerNumbers);
-        mafiaNumbers = findViewById(R.id.mafiaNumbers);
-        angelNumbers = findViewById(R.id.angelNumbers);
-        SeekBar seekBarVillager = findViewById(R.id.seekBarVillager);
-        SeekBar seekBarMafia = findViewById(R.id.seekBarMafia);
-        SeekBar seekBarAngel = findViewById(R.id.seekBarAngel);
-        seekBarVillager.setOnSeekBarChangeListener(new seekbarListener());
-        seekBarMafia.setOnSeekBarChangeListener(new seekbarListener());
-        seekBarAngel.setOnSeekBarChangeListener(new seekbarListener());
+        if (savedInstanceState == null) {
+            preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
+            editor = preferences.edit();
+            villagerNumbers = findViewById(R.id.villagerNumbers);
+            mafiaNumbers = findViewById(R.id.mafiaNumbers);
+            angelNumbers = findViewById(R.id.angelNumbers);
+            SeekBar seekBarVillager = findViewById(R.id.seekBarVillager);
+            SeekBar seekBarMafia = findViewById(R.id.seekBarMafia);
+            SeekBar seekBarAngel = findViewById(R.id.seekBarAngel);
+            seekBarVillager.setOnSeekBarChangeListener(new seekbarListener());
+            seekBarMafia.setOnSeekBarChangeListener(new seekbarListener());
+            seekBarAngel.setOnSeekBarChangeListener(new seekbarListener());
        /* try {
 
             FileInputStream fin = openFileInput("settings.txt");
@@ -57,6 +59,7 @@ public class SettingsMenu extends AppCompatActivity {
         }
         catch(Exception ignored){
         }*/
+        }
     }
 
     private class seekbarListener implements SeekBar.OnSeekBarChangeListener {
@@ -64,10 +67,16 @@ public class SettingsMenu extends AppCompatActivity {
         public void onProgressChanged(SeekBar seekBar, int progress,
                                       boolean fromUser) {
             TextView thingToChange = findViewById(R.id.villagerNumbers);
-            if (seekBar.getId() == R.id.seekBarVillager) { thingToChange = findViewById(R.id.villagerNumbers); }
-            if (seekBar.getId() == R.id.seekBarMafia) { thingToChange = findViewById(R.id.mafiaNumbers); }
-            if (seekBar.getId() == R.id.seekBarAngel) { thingToChange = findViewById(R.id.angelNumbers); }
-            Log.d("getitbois","Value of progress:" + progress);
+            if (seekBar.getId() == R.id.seekBarVillager) {
+                thingToChange = findViewById(R.id.villagerNumbers);
+            }
+            if (seekBar.getId() == R.id.seekBarMafia) {
+                thingToChange = findViewById(R.id.mafiaNumbers);
+            }
+            if (seekBar.getId() == R.id.seekBarAngel) {
+                thingToChange = findViewById(R.id.angelNumbers);
+            }
+            Log.d("getitbois", "Value of progress:" + progress);
             thingToChange.setText(String.valueOf(progress));
         }
 
@@ -78,6 +87,7 @@ public class SettingsMenu extends AppCompatActivity {
         }
 
     }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
@@ -99,13 +109,14 @@ public class SettingsMenu extends AppCompatActivity {
         }
         catch (Exception e) { e.printStackTrace();
         }*/
-       editor.clear();
-       editor.putString("villager", String.valueOf(villagerNumbers.getText()));
+        editor.clear();
+        editor.putString("villager", String.valueOf(villagerNumbers.getText()));
         editor.putString("mafia", String.valueOf(mafiaNumbers.getText()));
-        editor.putString("angel",String.valueOf(angelNumbers.getText()));
+        editor.putString("angel", String.valueOf(angelNumbers.getText()));
         editor.apply();
         super.onBackPressed();
     }
+
     public static String getDefaults(String key, String defaultValue) {
         String gotit = preferences.getString(key, defaultValue);
         return gotit;

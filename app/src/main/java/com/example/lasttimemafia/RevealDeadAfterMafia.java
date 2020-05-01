@@ -18,70 +18,56 @@ import static com.example.lasttimemafia.joinedGame.sendMessage;
 import static com.example.lasttimemafia.joinedGame.socket;
 
 public class RevealDeadAfterMafia extends AppCompatActivity {
-    String nextThing = "";
-    String currentActivity = "";
+    static String nextThing = "";
+    static String currentActivity = "";
     boolean canIMoveOn = true;
     boolean isTheGameGoing = true;
+    static TextView theKillerName;
+    static TextView ripThem;
+    static String whoWon;
+    static String personThatDied = "";
+    static boolean afterVillagerKill = false;
+    static long countdownTimer = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reveal_dead_after_mafia);
-        TextView theKillerName = findViewById(R.id.theKillerName);
-        nextThing = LifecycleTracker.returnNextActivity();
-        currentActivity = LifecycleTracker.returnCurrentActivity();
-        if (currentActivity.equals("villagedeath")) {
-            theKillerName.setText("The Villagers Killed");
-        }
-        Log.d("heheblock", "We made it into RevealDead");
-        TextView ripThem = findViewById(R.id.ripThem);
-        if (currentActivity.equals("deadforever")) {
-            ripThem.setText("No.Really.You are literally dead.");
-            theKillerName.setText("You're Dead");
-        } else if(currentActivity.equals("gameover")){
-            theKillerName.setText("Game Over");
+        if (savedInstanceState == null) {
             sendMessage("whowonthegame");
-            String whoWon = "";
+            whoWon = "";
             try {
                 whoWon = receiveMessage(socket);
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
-            ripThem.setText(whoWon + " won");
-
-        }else {
-            sendMessage("getdead");
-            String personThatDied = "";
-            try {
-                personThatDied = receiveMessage(socket);
-                if (joinedGame.name.equals(personThatDied)) {
-                    canIMoveOn = false;
+            currentActivity = LifecycleTracker.returnCurrentActivity();
+            nextThing = LifecycleTracker.returnNextActivity();
+            if (currentActivity.equals("showdeath")) {
+                sendMessage("getdead");
+                try {
+                    personThatDied = receiveMessage(socket);
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
                 }
-                ripThem.setText(personThatDied);
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
             }
-            boolean afterVillagerKill = false;
             if (currentActivity.equals("villagedeath")) {
                 afterVillagerKill = true;
             }
             sendMessage("isgamestillgoing " + afterVillagerKill);
             try {
                 isTheGameGoing = Boolean.parseBoolean(receiveMessage(socket));
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
+            } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
             sendMessage("startalarmandchecktime 5");
-            long countdownTimer = 0;
+            countdownTimer = 0;
             try {
                 countdownTimer = Long.parseLong(receiveMessage(socket));
                 Log.d("finalloop", "Countdown Timer:" + countdownTimer);
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
-            Log.d("finalloop", "Did we make it here");
             new CountDownTimer(countdownTimer, 500) {
                 public void onTick(long millisUntilFinished) {
                     Log.d("finalloop", "Did we make it here 2");
@@ -97,7 +83,9 @@ public class RevealDeadAfterMafia extends AppCompatActivity {
                     //Log.d("days","does this even wrk!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     Log.d("finalloop", "NextThing:" + nextThing);
                     Log.d("finalloop", "Did we make it here 4");
-                    if (!isTheGameGoing) {
+                    if (!isTheGameGoing && nextThing.equals("gameover")) {
+                        //Do nothing
+                    } else if (!isTheGameGoing) {
                         openGameOver();
                     } else if (!canIMoveOn) {
                         openYourDead();
@@ -105,13 +93,27 @@ public class RevealDeadAfterMafia extends AppCompatActivity {
                         openVillageTalk();
                     } else if (nextThing.equals("closeeyes")) {
                         openCloseEyes();
-                    } else if(nextThing.equals("gameover")){
+                    } else if (nextThing.equals("gameover")) {
                         openGameOver();
-                    }else {
-                        Log.d("failure", "failure in Textmessages");
                     }
                 }
             }.start();
+        }
+        theKillerName = findViewById(R.id.theKillerName);
+        Log.d("moolah", "CurrentActivity:" + currentActivity);
+        if (currentActivity.equals("villagedeath")) {
+            theKillerName.setText("The Villagers Killed");
+        }
+        ripThem = findViewById(R.id.ripThem);
+        if (currentActivity.equals("deadforever")) {
+            ripThem.setText("No.Really.You are literally dead.");
+            theKillerName.setText("You're Dead");
+        } else if (currentActivity.equals("gameover")) {
+            theKillerName.setText("Game Over");
+            ripThem.setText(whoWon + " won");
+        } else {
+            ripThem.setText(personThatDied);
+            Log.d("finalloop", "Did we make it here");
             // int positionOfPlayerInArray = MafiaServerGame.players.indexOf(personThatDied);
             //MafiaServerGame.players.remove(personThatDied);
             // Log.d("removeplayers","Value of roles:" + MafiaServerGame.role);

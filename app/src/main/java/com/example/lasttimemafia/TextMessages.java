@@ -26,38 +26,40 @@ public class TextMessages extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_main2);
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-        ViewPager viewPager = findViewById(R.id.view_pager);
-        viewPager.setAdapter(sectionsPagerAdapter);
-        TabLayout tabs = findViewById(R.id.tabs);
-        tabs.setupWithViewPager(viewPager);
-        tabs.getTabAt(0).setText("Voting");
-        tabs.getTabAt(1).setText("Messages");
-        sendMessage("startalarmandchecktime 35");
-        long countdownTimer = 0;
-        try {
-            countdownTimer = Long.parseLong(receiveMessage(socket));
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        new CountDownTimer(countdownTimer, 500) {
-            public void onTick(long millisUntilFinished) {
-
+        if (savedInstanceState == null) {
+            SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+            ViewPager viewPager = findViewById(R.id.view_pager);
+            viewPager.setAdapter(sectionsPagerAdapter);
+            TabLayout tabs = findViewById(R.id.tabs);
+            tabs.setupWithViewPager(viewPager);
+            tabs.getTabAt(0).setText("Voting");
+            tabs.getTabAt(1).setText("Messages");
+            sendMessage("startalarmandchecktime 35");
+            long countdownTimer = 0;
+            try {
+                countdownTimer = Long.parseLong(receiveMessage(socket));
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
             }
+            new CountDownTimer(countdownTimer, 500) {
+                public void onTick(long millisUntilFinished) {
 
-            public void onFinish() {
-                //Frag2.thread.interrupt();
-                Frag2.keepThreadRunning = false;
-                Log.d("faker","value of nextThing:" + LifecycleTracker.getNumberOfActivity());
-                Log.d("faker","Called from TextMessages");
-                nextThing = LifecycleTracker.returnNextActivity();
-                if (nextThing.equals("closeeyes")) {
-                    closeEyes();
-                }else{
-                    Log.d("failure","failure in Textmessages");
                 }
-            }
-        }.start();
+
+                public void onFinish() {
+                    //Frag2.thread.interrupt();
+                    Frag2.keepThreadRunning = false;
+                    Log.d("faker", "value of nextThing:" + LifecycleTracker.getNumberOfActivity());
+                    Log.d("faker", "Called from TextMessages");
+                    nextThing = LifecycleTracker.returnNextActivity();
+                    if (nextThing.equals("closeeyes")) {
+                        closeEyes();
+                    } else {
+                        Log.d("failure", "failure in Textmessages");
+                    }
+                }
+            }.start();
+        }
     }
 
     public void closeEyes() {

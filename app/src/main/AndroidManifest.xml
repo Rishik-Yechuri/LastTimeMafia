@@ -6,6 +6,7 @@
     <uses-permission
         android:name="android.permission.INTERNET"
         android:required="true" />
+
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
@@ -15,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SettingsMenu"></activity>
+        <activity
+            android:name=".SettingsMenu" />
         <activity android:name=".AngelVoting" />
         <activity android:name=".VillageVoting" />
         <activity android:name=".RevealDeadAfterMafia" />
@@ -32,9 +34,12 @@
         <activity android:name=".Server" />
         <activity android:name=".MafiaClientGame" />
         <activity android:name=".Lobby" />
-        <activity android:name=".TextMessages" />
+        <activity
+            android:name=".TextMessages"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="nosensor" />
         <activity android:name=".joinedGame" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

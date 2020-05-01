@@ -48,7 +48,7 @@ import static com.example.lasttimemafia.SettingsMenu.preferences;
 
 public class MafiaNetworkCode extends AppCompatActivity {
     ProgressBar progressBar;
-   public static  int totalNumOfPlayers = 2;
+    public static int totalNumOfPlayers = 2;
     int currentNumOfPlayers = 0;
     Socket socket;
     boolean personKilled = false;
@@ -67,25 +67,26 @@ public class MafiaNetworkCode extends AppCompatActivity {
     //End of Code for storing text messages and info
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("whatevs","Go help me");
-        preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
-        SettingsMenu.editor = preferences.edit();
-        int tempMafia  = Integer.parseInt(SettingsMenu.getDefaults("mafia","0"));
-        int tempVillager  = Integer.parseInt(SettingsMenu.getDefaults("villager","0"));
-        int tempAngel  = Integer.parseInt(SettingsMenu.getDefaults("angel","0"));
-        MafiaServerGame.numOfAngels = tempAngel;
-        MafiaServerGame.numOfMafia = tempMafia;
-        MafiaServerGame.numOfVillagers = tempVillager;
-        hostGame.totalNumOfPlayers = tempAngel+tempMafia+tempVillager;
-        totalNumOfPlayers = hostGame.totalNumOfPlayers;
-        ////////////////////////////////////////////////////////////
-        progressBar = findViewById(R.id.progressBar2);
-        progressBar.setMax(Integer.valueOf(totalNumOfPlayers));
-        progressBar.setProgress(2);
-        holdVotingInfo = new HashMap<>();
-        //textMessageHistory = new ArrayList();
-        //textMessageHistorySender = new ArrayList();
-        Log.d("hostingGame", "It Works!");
+        if (savedInstanceState == null) {
+            preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
+            SettingsMenu.editor = preferences.edit();
+            int tempMafia = Integer.parseInt(SettingsMenu.getDefaults("mafia", "0"));
+            int tempVillager = Integer.parseInt(SettingsMenu.getDefaults("villager", "0"));
+            int tempAngel = Integer.parseInt(SettingsMenu.getDefaults("angel", "0"));
+            MafiaServerGame.numOfAngels = tempAngel;
+            MafiaServerGame.numOfMafia = tempMafia;
+            MafiaServerGame.numOfVillagers = tempVillager;
+            hostGame.totalNumOfPlayers = tempAngel + tempMafia + tempVillager;
+            totalNumOfPlayers = hostGame.totalNumOfPlayers;
+            ////////////////////////////////////////////////////////////
+            progressBar = findViewById(R.id.progressBar2);
+            progressBar.setMax(Integer.valueOf(totalNumOfPlayers));
+            progressBar.setProgress(2);
+            holdVotingInfo = new HashMap<>();
+            //textMessageHistory = new ArrayList();
+            //textMessageHistorySender = new ArrayList();
+            Log.d("hostingGame", "It Works!");
+        }
     }
 
     BufferedReader br;
@@ -157,9 +158,9 @@ public class MafiaNetworkCode extends AppCompatActivity {
     public void permaConnection(int portNumber2) throws IOException, InterruptedException {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        Log.d("ilolveit","Precall");
-       MafiaServerGame.addRolesToList();
-        Log.d("ilolveit","postcall");
+        Log.d("ilolveit", "Precall");
+        MafiaServerGame.addRolesToList();
+        Log.d("ilolveit", "postcall");
         int portNumber = portNumber2;
         boolean run = true;
         ServerSocket serverSocket = new ServerSocket(portNumber);
@@ -173,7 +174,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
         out = new PrintWriter(os, true);
         //ProgressBar progressBar = findViewById(R.id.progressBar2);
         //progressBar.setMax(Integer.valueOf(totalNumOfPlayers));
-        Log.d("helpme","totalnum:" + totalNumOfPlayers);
+        Log.d("helpme", "totalnum:" + totalNumOfPlayers);
         sendMessage("totalplayers " + totalNumOfPlayers);
         boolean loop = true;
         while (loop) {
@@ -195,18 +196,19 @@ public class MafiaNetworkCode extends AppCompatActivity {
         while (MafiaServerGame.sendRole == false) {
             Thread.sleep(250);
         }
-        Log.d("stealyokid","playerName:" + playerName);;
+        Log.d("stealyokid", "playerName:" + playerName);
+        ;
         int placeOfRoleInList = MafiaServerGame.players.indexOf(playerName);
         Log.d("random", "PlaceOfRoleInList: " + placeOfRoleInList);
         Log.d("removeplayers", "Value of Roles before death:" + MafiaServerGame.role);
-        int tempMafia  = Integer.parseInt(SettingsMenu.getDefaults("mafia","0"));
-        int tempVillager  = Integer.parseInt(SettingsMenu.getDefaults("villager","0"));
-        int tempAngel  = Integer.parseInt(SettingsMenu.getDefaults("angel","0"));
+        int tempMafia = Integer.parseInt(SettingsMenu.getDefaults("mafia", "0"));
+        int tempVillager = Integer.parseInt(SettingsMenu.getDefaults("villager", "0"));
+        int tempAngel = Integer.parseInt(SettingsMenu.getDefaults("angel", "0"));
         MafiaServerGame.numOfAngels = tempAngel;
         MafiaServerGame.numOfMafia = tempMafia;
         MafiaServerGame.numOfVillagers = tempVillager;
         MafiaServerGame.addRolesToList();
-        Log.d("goingcrazy","roles accessed");
+        Log.d("goingcrazy", "roles accessed");
         String role = (String) MafiaServerGame.role.get(placeOfRoleInList);
         //sendMessage("Trash");
        /* Log.d("rolecheck", "RoleSentPre");
@@ -367,16 +369,16 @@ public class MafiaNetworkCode extends AppCompatActivity {
         } else if (receivedMessage.startsWith("isgamestillgoing")) {
             boolean isItGoing = isGameStillGoing(Boolean.parseBoolean(receivedMessage.split(" ")[1]));
             sendMessage(String.valueOf(isItGoing));
-        }else if(receivedMessage.startsWith("whowonthegame")){
+        } else if (receivedMessage.startsWith("whowonthegame")) {
             sendMessage(whoWon());
-        }else if(receivedMessage.startsWith("getroleofperson")){
+        } else if (receivedMessage.startsWith("getroleofperson")) {
             String role = getRoleOfPerson(receivedMessage.split(" ")[1]);
             sendMessage(role);
 
-        }else if(receivedMessage.startsWith("getnumberofpeople")){
+        } else if (receivedMessage.startsWith("getnumberofpeople")) {
             sendMessage(String.valueOf(totalNumOfPlayers));
 
-        }else if(receivedMessage.startsWith("setname")){
+        } else if (receivedMessage.startsWith("setname")) {
             playerName = receivedMessage.split(" ")[1];
         }
         return receivedMessage;
@@ -656,16 +658,17 @@ public class MafiaNetworkCode extends AppCompatActivity {
                 numOfInnocent++;
             }
         }
-        if(numOfMafia>numOfInnocent){
+        if (numOfMafia > numOfInnocent) {
             whoWon = "the mafia";
-        }else{
+        } else {
             whoWon = "the village";
         }
-        return  whoWon;
+        return whoWon;
     }
-    public String getRoleOfPerson(String personToGetRoleOf){
+
+    public String getRoleOfPerson(String personToGetRoleOf) {
         int place = MafiaServerGame.players.indexOf(personToGetRoleOf);
         String role = MafiaServerGame.role.get(place);
-        return  role;
+        return role;
     }
 }

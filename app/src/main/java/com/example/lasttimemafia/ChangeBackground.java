@@ -17,10 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChangeBackground extends AppCompatActivity {
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_joined_game);
-        Button button = (Button) findViewById(R.id.button4);
-        button.setText("Connected");
+        if (savedInstanceState == null) {
+            Button button = (Button) findViewById(R.id.button4);
+            button.setText("Connected");
+        }
     }
 }

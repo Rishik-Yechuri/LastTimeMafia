@@ -32,20 +32,24 @@ import java.util.Arrays;
 
 
 public class Frag1 extends Fragment {
-int endNumber;
+    int endNumber;
+    ArrayList<String> playerNames;
+    ArrayList<Button> holdButtons;
+    ArrayList<Button> holdButtons2;
+
     @Nullable
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag1_layout, container, false);
         LinearLayout rootView = view.findViewById(R.id.rootViewMafiaVoting);
         endNumber = 0;
-        ArrayList<Button> holdButtons = new ArrayList<Button>();
-        ArrayList<Button> holdButtons2 = new ArrayList<Button>();
+        holdButtons = new ArrayList<Button>();
+        holdButtons2 = new ArrayList<Button>();
         Button btnTag;
         Space space2 = new Space(getContext());
         space2.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         space2.setMinimumHeight(dpToPx(20));
         rootView.addView(space2);
-        ArrayList<String> playerNames = new ArrayList<>();
+        playerNames = new ArrayList<>();
         //String[] playerNames = new String[Integer.parseInt(joinedGame.totalNumOfPlayers)];
         sendMessage("getplayers");
         String tempPlayerList = "";
@@ -88,9 +92,14 @@ int endNumber;
             Log.d("textdebug", "playerName value:" + playerNames.get(p));
             holdButtons.get(p).setText(playerNames.get(p));
         }
-        for (Button btn : holdButtons) {
-            btn.setOnClickListener(sendVote);
-        }
+
+
+       // if (savedInstanceState == null) {
+            for (Button btn : holdButtons) {
+                btn.setOnClickListener(sendVote);
+            }
+        //}
+
         return view;
     }
 
@@ -109,7 +118,7 @@ int endNumber;
         public void onClick(View v) {
             Button b = (Button) v;
             Log.d("sender", "buttonString:" + b.getText().toString());
-            sendMessage("setvote" + " " + b.getText().toString()+" " + endNumber);
+            sendMessage("setvote" + " " + b.getText().toString() + " " + endNumber);
             endNumber++;
         }
     };

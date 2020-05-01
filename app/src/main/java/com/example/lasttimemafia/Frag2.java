@@ -1,6 +1,9 @@
 package com.example.lasttimemafia;
 
 import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,123 +37,54 @@ import static com.example.lasttimemafia.joinedGame.sendMessage;
 
 public class Frag2 extends Fragment {
     EditText editText;
-    ArrayList messageSender;
-    ArrayList message;
+    ArrayList messageSender = new ArrayList();
+    ArrayList message = new ArrayList();
     LinearLayout rootView;
     String lastSender;
-    int textsSent;
-    boolean boolLoop;
+    int textsSent = 0;
+    boolean boolLoop = true;
     public static Thread thread;
-    Handler handler;
+    static Handler handler;
     long lastTimeMessageSent = 0;
     public static boolean keepThreadRunning = true;
+    View view;
+    Context context;
+
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.frag2_layout, container, false);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle onSavedInstance) {
+        /*View*/
+        view = inflater.inflate(R.layout.frag2_layout, container, false);
         rootView = view.findViewById(R.id.realHoldsText);
+        ///////////////////////////////////////////////////////////////////////////////
+        //addTextToUI("stop","me");
+        /////////////////////////////////////////////////////////////////////////////////
         View lowerView = view.findViewById(R.id.linearLayoutTextHolder);
         //View lowerView = view.findViewById(R.id.linearLayoutMain);
         Button votingButton = lowerView.findViewById(R.id.button7);
-        thread = new Thread(new MyThread());
-        thread.start();
-        //keepThreadRunning = false;
-        Log.d("intstatus","Status of Interuptted:" + thread.isInterrupted());
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                Log.d("receiverApp", "Message is being handled by main thread.");
-                String value = msg.obj.toString();
-                String[] split = value.split("\uD800\uDF0C");
-                addTextToUI(split[0], split[1]);
-            }
-        };
-        textsSent = 0;
-        message = new ArrayList();
-        messageSender = new ArrayList();
         votingButton.setOnClickListener(sendText);
         editText = view.findViewById(R.id.editText);
-        /*addTextToUI("lel", "Akash");
-        addTextToUI("Who though?", "Saahil");
-        addTextToUI("I think we should vote out Saahas", "Saahil");
-        addTextToUI("Cause I think he knows about us", "Saahil");
-        addTextToUI("Guys lets vote ourselves out to trick them", "Bhaskar");
-        addTextToUI("Very Smort Boscer", "Saahil");
-        addTextToUI("lel", "Akash");
-        addTextToUI("But is it smort??", "Saahil");
-        addTextToUI("jk im trolling", "Saahil");
-        addTextToUI("but once we get rid of him we can spread propaganda", "Saahil");
-        addTextToUI("we can keep killing more inncoent people", "Bhaskar");
-        addTextToUI("That is what i like to hear", "Saahil");
-        addTextToUI("ye", "Akash");
-        addTextToUI("tell me the strats though", "Saahil");
-        addTextToUI("Big brain time,thats why", "Saahil");
-        addTextToUI("but don't kill me", "Saahil");
-        addTextToUI("ok lets vote out Akash cause he isn't helping us", "Bhaskar");
-        addTextToUI("^Respecc", "Saahil");
-        addTextToUI("lel", "Akash");
-        addTextToUI("Stop saying that", "Saahil");
-        addTextToUI("yeah I might just vote for Akash", "Saahil");
-        addTextToUI("Cause I think he will rat us out", "Saahil");
-        addTextToUI("You are indeed a absolute stonk", "Bhaskar");
-        addTextToUI("Once again,you are very smort boscer", "Saahil");*/
+        //context = getActivity();
 
-      /* new Thread() {
-            public void run() {
-
-            }
-        }.start();*/
-        boolLoop = true;
-        /*while (boolLoop) {
-            try {
-                Thread.sleep(100);
-                sendMessage("updatemessages");
-                String getTextHistory = receiveMessage(socket);
-                Log.d("breakitdown", "gettexthistory:" + getTextHistory);
-                String[] breakItDown = getTextHistory.split("\uD800\uDF0C");
-                Log.d("breakitdown", "Breakitdown:" + Arrays.toString(breakItDown));
-                if (breakItDown.length > 1) {
-                    message = new ArrayList();
-                    messageSender = new ArrayList();
-                    for (int x = 0; x < breakItDown.length; x += 2) {
-                        message.add(breakItDown[x]);
-                        messageSender.add(breakItDown[x + 1]);
-                    }
+        if (onSavedInstance == null) {
+            handler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    Log.d("rotatecheck", "inside handlemessage");
+                    Log.d("textvalue", "TextsSent:" + textsSent);
+                    String value = msg.obj.toString();
+                    Log.d("finalpackage", "Value:" + value);
+                    String[] split = value.split("\uD800\uDF0C");
+                    Log.d("finalpackage", "split[0]" + split[0]);
+                    Log.d("finalpackage", "split[1]" + split[1]);
+                    addTextToUI(split[0], split[1]);
                 }
-            } catch (InterruptedException | IOException e) {
-                e.printStackTrace();
-            }
-            Log.d("receiver", "Hikring");
-            Log.d("receiver", "TextSent size:" + textsSent);
-            Log.d("receiver", "message list size:" + message.size());
-            if(textsSent<message.size()){
-                Log.d("receiver","Added to UI");
-                addTextToUI((String)message.get(textsSent),(String)messageSender.get(textsSent));
-            }
-            sendMessage("checkalarm");
-            String loopOrNot = "";
-            try {
-                loopOrNot = receiveMessage(socket);
-                boolLoop = Boolean.parseBoolean(loopOrNot);
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
-        }*/
+            };
+            thread = new Thread(new MyThread());
+            thread.start();
+            Log.d("intstatus", "Status of Interuptted:" + thread.isInterrupted());
+        }
         return view;
-
-
-        /*while(boolLoop){
-
-            sendMessage("checkalarm");
-            String loopOrNot = "";
-            try {
-                loopOrNot = receiveMessage(socket);
-                boolLoop = Boolean.parseBoolean(loopOrNot);
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
-        }*/
-        //return super.onCreateView(inflater,container,savedInstanceState);
     }
 
     class MyThread implements Runnable {
@@ -184,11 +118,13 @@ public class Frag2 extends Fragment {
                 Log.d("receiverApp", "message list size:" + message.size());
                 if (textsSent < message.size()) {
                     kring = message.get(textsSent) + "\uD800\uDF0C" + messageSender.get(textsSent);
+                    Log.d("sizecheck", "Here");
                     messageOfficial = Message.obtain();
+                    Log.d("sizecheck", "Here 2");
                     messageOfficial.obj = kring;
-                    Log.d("receiverApp", "MessageOfficial:" + messageOfficial.obj);
-                    Log.d("receiverApp", "Message is in second thread");
+                    Log.d("sizecheck", "Here 3 ");
                     handler.sendMessage(messageOfficial);
+                    Log.d("sizecheck", "Here 4");
                 }
                 /*Log.d("intstatus","Inside thread check:" + Thread.currentThread().isInterrupted());
                 if(Thread.currentThread().isInterrupted()){
@@ -204,41 +140,58 @@ public class Frag2 extends Fragment {
             String thingToSend = "setmessage";
             if (editText.getText().toString().length() > 0) {
                 thingToSend += " " + editText.getText().toString();
-                Log.d("conflict","TimeGap:" + (System.currentTimeMillis()-lastTimeMessageSent));
-               // if (System.currentTimeMillis() - lastTimeMessageSent > 4000) {
-                    sendMessage(thingToSend);
-                   // lastTimeMessageSent = System.currentTimeMillis();
-              //  }
+                Log.d("conflict", "TimeGap:" + (System.currentTimeMillis() - lastTimeMessageSent));
+                // if (System.currentTimeMillis() - lastTimeMessageSent > 4000) {
+                sendMessage(thingToSend);
+                // lastTimeMessageSent = System.currentTimeMillis();
+                //  }
             }
         }
     };
 
     public void addTextToUI(String messageToSend, String senderName) {
-        Log.d("receiverApp", "Message is being sent to UI");
         if (lastSender == null) {
             lastSender = "";
         }
-        TextView textView = new TextView(getContext());
+        Log.d("trueornot", "value of GetContext:" + context);
+        if (context == null) {
+            context = getActivity();
+        }
+        TextView textView = new TextView(context);
+
         textView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
         textView.setBackgroundResource(R.drawable.circularbutton);
+
         int selectedColor = Color.rgb(237, 19, 74);
-        //textView.setTextColor(selectedColor);
+
         textView.setTextSize(16);
+
         String finaltext = "";
+
         if (!lastSender.equals(senderName)) {
             finaltext = senderName + "\n" + messageToSend;
         } else {
             finaltext = messageToSend;
         }
+
         textView.setText(finaltext);
         rootView.addView(textView);
+        Log.d("addembois", "Added");
         lastSender = senderName;
+
         textsSent++;
     }
 
     private String getColoredSpanned(String text, String color) {
         String input = "<font color=" + color + ">" + text + "</font>";
         return input;
+    }
+
+
+    @Override
+    public void onConfigurationChanged(final Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 
 }

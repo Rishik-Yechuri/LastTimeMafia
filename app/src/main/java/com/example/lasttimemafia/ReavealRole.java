@@ -22,25 +22,11 @@ import static com.example.lasttimemafia.joinedGame.socket;
 
 public class ReavealRole extends AppCompatActivity {
     String nextThing;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reaveal_role);
-        View tempView = findViewById(R.id.revealRoleRoot);
-        /*double time = getTime.returnTime();
-        Log.d("successtest","Time:" + time);
-        double timeLeft = 12.4 - time;
-        double tempConversion = timeLeft * 1000;
-        long countdownTimer = (int)tempConversion;*/
-        //Store role name to what they should be formatted to in a Hashmap
-        sendMessage("startalarmandchecktime 4.0");
-        long countdownTimer = 0;
-        try {
-            countdownTimer = Long.parseLong(receiveMessage(socket));
-            Log.d("synccheck", "Value of RevealRole countdowntimer:" + countdownTimer);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
         HashMap<String, String> roleToFormatted = new HashMap<>();
         roleToFormatted.put("mafia", "75");
         roleToFormatted.put("villager", "75");
@@ -53,43 +39,59 @@ public class ReavealRole extends AppCompatActivity {
         final TextView role = findViewById(R.id.roleText);
         role.setText(roleToFormatted.get(roleString));
         role.setText(roleString);
-        ArrayList<String> playerLifecycle;
-        if (role.getText().toString().equals("Mafia")) {
-            //playerLifecycle = new ArrayList<>(Arrays.asList("closeeyes", "mafiaopeneyes", "mafiatextmessages", "closeeyes", "openeyes", "showdeath","villagetalk","villagedeath"));
-            playerLifecycle = new ArrayList<>(Arrays.asList("closeeyes", "mafiaopeneyes", "mafiatextmessages", "closeeyes", "angelopeneyes","closeeyes","closeeyes","openeyes", "showdeath","villagetalk","villagedeath"));
-        } else if (role.getText().toString().equals("Guardian Angel")) {
-            //playerLifecycle = new ArrayList<>(Arrays.asList("closeeyes", "mafiaopeneyes", "closeeyes", "closeeyes", "openeyes", "showdeath","villagetalk","villagedeath"));
-            playerLifecycle = new ArrayList<>(Arrays.asList("closeeyes", "mafiaopeneyes", "closeeyes", "closeeyes", "angelopeneyes","angelprotection","closeeyes","openeyes", "showdeath","villagetalk","villagedeath"));
-        }else if(role.getText().toString().equals("Villager")){
-            //playerLifecycle = new ArrayList<>(Arrays.asList("closeeyes", "mafiaopeneyes", "closeeyes", "closeeyes", "openeyes", "showdeath","villagetalk","villagedeath"));
-            playerLifecycle = new ArrayList<>(Arrays.asList("closeeyes", "mafiaopeneyes", "closeeyes", "closeeyes", "angelopeneyes","closeeyes","closeeyes","openeyes", "showdeath","villagetalk","villagedeath"));
-        }
-        else{
-            playerLifecycle = new ArrayList<>(Arrays.asList("failure"));
-        }
-        LifecycleTracker.setLifecycle(playerLifecycle);
-        new CountDownTimer(countdownTimer, 500) {
-            public void onTick(long millisUntilFinished) {
+        if (savedInstanceState == null) {
+            View tempView = findViewById(R.id.revealRoleRoot);
+        /*double time = getTime.returnTime();
+        Log.d("successtest","Time:" + time);
+        double timeLeft = 12.4 - time;
+        double tempConversion = timeLeft * 1000;
+        long countdownTimer = (int)tempConversion;*/
+            //Store role name to what they should be formatted to in a Hashmap
+            sendMessage("startalarmandchecktime 4.0");
+            long countdownTimer = 0;
+            try {
+                countdownTimer = Long.parseLong(receiveMessage(socket));
+                Log.d("synccheck", "Value of RevealRole countdowntimer:" + countdownTimer);
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
             }
+            ArrayList<String> playerLifecycle;
+            if (role.getText().toString().equals("Mafia")) {
+                //playerLifecycle = new ArrayList<>(Arrays.asList("closeeyes", "mafiaopeneyes", "mafiatextmessages", "closeeyes", "openeyes", "showdeath","villagetalk","villagedeath"));
+                playerLifecycle = new ArrayList<>(Arrays.asList("closeeyes", "mafiaopeneyes", "mafiatextmessages", "closeeyes", "angelopeneyes", "closeeyes", "closeeyes", "openeyes", "showdeath", "villagetalk", "villagedeath"));
+            } else if (role.getText().toString().equals("Guardian Angel")) {
+                //playerLifecycle = new ArrayList<>(Arrays.asList("closeeyes", "mafiaopeneyes", "closeeyes", "closeeyes", "openeyes", "showdeath","villagetalk","villagedeath"));
+                playerLifecycle = new ArrayList<>(Arrays.asList("closeeyes", "mafiaopeneyes", "closeeyes", "closeeyes", "angelopeneyes", "angelprotection", "closeeyes", "openeyes", "showdeath", "villagetalk", "villagedeath"));
+            } else if (role.getText().toString().equals("Villager")) {
+                //playerLifecycle = new ArrayList<>(Arrays.asList("closeeyes", "mafiaopeneyes", "closeeyes", "closeeyes", "openeyes", "showdeath","villagetalk","villagedeath"));
+                playerLifecycle = new ArrayList<>(Arrays.asList("closeeyes", "mafiaopeneyes", "closeeyes", "closeeyes", "angelopeneyes", "closeeyes", "closeeyes", "openeyes", "showdeath", "villagetalk", "villagedeath"));
+            } else {
+                playerLifecycle = new ArrayList<>(Arrays.asList("failure"));
+            }
+            LifecycleTracker.setLifecycle(playerLifecycle);
+            new CountDownTimer(countdownTimer, 500) {
+                public void onTick(long millisUntilFinished) {
+                }
 
-            public void onFinish() {
-                //nextThing = LifecycleTracker.returnNextActivity();
-               // if(nextThing.equals("closeeyes")){
-                    Log.d("reuse","here 1");
+                public void onFinish() {
+                    //nextThing = LifecycleTracker.returnNextActivity();
+                    // if(nextThing.equals("closeeyes")){
+                    Log.d("reuse", "here 1");
                     openCloseEyes();
-               // }else{
-                    Log.d("failurecatcher","role:" + role.getText().toString());
-                    Log.d("failurecatcher","failure in reveal role");
-               // }
-            }
-        }.start();
+                    // }else{
+                    Log.d("failurecatcher", "role:" + role.getText().toString());
+                    Log.d("failurecatcher", "failure in reveal role");
+                    // }
+                }
+            }.start();
+        }
     }
 
     public void openCloseEyes() {
-        Log.d("reuse","here 2");
+        Log.d("reuse", "here 2");
         CloseYourEyes.closeEyesAudio = MediaPlayer.create(this, R.raw.closeeyes);
         Intent intent = new Intent(this, CloseYourEyes.class);
-        Log.d("reuse","here 3");
+        Log.d("reuse", "here 3");
         startActivity(intent);
     }
 
@@ -115,9 +117,9 @@ public class ReavealRole extends AppCompatActivity {
                 loopRecceiveMessage = false;
             }
         }
-        if(receivedMessage.startsWith("totalplayers")){
+        if (receivedMessage.startsWith("totalplayers")) {
             MafiaClientGame.progressBar.setMax(Integer.parseInt(receivedMessage.split(" ")[1]));
-        }else if(receivedMessage.startsWith("currentplayers")){
+        } else if (receivedMessage.startsWith("currentplayers")) {
             MafiaClientGame.progressBar.setProgress(Integer.parseInt(receivedMessage.split(" ")[1]));
         }
         Log.d("conflict", "Message Received:" + receivedMessage);
