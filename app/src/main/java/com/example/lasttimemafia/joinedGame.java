@@ -1,9 +1,13 @@
 package com.example.lasttimemafia;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.StrictMode;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.LogPrinter;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,8 +22,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static com.example.lasttimemafia.ReavealRole.receiveMessage;
 
 public class joinedGame extends AppCompatActivity {
+    boolean loop = true;
     public static String name = "";
     public static Socket socket;
     Button button2;
@@ -31,6 +40,12 @@ public class joinedGame extends AppCompatActivity {
     boolean loop2 = true;
     ProgressBar progressBar;
     String input = "";
+    public Handler handler;
+    Thread thread;
+    //Message mainThreadMessage;
+    Message messageOfficial;
+    static String host = "";
+    public Handler mainThreadHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +55,37 @@ public class joinedGame extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_joined_game);
         if (savedInstanceState == null) {
+            mainThreadHandler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    Log.d("handleimport", "We are inside the Main Handler");
+                    String value = msg.obj.toString();
+                    if (value.equals("inputset")) {
+                        String currentNumOfPlayers = "";
+                        String[] currentNumOfPlayers2 = {};
+                        if (input != null) {
+                            currentNumOfPlayers2 = input.split(" ");
+
+                            currentNumOfPlayers = "";
+                            if (currentNumOfPlayers2[0].equals("currentplayers")) {
+                                currentNumOfPlayers = currentNumOfPlayers2[1];
+                            }
+                            if (currentNumOfPlayers.length() > 0) {
+                                progressBar.setProgress(Integer.valueOf(currentNumOfPlayers));
+                            }
+                        }
+                        if (currentNumOfPlayers.equals(totalNumOfPlayers)) {
+                            if (loop) {
+                                Log.d("formatting", "Made it to JoinedGameAboutToCallMafiaGame");
+                                openMafiaGame();
+                            }
+                            loop = false;
+                            Log.d("clientGame2", "Mafia Game Has Been Opened");
+                        }
+                    }
+                }
+            };
+
             String code = "";
             Log.d("formatting", "Made it to JoinedGame1");
             button2 = (Button) findViewById(R.id.button4);
@@ -71,6 +117,38 @@ public class joinedGame extends AppCompatActivity {
             });
             new Thread() {
                 public void run() {
+                    Looper.prepare();
+                    handler = new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            Log.d("handleimport", "We are inside the Side Thread 1");
+                            String value = msg.obj.toString();
+                            if (value.equals("updateinput")) {
+                                Log.d("handleimport", "We are inside the Side Thread 2");
+                                try {
+                                    input = receiveMessage();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                messageOfficial.obj = "inputset";
+                                mainThreadHandler.sendMessage(messageOfficial);
+                            } else if (value.equals("updatesocket")) {
+                                try {
+                                    socket = new Socket(host, 4999);
+                                    br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                                    out = new PrintWriter(socket.getOutputStream(), true);
+                                    int portToUse = 0;
+                                    portToUse = Integer.parseInt(br.readLine());
+                                    socket.close();
+                                    finalConnection(host, portToUse);
+                                } catch (IOException | InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    };
                     while (loop2) {
                         try {
                             Thread.sleep(200);
@@ -81,7 +159,6 @@ public class joinedGame extends AppCompatActivity {
                             loop2 = false;
                         }
                     }
-                    boolean loop = true;
                     ProgressBar progressBar = findViewById(R.id.progressBar4);
                     Log.d("formatting", "Made it to JoinedGame8");
                     while (loop) {
@@ -92,14 +169,16 @@ public class joinedGame extends AppCompatActivity {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        try {
-                            input = receiveMessage();
-                        } catch (IOException | InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        //input = receiveMessage();
+                        Message mainThreadMessage;
+                        mainThreadMessage = Message.obtain();
+                        mainThreadMessage.obj = "updateinput";
+                        Log.d("handleimport", "Pre Export");
+                        handler.sendMessage(mainThreadMessage);
+                        Log.d("handleimport", "Post Export");
                         Log.d("clientGame", "This is the Progress: " + input);
                         //Log.d("clientGame","We Made It Here!");
-                        String currentNumOfPlayers = "";
+                        /*String currentNumOfPlayers = "";
                         String[] currentNumOfPlayers2 = {};
                         if (input != null) {
                             currentNumOfPlayers2 = input.split(" ");
@@ -111,17 +190,15 @@ public class joinedGame extends AppCompatActivity {
                             if (currentNumOfPlayers.length() > 0) {
                                 progressBar.setProgress(Integer.valueOf(currentNumOfPlayers));
                             }
-                        }
-                        Log.d("clientGame2", "CurrentPlayers: " + currentNumOfPlayers);
-                        Log.d("clientGame2", "TotalPlayers: " + totalNumOfPlayers);
-                        if (currentNumOfPlayers.equals(totalNumOfPlayers)) {
+                        }*/
+                        /*if (currentNumOfPlayers.equals(totalNumOfPlayers)) {
                             if (loop) {
                                 Log.d("formatting", "Made it to JoinedGameAboutToCallMafiaGame");
                                 openMafiaGame();
                             }
                             loop = false;
                             Log.d("clientGame2", "Mafia Game Has Been Opened");
-                        }
+                        }*/
                     }
                 }
             }.start();
@@ -180,24 +257,22 @@ public class joinedGame extends AppCompatActivity {
                 totalistic = totalistic + code.charAt(looper);
             }
         }
-        final String host = totalistic;
+        host = totalistic;
         final int portNumber = 4999;
         boolean run = true;
         int portToUse = 0;
-        Log.d("checkConnection", "The Host:" + host);
-        Log.d("checkConnection", "Before Socket Connection");
-        //socket = new Socket(host, portNumber);
-        Log.d("formatting", "Made it to JoinedGame9");
-        socket = new Socket(host, 4999);
-        Log.d("checkConnection", "After the Socket Connection");
-        br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        out = new PrintWriter(socket.getOutputStream(), true);
+        //socket = new Socket(host, 4999);
+        Message mainThreadMessage = Message.obtain();
+        mainThreadMessage.obj = "updatesocket";
+        Log.d("handleimport", "Pre message send in mainCode");
+        handler.sendMessage(mainThreadMessage);
+        Log.d("handleimport", "Post message send in mainCode");
+        /*br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        out = new PrintWriter(socket.getOutputStream(), true);*/
 
-        portToUse = Integer.parseInt(br.readLine());
-        Log.d("clientGame", "value of final port:" + portToUse);
+        /*portToUse = Integer.parseInt(br.readLine());
         socket.close();
-        Log.d("formatting", "Made it to JoinedGame10");
-        finalConnection(host, portToUse);
+        finalConnection(host, portToUse);*/
     }
 
     public static void sendMessage(String message) {
@@ -241,4 +316,5 @@ public class joinedGame extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
+
 }

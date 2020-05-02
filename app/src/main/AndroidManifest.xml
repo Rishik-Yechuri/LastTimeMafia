@@ -38,7 +38,7 @@
             android:name=".TextMessages"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="nosensor" />
-        <activity android:name=".joinedGame" />
+        <activity android:name=".joinedGame"  android:screenOrientation="nosensor"/>
         <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
