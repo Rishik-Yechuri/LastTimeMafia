@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -25,6 +26,7 @@ import androidx.fragment.app.Fragment;
 import com.example.lasttimemafia.R;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -65,7 +67,6 @@ public class Frag2 extends Fragment {
         votingButton.setOnClickListener(sendText);
         editText = view.findViewById(R.id.editText);
         //context = getActivity();
-
         if (onSavedInstance == null) {
             handler = new Handler() {
                 @Override
@@ -80,6 +81,7 @@ public class Frag2 extends Fragment {
                     addTextToUI(split[0], split[1]);
                 }
             };
+
             thread = new Thread(new MyThread());
             thread.start();
             Log.d("intstatus", "Status of Interuptted:" + thread.isInterrupted());
@@ -137,7 +139,9 @@ public class Frag2 extends Fragment {
 
     private View.OnClickListener sendText = new View.OnClickListener() {
         public void onClick(View v) {
-            String thingToSend = "setmessage";
+            textMessagesNetworking task = new textMessagesNetworking(Frag2.this);
+            task.execute();
+            /*String thingToSend = "setmessage";
             if (editText.getText().toString().length() > 0) {
                 thingToSend += " " + editText.getText().toString();
                 Log.d("conflict", "TimeGap:" + (System.currentTimeMillis() - lastTimeMessageSent));
@@ -145,7 +149,7 @@ public class Frag2 extends Fragment {
                 sendMessage(thingToSend);
                 // lastTimeMessageSent = System.currentTimeMillis();
                 //  }
-            }
+            }*/
         }
     };
 
@@ -192,6 +196,36 @@ public class Frag2 extends Fragment {
     @Override
     public void onConfigurationChanged(final Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+    }
+
+    private static class textMessagesNetworking extends AsyncTask<Integer, Integer, String> {
+        WeakReference<Frag2> activityWeakReference;
+
+        textMessagesNetworking(Frag2 activity) {
+            activityWeakReference = new WeakReference<Frag2>(activity);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Frag2 activity = activityWeakReference.get();
+        }
+
+        @Override
+        protected String doInBackground(Integer... integers) {
+            Frag2 activity = activityWeakReference.get();
+            String thingToSend = "setmessage";
+            if (activity.editText.getText().toString().length() > 0) {
+                thingToSend += " " + activity.editText.getText().toString();
+                sendMessage(thingToSend);
+            }
+            return "finished";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
     }
 
 }
