@@ -50,6 +50,7 @@ public class OpenYourEyes extends AppCompatActivity {
                 }
 
                 public void onFinish() {
+                    finish();
                     if (nextThing.equals("mafiatextmessages")) {
                         openTextMessages();
                     } else if (nextThing.equals("closeeyes")) {
@@ -81,6 +82,7 @@ public class OpenYourEyes extends AppCompatActivity {
     public void openCloseEyes() {
         CloseYourEyes.closeEyesAudio = MediaPlayer.create(this, R.raw.closeeyes);
         Intent intent = new Intent(this, CloseYourEyes.class);
+        finish();
         startActivity(intent);
     }
 
@@ -92,5 +94,14 @@ public class OpenYourEyes extends AppCompatActivity {
     public void openAngelProtection() {
         Intent intent = new Intent(this, AngelVoting.class);
         startActivity(intent);
+    }
+    @Override
+    public void onBackPressed() {
+        openDialog();
+    }
+
+    public void openDialog() {
+        ConfirmGoPackDialog goBack = new ConfirmGoPackDialog(getApplicationContext());
+        goBack.show(getSupportFragmentManager(), "litty");
     }
 }

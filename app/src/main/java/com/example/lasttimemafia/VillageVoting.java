@@ -186,4 +186,13 @@ public class VillageVoting extends AppCompatActivity {
         Intent intent = new Intent(this, RevealDeadAfterMafia.class);
         startActivity(intent);
     }
+    @Override
+    public void onBackPressed() {
+        openDialog();
+    }
+
+    public void openDialog() {
+        ConfirmGoPackDialog goBack = new ConfirmGoPackDialog(getApplicationContext());
+        goBack.show(getSupportFragmentManager(), "litty");
+    }
 }

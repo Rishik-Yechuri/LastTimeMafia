@@ -68,4 +68,13 @@ public class TextMessages extends AppCompatActivity {
         Log.d("testtabs", "openeyes 2");
         startActivity(intent);
     }
+    @Override
+    public void onBackPressed() {
+        openDialog();
+    }
+
+    public void openDialog() {
+        ConfirmGoPackDialog goBack = new ConfirmGoPackDialog(getApplicationContext());
+        goBack.show(getSupportFragmentManager(), "litty");
+    }
 }

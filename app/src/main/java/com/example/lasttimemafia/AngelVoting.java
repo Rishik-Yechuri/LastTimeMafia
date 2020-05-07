@@ -66,6 +66,7 @@ public class AngelVoting extends AppCompatActivity {
                 }
 
                 public void onFinish() {
+                    finish();
                     openCloseEyes();
                 }
             }.start();
@@ -159,5 +160,14 @@ public class AngelVoting extends AppCompatActivity {
             super.onPostExecute(s);
             getRole.setText(theRole);
         }
+    }
+    @Override
+    public void onBackPressed() {
+        openDialog();
+    }
+
+    public void openDialog() {
+        ConfirmGoPackDialog goBack = new ConfirmGoPackDialog(getApplicationContext());
+        goBack.show(getSupportFragmentManager(), "litty");
     }
 }

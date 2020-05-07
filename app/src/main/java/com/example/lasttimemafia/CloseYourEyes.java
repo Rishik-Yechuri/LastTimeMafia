@@ -71,6 +71,7 @@ public class CloseYourEyes extends AppCompatActivity {
                 }
 
                 public void onFinish() {
+                    finish();
                     if (nextThing.equals("openeyes")) {
                         openOpenEyes();
                     } else if (nextThing.equals("closeeyes")) {
@@ -111,5 +112,14 @@ public class CloseYourEyes extends AppCompatActivity {
         OpenYourEyes.openEyesAudio = MediaPlayer.create(this, R.raw.guardianangelopeneyes);
         Intent intent = new Intent(this, OpenYourEyes.class);
         startActivity(intent);
+    }
+    @Override
+    public void onBackPressed() {
+        openDialog();
+    }
+
+    public void openDialog() {
+        ConfirmGoPackDialog goBack = new ConfirmGoPackDialog(getApplicationContext());
+        goBack.show(getSupportFragmentManager(), "litty");
     }
 }

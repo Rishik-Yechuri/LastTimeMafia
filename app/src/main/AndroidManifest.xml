@@ -17,29 +17,63 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".SettingsMenu" />
-        <activity android:name=".AngelVoting" />
-        <activity android:name=".VillageVoting" />
-        <activity android:name=".RevealDeadAfterMafia" />
-        <activity android:name=".OpenYourEyes" />
-        <activity android:name=".ReavealRole" />
-        <activity android:name=".CloseYourEyes" />
-        <activity android:name=".GameIsStarting" />
-        <activity android:name=".CountdownTimer" />
-        <activity android:name=".ChangeBackground" />
-        <activity android:name=".hostGame" />
-        <activity android:name=".MafiaServerGame" />
-        <activity android:name=".MafiaNetworkCode" />
-        <activity android:name=".NetwworkCaller" />
-        <activity android:name=".Server" />
-        <activity android:name=".MafiaClientGame" />
-        <activity android:name=".Lobby" />
+            android:name=".SettingsMenu"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".AngelVoting"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".VillageVoting"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".RevealDeadAfterMafia"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".OpenYourEyes"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".ReavealRole"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".CloseYourEyes"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".GameIsStarting"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".CountdownTimer"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".ChangeBackground"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".hostGame"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".MafiaServerGame"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".MafiaNetworkCode"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".NetwworkCaller"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".MafiaClientGame"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".Lobby"
+            android:screenOrientation="nosensor" />
         <activity
             android:name=".TextMessages"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="nosensor" />
-        <activity android:name=".joinedGame"  android:screenOrientation="nosensor"/>
-        <activity android:name=".MainActivity" >
+        <activity
+            android:name=".joinedGame"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

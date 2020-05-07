@@ -43,7 +43,7 @@ public class joinedGame extends AppCompatActivity {
     ProgressBar progressBar;
     String input = "";
     EditText textCode;
-    public Handler handler;
+    public static Handler handler;
     Thread thread;
     //Message mainThreadMessage;
     Message messageOfficial;
@@ -57,21 +57,29 @@ public class joinedGame extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_joined_game);
-        if (savedInstanceState == null) {
-            String code = "";
-            Log.d("formatting", "Made it to JoinedGame1");
-            button2 = (Button) findViewById(R.id.button4);
-            Log.d("formatting", "Made it to JoinedGame2");
-            progressBar = findViewById(R.id.progressBar4);
-            button2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (v.getId() == R.id.button4) {
-                        progressBar = findViewById(R.id.progressBar4);
-                        Log.d("progressbarfinal","Value of progressBar:" + progressBar);
-                        textCode = findViewById(R.id.editText3);
-                        nameText = findViewById(R.id.nameText);
-                        name = nameText.getText().toString();
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                String value = msg.obj.toString();
+                if (value.equals("die")) {
+                    finish();
+                }
+            }
+        };
+        //if (savedInstanceState == null) {
+        String code = "";
+        Log.d("formatting", "Made it to JoinedGame1");
+        button2 = (Button) findViewById(R.id.button4);
+        Log.d("formatting", "Made it to JoinedGame2");
+        progressBar = findViewById(R.id.progressBar4);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v.getId() == R.id.button4) {
+                    Log.d("progressbarfinal", "Value of progressBar:" + progressBar);
+                    textCode = findViewById(R.id.editText3);
+                    nameText = findViewById(R.id.nameText);
+                    name = nameText.getText().toString();
                         /*try {
                             runMainCode(code);
                         } catch (IOException e) {
@@ -79,94 +87,99 @@ public class joinedGame extends AppCompatActivity {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }*/
-                        networkProcess task = new networkProcess(joinedGame.this);
-                        task.execute();
-                        button2.setText("connected");
+                    networkProcess task = new networkProcess(joinedGame.this);
+                    task.execute();
+                    button2.setText("connected");
+                }
+            }
+        });
+        new Thread() {
+            public void run() {
+                start = false;
+                Looper.prepare();
+                while (loop2) {
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (start) {
+                        loop2 = false;
                     }
                 }
-            });
-            new Thread() {
-                public void run() {
-                    Looper.prepare();
-                    while (loop2) {
-                        try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        if (start) {
-                            loop2 = false;
-                        }
-                    }
-                    progressBar = findViewById(R.id.progressBar4);
-                    Log.d("formatting", "Made it to JoinedGame8");
-                    while (loop) {
-                        Log.d("clientnums", "TotalPlayers:" + totalNumOfPlayers);
-                        progressBar.setMax(Integer.valueOf(totalNumOfPlayers));
-                        try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        try {
-                            input = receiveMessage();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        Message mainThreadMessage;
-                        mainThreadMessage = Message.obtain();
-                        mainThreadMessage.obj = "updateinput";
-                        Log.d("handleimport", "Pre Export");
-                        Log.d("handleimport", "Post Export");
-                        Log.d("clientGame", "This is the Progress: " + input);
-                        //Log.d("clientGame","We Made It Here!");
-                        String currentNumOfPlayers = "";
-                        String[] currentNumOfPlayers2 = {};
-                        if (input != null) {
-                            currentNumOfPlayers2 = input.split(" ");
 
-                            currentNumOfPlayers = "";
-                            if (currentNumOfPlayers2[0].equals("currentplayers")) {
-                                currentNumOfPlayers = currentNumOfPlayers2[1];
-                            }
-                            if (currentNumOfPlayers.length() > 0) {
-                                progressBar.setProgress(Integer.valueOf(currentNumOfPlayers));
-                            }
+                Log.d("formatting", "Made it to JoinedGame8");
+                while (loop) {
+                    Log.d("clientnums", "TotalPlayers:" + totalNumOfPlayers);
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        input = receiveMessage(joinedGame.this);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    Message mainThreadMessage;
+                    mainThreadMessage = Message.obtain();
+                    mainThreadMessage.obj = "updateinput";
+                    Log.d("handleimport", "Pre Export");
+                    Log.d("handleimport", "Post Export");
+                    Log.d("clientGame", "This is the Progress: " + input);
+                    //Log.d("clientGame","We Made It Here!");
+                    String currentNumOfPlayers = "";
+                    String[] currentNumOfPlayers2 = {};
+                    if (input != null) {
+                        currentNumOfPlayers2 = input.split(" ");
+
+                        currentNumOfPlayers = "";
+                        if (currentNumOfPlayers2[0].equals("currentplayers")) {
+                            currentNumOfPlayers = currentNumOfPlayers2[1];
                         }
-                        if (currentNumOfPlayers.equals(totalNumOfPlayers)) {
-                            if (loop) {
-                                Log.d("formatting", "Made it to JoinedGameAboutToCallMafiaGame");
-                                openMafiaGame();
-                            }
-                            loop = false;
-                            Log.d("clientGame2", "Mafia Game Has Been Opened");
+                        if (currentNumOfPlayers.length() > 0) {
+                            progressBar.setProgress(Integer.valueOf(currentNumOfPlayers));
                         }
                     }
+                    if (currentNumOfPlayers.equals(totalNumOfPlayers)) {
+                        if (loop) {
+                            Log.d("formatting", "Made it to JoinedGameAboutToCallMafiaGame");
+                            finish();
+                            openMafiaGame();
+                        }
+                        loop = false;
+                        Log.d("clientGame2", "Mafia Game Has Been Opened");
+                    }
                 }
-            }.start();
-        }
+            }
+        }.start();
+        //}
     }
 
-    public void finalConnection(String host, int portNumber) throws IOException, InterruptedException {
-        Log.d("clientGame", "FinalPort:" + portNumber);
-        Log.d("formatting", "Made it to JoinedGame11");
+    public static void finalConnection(String host, int portNumber, joinedGame realActivity) throws IOException, InterruptedException {
+        Log.d("stronktrace", "Here 1");
         Socket socket = new Socket(host, portNumber);
+        Log.d("stronktrace", "Here 2");
         br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        Log.d("stronktrace", "Here 3");
         out = new PrintWriter(socket.getOutputStream(), true);
+        Log.d("stronktrace", "Here 4");
         //setContentView(R.layout.activity_lobby);
         Thread.sleep(2000);
-        Log.d("formatting", "Made it to JoinedGame12");
-        String receive = receiveMessage();
+        Log.d("stronktrace", "Here 5");
+        String receive = receiveMessage(realActivity);
+        Log.d("stronktrace", "Here 6");
         String[] splitMessage = receive.split(" ");
+        Log.d("stronktrace", "Here 7");
         totalNumOfPlayers = splitMessage[1];
-        Log.d("formatting", "Made it to JoinedGame13");
+        Log.d("stacktrace", "presend");
         sendMessage("setname " + name);
-        Log.d("formatting", "Made it to JoinedGame14");
+        Log.d("stacktrace", "postsend");
         //sendMessage("trashInfo");
         start = true;
-        Log.d("clientGame", "Total Num Of Players:" + totalNumOfPlayers);
+
 
            /* new Thread() {
                 public void run() {
@@ -178,7 +191,7 @@ public class joinedGame extends AppCompatActivity {
             }.start();*/
     }
 
-    public void runMainCode(String code) throws IOException, InterruptedException {
+    public static void runMainCode(String code, joinedGame realActivity) throws IOException, InterruptedException {
         String[] codeSplit = code.split("\\.");
         String totalistic = "";
         if (!(code.charAt(0) == 'A' || code.charAt(0) == 'C' || code.charAt(0) == 'B')) {
@@ -215,7 +228,7 @@ public class joinedGame extends AppCompatActivity {
 
         portToUse = Integer.parseInt(br.readLine());
         socket.close();
-        finalConnection(host, portToUse);
+        finalConnection(host, portToUse, realActivity);
     }
 
     public static void sendMessage(String message) {
@@ -228,28 +241,31 @@ public class joinedGame extends AppCompatActivity {
         Log.d("conflict","The recieved message was: " + receivedMessage);
         return receivedMessage;
     }*/
-    public String receiveMessage() throws IOException, InterruptedException {
+    public static String receiveMessage(joinedGame activity) throws IOException, InterruptedException {
+        WeakReference<joinedGame> activityWeakReference = new WeakReference<joinedGame>(activity);
+        joinedGame activity2 = activityWeakReference.get();
         boolean loop = true;
         String receivedMessage = "";
         while (loop) {
             Thread.sleep(200);
-            Log.d("messageforrole", "Message: " + receivedMessage);
             receivedMessage = br.readLine();
-            Log.d("messageforrole", "Message2: " + receivedMessage);
             if (receivedMessage != null) {
                 loop = false;
             }
         }
         if (receivedMessage.startsWith("currentplayers")) {
-            Log.d("thingset","please");
-            progressBar.setProgress(Integer.parseInt(receivedMessage.split(" ")[1]));
+            Log.d("thingset", "please");
+            activity2.progressBar.setProgress(Integer.parseInt(receivedMessage.split(" ")[1]));
         } else if (receivedMessage.startsWith("totalplayers")) {
-            if (progressBar == null) {
-                progressBar = findViewById(R.id.progressBar4);
+            if (activity2.progressBar == null) {
+                activity2.progressBar = activity2.findViewById(R.id.progressBar4);
             }
-            progressBar.setMax(Integer.parseInt(receivedMessage.split(" ")[1]));
+            activity2.progressBar = activity2.findViewById(R.id.progressBar4);
+            activity2.progressBar.setMax(Integer.parseInt(receivedMessage.split(" ")[1]));
             totalNumOfPlayers = receivedMessage.split(" ")[1];
         }
+        Log.d("callercheck", "Called Receive from joinedGame");
+        Log.d("conflict", "Received Message: " + receivedMessage);
         return receivedMessage;
     }
 
@@ -258,10 +274,11 @@ public class joinedGame extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        finish();
         startActivity(intent);
     }
 
-    private class networkProcess extends AsyncTask<Integer, Integer, String> {
+    private static class networkProcess extends AsyncTask<Integer, Integer, String> {
         WeakReference<joinedGame> activityWeakReference;
 
         networkProcess(joinedGame activity) {
@@ -272,8 +289,8 @@ public class joinedGame extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             joinedGame activity = activityWeakReference.get();
-            setContentView(R.layout.activity_lobby);
-
+            activity.setContentView(R.layout.activity_lobby);
+            activity.progressBar = activity.findViewById(R.id.progressBar4);
         }
 
         @Override
@@ -281,7 +298,7 @@ public class joinedGame extends AppCompatActivity {
             joinedGame activity = activityWeakReference.get();
             String code = activity.textCode.getText().toString();
             try {
-                runMainCode(code);
+                runMainCode(code, activity);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {

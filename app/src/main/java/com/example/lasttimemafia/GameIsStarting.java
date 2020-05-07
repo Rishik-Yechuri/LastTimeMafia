@@ -63,6 +63,7 @@ public class GameIsStarting extends AppCompatActivity {
                 }
 
                 public void onFinish() {
+                    finish();
                     openCountdownTimer();
                 }
             }.start();
@@ -71,6 +72,7 @@ public class GameIsStarting extends AppCompatActivity {
 
     public void openCountdownTimer() {
         Intent intent = new Intent(this, ReavealRole.class);
+        finish();
         startActivity(intent);
     }
 
@@ -89,5 +91,14 @@ public class GameIsStarting extends AppCompatActivity {
             }
         }
         return receivedMessage;
+    }
+    @Override
+    public void onBackPressed() {
+        openDialog();
+    }
+
+    public void openDialog() {
+        ConfirmGoPackDialog goBack = new ConfirmGoPackDialog(getApplicationContext());
+        goBack.show(getSupportFragmentManager(), "litty");
     }
 }

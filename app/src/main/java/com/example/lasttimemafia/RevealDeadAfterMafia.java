@@ -83,6 +83,7 @@ public class RevealDeadAfterMafia extends AppCompatActivity {
                     //Log.d("days","does this even wrk!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     Log.d("finalloop", "NextThing:" + nextThing);
                     Log.d("finalloop", "Did we make it here 4");
+                    finish();
                     if (!isTheGameGoing && nextThing.equals("gameover")) {
                         //Do nothing
                     } else if (!isTheGameGoing) {
@@ -141,5 +142,15 @@ public class RevealDeadAfterMafia extends AppCompatActivity {
         LifecycleTracker.setLifecycle(new ArrayList<>(Arrays.asList("gameover")));
         Intent intent = new Intent(this, RevealDeadAfterMafia.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        openDialog();
+    }
+
+    public void openDialog() {
+        ConfirmGoPackDialog goBack = new ConfirmGoPackDialog(getApplicationContext());
+        goBack.show(getSupportFragmentManager(), "litty");
     }
 }

@@ -110,6 +110,7 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
             textMessage.setText(role);
             CountdownTimer.countdownTime = mafiaTime;
             Log.d("formatting", "Made it to MafiaClientGameEnd");
+            finish();
             openGameStarting();
        /* new java.util.Timer().schedule(
                 new java.util.TimerTask() {
@@ -132,6 +133,7 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
     }
 
     public void sendMessage(String message) {
+        Log.d("conflict", "Message Sent: " + message);
         out.println(message);
     }
 
@@ -201,6 +203,7 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
 
     public void openGameStarting() {
         Intent intent = new Intent(this, GameIsStarting.class);
+        finish();
         startActivity(intent);
     }
 }

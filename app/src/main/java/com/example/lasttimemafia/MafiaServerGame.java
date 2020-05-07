@@ -124,4 +124,13 @@ public class MafiaServerGame extends AppCompatActivity {
             Log.d("goingcrazy", "roles added");
         }
     }
+    @Override
+    public void onBackPressed() {
+        openDialog();
+    }
+
+    public void openDialog() {
+        ConfirmGoPackDialog goBack = new ConfirmGoPackDialog(getApplicationContext());
+        goBack.show(getSupportFragmentManager(), "litty");
+    }
 }

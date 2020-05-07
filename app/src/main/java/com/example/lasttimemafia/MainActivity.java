@@ -2,6 +2,7 @@ package com.example.lasttimemafia;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -17,33 +18,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            //Wifi Stuff
-            //A method for the wifi that discovers peers
-            //Regular Loading stuff
+        //if (savedInstanceState == null) {
             preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
+            Log.d("reloaderror","Pre buttons creating");
             Button button2 = (Button) findViewById(R.id.button2);
+            Log.d("reloaderror","Button Created");
             button2.setOnClickListener(this);
+            Log.d("reloaderror","listener set");
             Button button = (Button) findViewById(R.id.button);
             button.setOnClickListener(this);
             Button button3 = (Button) findViewById(R.id.button3);
             button3.setOnClickListener(this);
             Button button5 = (Button) findViewById(R.id.button5);
             button5.setOnClickListener(this);
-        }
+       // }
     }
 
 
     //Button codes
     @Override
     public void onClick(View v) {
+        Log.d("reloaderror","onclick works");
         if (v.getId() == R.id.button2) {
+            Log.d("reloaderror","settings button clicked");
             openSetting();
         } else if (v.getId() == R.id.button) {
             openhostGame();
         } else if (v.getId() == R.id.button3) {
             //openCreateAccount();
         } else if (v.getId() == R.id.button5) {
+            Log.d("reloaderror","join game button clicked");
             openJoinedGame();
         }
     }

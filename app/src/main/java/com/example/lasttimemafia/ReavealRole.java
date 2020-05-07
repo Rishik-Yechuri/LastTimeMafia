@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -22,11 +24,28 @@ import static com.example.lasttimemafia.joinedGame.socket;
 
 public class ReavealRole extends AppCompatActivity {
     String nextThing;
+    public static Intent intentMain;
+    static Handler handler;
+    boolean killed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reaveal_role);
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                String value = msg.obj.toString();
+                if (value.equals("mainmenu")) {
+                    killed = true;
+                    Message killerMessage = Message.obtain();
+                    killerMessage.obj = "die";
+                    joinedGame.handler.sendMessage(killerMessage);
+                    finish();
+                }
+            }
+        };
+        intentMain = new Intent(this, MainActivity.class);
         HashMap<String, String> roleToFormatted = new HashMap<>();
         roleToFormatted.put("mafia", "75");
         roleToFormatted.put("villager", "75");
@@ -76,7 +95,7 @@ public class ReavealRole extends AppCompatActivity {
                 public void onFinish() {
                     //nextThing = LifecycleTracker.returnNextActivity();
                     // if(nextThing.equals("closeeyes")){
-                    Log.d("reuse", "here 1");
+                    finish();
                     openCloseEyes();
                     // }else{
                     Log.d("failurecatcher", "role:" + role.getText().toString());
@@ -92,7 +111,10 @@ public class ReavealRole extends AppCompatActivity {
         CloseYourEyes.closeEyesAudio = MediaPlayer.create(this, R.raw.closeeyes);
         Intent intent = new Intent(this, CloseYourEyes.class);
         Log.d("reuse", "here 3");
-        startActivity(intent);
+        finish();
+        if (!killed) {
+            startActivity(intent);
+        }
     }
 
     public static String toTitleCase(String givenString) {
@@ -124,5 +146,15 @@ public class ReavealRole extends AppCompatActivity {
         }
         Log.d("conflict", "Message Received:" + receivedMessage);
         return receivedMessage;
+    }
+
+    @Override
+    public void onBackPressed() {
+        openDialog();
+    }
+
+    public void openDialog() {
+        ConfirmGoPackDialog goBack = new ConfirmGoPackDialog(getApplicationContext());
+        goBack.show(getSupportFragmentManager(), "litty");
     }
 }

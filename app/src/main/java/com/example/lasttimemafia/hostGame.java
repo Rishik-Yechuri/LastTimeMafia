@@ -106,6 +106,7 @@ public class hostGame extends AppCompatActivity {
                         if (currentNumOfPlayers == totalNumOfPlayers) {
                             loop = false;
                             Log.d("hostGame", "OpenedMafiaGame");
+                            finish();
                             openMafiaGame();
                         }
                     }
