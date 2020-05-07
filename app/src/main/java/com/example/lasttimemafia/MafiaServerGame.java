@@ -130,7 +130,7 @@ public class MafiaServerGame extends AppCompatActivity {
     }
 
     public void openDialog() {
-        ConfirmGoPackDialog goBack = new ConfirmGoPackDialog(getApplicationContext());
+        ConfirmGoPackDialog goBack = new ConfirmGoPackDialog(MafiaServerGame.this);
         goBack.show(getSupportFragmentManager(), "litty");
     }
 }

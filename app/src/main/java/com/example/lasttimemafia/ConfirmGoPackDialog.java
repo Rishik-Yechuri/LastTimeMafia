@@ -32,8 +32,14 @@ public class ConfirmGoPackDialog extends AppCompatDialogFragment {
             public void onClick(DialogInterface dialog, int which) {
                 Message tempMessage = Message.obtain();
                 tempMessage.obj = "mainmenu";
+                Log.d("contextlooker","value of mContext:" + mContext);
                 ((Activity) mContext).finish();
                 //ReavealRole.handler.sendMessage(tempMessage);
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
             }
         });
         return builder.create();
