@@ -97,9 +97,11 @@ public class MafiaNetworkCode extends AppCompatActivity {
 
     public String convertIP() throws UnknownHostException {
         String totalistic = "";
-
         String ipAddress = getIPAddress(true);
-        Log.d("IP", "This is What is returned from getIPAddress:" + ipAddress);
+        ipAddress= ipAddress.replace(".","A");
+        long downed = ConvertBasesToCode.convertDown(ipAddress,11);
+        totalistic = ConvertBasesToCode.convertUp(downed,62);
+        /*Log.d("IP", "This is What is returned from getIPAddress:" + ipAddress);
         String[] IPSplit = ipAddress.split("\\.");
         if (IPSplit[0].equals("192") && IPSplit[1].equals("168")) {
             String first = "";
@@ -126,7 +128,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
             }
         } else {
             totalistic = "B" + ipAddress;
-        }
+        }*/
         return totalistic;
         //return totalistic;
     }

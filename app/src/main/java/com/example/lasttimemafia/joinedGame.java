@@ -192,9 +192,13 @@ public class joinedGame extends AppCompatActivity {
     }
 
     public static void runMainCode(String code, joinedGame realActivity) throws IOException, InterruptedException {
-        String[] codeSplit = code.split("\\.");
+       // String[] codeSplit = code.split("\\.");
         String totalistic = "";
-        if (!(code.charAt(0) == 'A' || code.charAt(0) == 'C' || code.charAt(0) == 'B')) {
+        long downed = ConvertBasesToCode.convertDown(code,62);
+        Log.d("downedvalue","downed:" + downed);
+        totalistic = ConvertBasesToCode.convertUp(downed,11);
+        totalistic = totalistic.replace("A",".");
+        /*if (!(code.charAt(0) == 'A' || code.charAt(0) == 'C' || code.charAt(0) == 'B')) {
             //Final Code
             totalistic = "192.168" + "." + codeSplit[0] + "." + codeSplit[1];
 
@@ -213,7 +217,7 @@ public class joinedGame extends AppCompatActivity {
             for (int looper = 1; looper < code.length(); looper++) {
                 totalistic = totalistic + code.charAt(looper);
             }
-        }
+        }*/
         host = totalistic;
         final int portNumber = 4999;
         boolean run = true;
