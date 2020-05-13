@@ -179,16 +179,6 @@ public class joinedGame extends AppCompatActivity {
         Log.d("stacktrace", "postsend");
         //sendMessage("trashInfo");
         start = true;
-
-
-           /* new Thread() {
-                public void run() {
-                    boolean loop = true;
-                    //while(loop){
-
-                   // }
-                }
-            }.start();*/
     }
 
     public static void runMainCode(String code, joinedGame realActivity) throws IOException, InterruptedException {
