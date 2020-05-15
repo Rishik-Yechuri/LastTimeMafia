@@ -2,13 +2,12 @@ package com.example.lasttimemafia;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.StrictMode;
-import android.os.Bundle;
 import android.util.Log;
-import android.util.LogPrinter;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,18 +15,12 @@ import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.lasttimemafia.R;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import static com.example.lasttimemafia.ReavealRole.receiveMessage;
 
 public class joinedGame extends AppCompatActivity {
     boolean loop = true;
