@@ -52,7 +52,6 @@ public class MafiaServerGame extends AppCompatActivity {
         setContentView(R.layout.activity_mafia_server_game);
         if (savedInstanceState == null) {
             //Looper.prepare();
-
             // players.add("Vihaan");
 
             //players.add("Vihaan");

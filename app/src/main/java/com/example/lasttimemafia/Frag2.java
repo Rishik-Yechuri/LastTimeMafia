@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Space;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -38,6 +39,8 @@ import static com.example.lasttimemafia.joinedGame.sendMessage;
 
 
 public class Frag2 extends Fragment {
+    Space leftTextSpace;
+    Space rightTestSpace;
     EditText editText;
     ArrayList messageSender = new ArrayList();
     ArrayList message = new ArrayList();
@@ -66,7 +69,19 @@ public class Frag2 extends Fragment {
         Button votingButton = lowerView.findViewById(R.id.button7);
         votingButton.setOnClickListener(sendText);
         editText = view.findViewById(R.id.editText);
-        //context = getActivity();
+        leftTextSpace = view.findViewById(R.id.leftTextSpace);
+        rightTestSpace = view.findViewById(R.id.rightTextSpace);
+        /*float width = GetScreenSize.getDimensionInDP(getContext(), "width");
+        float height = GetScreenSize.getDimensionInDP(getContext(), "height");
+        Log.d("calculate", "Width:" + width);
+        Log.d("calculate", "Height:" + height);
+        float spaceWidth = (width - 360) / 2;
+        Log.d("calculate", "spaceWidth:" + spaceWidth);
+        ViewGroup.LayoutParams paramsLeftSide = leftTextSpace.getLayoutParams();
+        ViewGroup.LayoutParams paramsRightSide = rightTestSpace.getLayoutParams();*/
+        //paramsLeftSide.width = (int) spaceWidth;
+        //paramsRightSide.width = (int) spaceWidth;
+        context = getActivity();
         if (onSavedInstance == null) {
             handler = new Handler() {
                 @Override

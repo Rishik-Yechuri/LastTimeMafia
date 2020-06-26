@@ -36,7 +36,6 @@ public class Frag1 extends Fragment {
     ArrayList<String> playerNames;
     ArrayList<Button> holdButtons;
     ArrayList<Button> holdButtons2;
-
     @Nullable
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag1_layout, container, false);

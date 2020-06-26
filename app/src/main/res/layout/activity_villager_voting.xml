@@ -92,6 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="47dp"
             android:text="Confirm"
+            android:background="@drawable/circularbutton"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
@@ -100,6 +101,18 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.995" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:orientation="horizontal">
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="8dp"
+            android:layout_weight="1" />
     </LinearLayout>
 </LinearLayout>
 
