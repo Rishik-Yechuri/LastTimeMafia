@@ -9,9 +9,9 @@
         android:angle="45"
         android:centerX="7"
         android:centerY="7"
-        android:endColor="#01f1fa"
+        android:endColor="#5ddc74"
         android:gradientRadius="50dp"
-        android:startColor="#0189ff"
+        android:startColor="#02832d"
         android:type="linear" />
 
     <!--If your shape requires only one solid color-->

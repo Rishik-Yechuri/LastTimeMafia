@@ -1,6 +1,8 @@
 package com.example.lasttimemafia;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -31,8 +33,13 @@ public class TextMessages extends AppCompatActivity {
             viewPager.setAdapter(sectionsPagerAdapter);
             TabLayout tabs = findViewById(R.id.tabs);
             tabs.setupWithViewPager(viewPager);
-            tabs.getTabAt(0).setText("Voting");
-            tabs.getTabAt(1).setText("Messages");
+            int color = Color.parseColor("#5ddc74");
+            tabs.setSelectedTabIndicatorColor(color);
+            //tabs.getTabAt(0).setText("Voting");
+            tabs.getTabAt(0).setText("");
+            tabs.getTabAt(1).setText("");
+            tabs.getTabAt(0).setIcon(R.drawable.ballotbox);
+            tabs.getTabAt(1).setIcon(R.drawable.circle);
             sendMessage("startalarmandchecktime 35");
             long countdownTimer = 0;
             try {
