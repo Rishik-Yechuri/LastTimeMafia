@@ -214,6 +214,7 @@ public class Frag2 extends Fragment {
     }
 
     private static class textMessagesNetworking extends AsyncTask<Integer, Integer, String> {
+        String textOnLine = "";
         WeakReference<Frag2> activityWeakReference;
 
         textMessagesNetworking(Frag2 activity) {
@@ -224,16 +225,23 @@ public class Frag2 extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             Frag2 activity = activityWeakReference.get();
+            String thingToSend = "setmessage";
+            if (activity.editText.getText().toString().length() > 0) {
+                thingToSend += " " + activity.editText.getText().toString();
+                textOnLine = thingToSend;
+            }
+            activity.editText.setText("");
         }
 
         @Override
         protected String doInBackground(Integer... integers) {
             Frag2 activity = activityWeakReference.get();
-            String thingToSend = "setmessage";
+            /*String thingToSend = "setmessage";
             if (activity.editText.getText().toString().length() > 0) {
                 thingToSend += " " + activity.editText.getText().toString();
                 sendMessage(thingToSend);
-            }
+            }*/
+            sendMessage(textOnLine);
             return "finished";
         }
 

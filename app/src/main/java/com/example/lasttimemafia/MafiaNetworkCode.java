@@ -374,14 +374,16 @@ public class MafiaNetworkCode extends AppCompatActivity {
         } else if (receivedMessage.startsWith("whowonthegame")) {
             sendMessage(whoWon());
         } else if (receivedMessage.startsWith("getroleofperson")) {
-            String role = getRoleOfPerson(receivedMessage.split(" ")[1]);
+            Log.d("textdebug","Received Message for getrole:" + receivedMessage);
+            String role = getRoleOfPerson(receivedMessage.split("ङॠ")[1]);
             sendMessage(role);
 
         } else if (receivedMessage.startsWith("getnumberofpeople")) {
             sendMessage(String.valueOf(totalNumOfPlayers));
 
         } else if (receivedMessage.startsWith("setname")) {
-            playerName = receivedMessage.split(" ")[1];
+            playerName = receivedMessage.split("ङॠ")[1];
+            Log.d("textdebug","Name received:" + playerName);
         }
         return receivedMessage;
     }
@@ -468,7 +470,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
         //Log.d("textdebug", "ServerGame Player list 1:" + MafiaServerGame.players.get(1));
         String playerList = "playerlist";
         for (int x = 0; x < currentNumOfPlayers; x++) {
-            playerList += " " + MafiaServerGame.players.get(x);
+            playerList += "ङॠ" + MafiaServerGame.players.get(x);
         }
         Log.d("textdebug", "Value of playerList:" + playerList);
         return playerList;
@@ -669,6 +671,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
     }
 
     public String getRoleOfPerson(String personToGetRoleOf) {
+        Log.d("textdebug","personTogetRoleOf:" + personToGetRoleOf);
         int place = MafiaServerGame.players.indexOf(personToGetRoleOf);
         String role = MafiaServerGame.role.get(place);
         return role;

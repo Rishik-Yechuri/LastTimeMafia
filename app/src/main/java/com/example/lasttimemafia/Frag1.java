@@ -58,7 +58,7 @@ public class Frag1 extends Fragment {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        String[] cutPlayers = tempPlayerList.split(" ");
+        String[] cutPlayers = tempPlayerList.split("ङॠ");
         Log.d("textdebug", "cutplayers:" + Arrays.toString(cutPlayers));
         if (cutPlayers[0].equals("playerlist")) {
             for (int y = 1; y < cutPlayers.length; y++) {

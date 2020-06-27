@@ -145,7 +145,7 @@ public class AngelVoting extends AppCompatActivity {
         protected String doInBackground(Integer... integers) {
             AngelVoting activity = activityWeakReference.get();
             try {
-                sendMessage("getroleofperson" + " " + buttonText);
+                sendMessage("getroleofperson" + "ङॠ" + buttonText);
                 theRole = receiveMessage(socket);
             } catch (IOException e) {
                 e.printStackTrace();

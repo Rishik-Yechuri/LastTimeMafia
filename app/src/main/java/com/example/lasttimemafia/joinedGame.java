@@ -169,7 +169,9 @@ public class joinedGame extends AppCompatActivity {
         Log.d("stronktrace", "Here 7");
         totalNumOfPlayers = splitMessage[1];
         Log.d("stacktrace", "presend");
-        sendMessage("setname " + name);
+        String kidsNames = "setnameङॠ" + name;
+        Log.d("textdebug","Name sent:" + kidsNames);
+        sendMessage(kidsNames);
         Log.d("stacktrace", "postsend");
         //sendMessage("trashInfo");
         start = true;

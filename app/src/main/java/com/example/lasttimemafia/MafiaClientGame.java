@@ -56,8 +56,7 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
             //String trash = receiveMessage();
             Log.d("receiveCheck", "Pre");
             try {
-
-                sendMessage("getroleofperson " + joinedGame.name);
+                sendMessage("getroleofpersonङॠ" + joinedGame.name);
                 Log.d("jetski", "Prerole");
                 role = receiveMessage(socket);
                 Log.d("jetski", "Role:" + role);
@@ -70,7 +69,7 @@ public class MafiaClientGame extends AppCompatActivity implements View.OnClickLi
                 //receiveMessage();
 
                 Log.d("jetski", "Prerole");
-                sendMessage("getroleofperson " + name);
+                sendMessage("getroleofpersonङॠ" + name);
                 role = receiveMessage(socket);
                 Log.d("jetski", "Role:" + role);
             /*numOfMafia = Integer.parseInt(receiveMessage(socket));
