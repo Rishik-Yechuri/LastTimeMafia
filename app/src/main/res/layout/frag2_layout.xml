@@ -104,6 +104,8 @@
             app:layout_constraintHorizontal_bias="0.158"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            android:backgroundTint="#5ddc74"
+            android:textColorHighlight="#5ddc74"
             app:layout_constraintVertical_bias="0.992" />
 
         <Button
