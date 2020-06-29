@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "113265908452",
+    "firebase_url": "https://lasttimemafia.firebaseio.com",
+    "project_id": "lasttimemafia",
+    "storage_bucket": "lasttimemafia.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:113265908452:android:5cc2108d15c747fc526af1",
+        "android_client_info": {
+          "package_name": "give.up.lasttimemafia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "113265908452-a36t8q5raj1mafg2evp9fhjadishpuk0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "give.up.lasttimemafia",
+            "certificate_hash": "95717f46440fce186cfb1e66494b956bb637e562"
+          }
+        },
+        {
+          "client_id": "113265908452-37417jta1f1ko4v77c1gn9aav1s36f7l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAe3bvbEPOAx9n98MHpwAZHZ12G_Mh1fLE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "113265908452-37417jta1f1ko4v77c1gn9aav1s36f7l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
