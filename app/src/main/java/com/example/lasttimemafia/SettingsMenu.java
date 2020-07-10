@@ -11,7 +11,9 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +28,8 @@ public class SettingsMenu extends AppCompatActivity {
     TextView villagerNumbers;
     TextView mafiaNumbers;
     TextView angelNumbers;
+    Switch enableWAN;
+    boolean WANenabled;
     public static SharedPreferences preferences;
     public static SharedPreferences.Editor editor;
 
@@ -45,6 +49,8 @@ public class SettingsMenu extends AppCompatActivity {
             seekBarVillager.setOnSeekBarChangeListener(new seekbarListener());
             seekBarMafia.setOnSeekBarChangeListener(new seekbarListener());
             seekBarAngel.setOnSeekBarChangeListener(new seekbarListener());
+            enableWAN = findViewById(R.id.enableWAN);
+            enableWAN.setOnCheckedChangeListener(new switchToggled());
        /* try {
 
             FileInputStream fin = openFileInput("settings.txt");
@@ -113,6 +119,7 @@ public class SettingsMenu extends AppCompatActivity {
         editor.putString("villager", String.valueOf(villagerNumbers.getText()));
         editor.putString("mafia", String.valueOf(mafiaNumbers.getText()));
         editor.putString("angel", String.valueOf(angelNumbers.getText()));
+        editor.putString("wan",String.valueOf(WANenabled));
         editor.apply();
         super.onBackPressed();
     }
@@ -120,5 +127,12 @@ public class SettingsMenu extends AppCompatActivity {
     public static String getDefaults(String key, String defaultValue) {
         String gotit = preferences.getString(key, defaultValue);
         return gotit;
+    }
+    class switchToggled implements CompoundButton.OnCheckedChangeListener{
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            WANenabled = isChecked;
+        }
     }
 }

@@ -8,12 +8,22 @@ import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
+
+import org.json.JSONObject;
 
 import java.io.FileInputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.example.lasttimemafia.SettingsMenu.GAME_PREFERENCES;
@@ -33,14 +43,19 @@ public class hostGame extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host_game);
         if (savedInstanceState == null) {
+            preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
             Log.d("firstorsecond", "HostGame");
             final ProgressBar progressBar = findViewById(R.id.progressBar2);
             NetwworkCaller c1 = new NetwworkCaller();
             String test = "";
             final MafiaNetworkCode giveUp = new MafiaNetworkCode();
+            if(SettingsMenu.getDefaults("wan","false").equals("true")){
+                NetwworkCaller.WANmode = true;
+                MafiaNetworkCode.WANmode = true;;
+            }
             try {
                 test = giveUp.convertIP();
-                Log.d("IP", "This is the IP" + test);
+                //Log.d("IP", "This is the IP" + test);
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
@@ -56,29 +71,8 @@ public class hostGame extends AppCompatActivity {
                 e.printStackTrace();
             }
             String ipAdress = inetAddress.getHostAddress();
-        /*try {
-            Log.d("cuthardcoding","We're in");
-            Log.d("firstplace","In hostGame");
-            FileInputStream fin = openFileInput("settings.txt");
-            int c;
-            String temp = "";
-            Log.d("cuthardcoding","We're in 2");
-            while ((c = fin.read()) != -1) {
-                temp = temp + Character.toString((char) c);
-            }
-            Log.d("cuthardcoding","We're in 3");
-            String[] allValues = temp.split(" ");
-            int total = 0;
-            for (int x = 0; x < allValues.length; x++) {
-                Log.d("cuthardcoding","Value of allValues:" + Arrays.toString(allValues));
-                total += Integer.parseInt(allValues[x]);
-            }
-            Log.d("playerchecks","Toalnumofplayers:" + total);
-            totalNumOfPlayers = total;
-        } catch (Exception ignored) {
-            Log.d("caughtit","In hostagame");
-        }*/
-            preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
+
+            //preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
             int tempMafia = Integer.parseInt(SettingsMenu.getDefaults("mafia", "0"));
             int tempVillager = Integer.parseInt(SettingsMenu.getDefaults("villager", "0"));
             int tempAngel = Integer.parseInt(SettingsMenu.getDefaults("angel", "0"));
@@ -118,5 +112,22 @@ public class hostGame extends AppCompatActivity {
     public void openMafiaGame() {
         Intent intent = new Intent(this, MafiaServerGame.class);
         startActivity(intent);
+    }
+    public void createGame(String message,String token){
+        Map<String, Object> data = new HashMap<>();
+        data.put("message", message);
+        data.put("token",token);
+        FirebaseFunctions.getInstance()
+                .getHttpsCallable("createGame")
+                .call(data)
+                .continueWith(new Continuation<HttpsCallableResult, String>() {
+                    @Override
+                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        HashMap result = (HashMap) task.getResult().getData();
+                        JSONObject res = new JSONObject(result);
+                        //String message = res.getString("gameID");
+                        return null;
+                    }
+                });
     }
 }

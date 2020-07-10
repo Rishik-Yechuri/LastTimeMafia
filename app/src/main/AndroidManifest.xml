@@ -6,7 +6,6 @@
     <uses-permission
         android:name="android.permission.INTERNET"
         android:required="true" />
-
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
@@ -16,6 +15,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:enabled="true"
+            android:exported="true"></service>
+
         <activity
             android:name=".SettingsMenu"
             android:screenOrientation="nosensor" />

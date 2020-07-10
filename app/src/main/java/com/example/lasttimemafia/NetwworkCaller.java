@@ -14,6 +14,8 @@ import static com.example.lasttimemafia.SettingsMenu.GAME_PREFERENCES;
 import static com.example.lasttimemafia.SettingsMenu.preferences;
 
 public class NetwworkCaller extends AppCompatActivity {
+    public static boolean WANmode = false;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
@@ -26,15 +28,17 @@ public class NetwworkCaller extends AppCompatActivity {
         //MafiaNetworkCode c1 = new MafiaNetworkCode();
         final int players = hostGame.totalNumOfPlayers;
         final int totaler = 4999;
-        new Thread() {
-            public void run() {
-                try {
-                    c1.connectionCreater(totaler, players);
-                } catch (IOException e) {
-                    e.printStackTrace();
+        if (!SettingsMenu.getDefaults("wan", "false").equals("true")) {
+            new Thread() {
+                public void run() {
+                    try {
+                        c1.connectionCreater(totaler, players);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        }.start();
+            }.start();
+        }
         for (int o = 0; o < players; o++) {
             final int totaler2 = 5000 + o;
             new Thread() {

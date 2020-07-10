@@ -83,9 +83,11 @@ public class RevealDeadAfterMafia extends AppCompatActivity {
                     //Log.d("days","does this even wrk!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     Log.d("finalloop", "NextThing:" + nextThing);
                     Log.d("finalloop", "Did we make it here 4");
-                    finish();
+                    //finish();
+                    boolean finishActivity = true;
                     if (!isTheGameGoing && nextThing.equals("gameover")) {
                         //Do nothing
+                        finishActivity = false;
                     } else if (!isTheGameGoing) {
                         openGameOver();
                     } else if (!canIMoveOn) {
@@ -96,6 +98,9 @@ public class RevealDeadAfterMafia extends AppCompatActivity {
                         openCloseEyes();
                     } else if (nextThing.equals("gameover")) {
                         openGameOver();
+                    }
+                    if(finishActivity){
+                        finish();
                     }
                 }
             }.start();

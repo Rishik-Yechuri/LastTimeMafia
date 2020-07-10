@@ -1,6 +1,9 @@
 package com.example.lasttimemafia;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -47,10 +50,12 @@ import static com.example.lasttimemafia.SettingsMenu.editor;
 import static com.example.lasttimemafia.SettingsMenu.preferences;
 
 public class MafiaNetworkCode extends AppCompatActivity {
+    public static boolean WANmode = false;
     ProgressBar progressBar;
     public static int totalNumOfPlayers = 2;
     int currentNumOfPlayers = 0;
     Socket socket;
+    private BroadcastReceiver _updateName = new RegisterNameReceiver();
     boolean personKilled = false;
     public static long startTimeOfTimer = System.currentTimeMillis();
     public static long totalTimePassed = 0;
@@ -58,6 +63,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
     public static long alarmEndTime = 0;
     public static long lastAlarmEndTime = 0;
     String playerName;
+    int portNumber;
     //Code for storing text messages and info
     HashMap<String, String> holdVotingInfo; //= new HashMap();
     // ArrayList textMessageHistory;
@@ -98,37 +104,9 @@ public class MafiaNetworkCode extends AppCompatActivity {
     public String convertIP() throws UnknownHostException {
         String totalistic = "";
         String ipAddress = getIPAddress(true);
-        ipAddress= ipAddress.replace(".","A");
-        long downed = ConvertBasesToCode.convertDown(ipAddress,11);
-        totalistic = ConvertBasesToCode.convertUp(downed,62);
-        /*Log.d("IP", "This is What is returned from getIPAddress:" + ipAddress);
-        String[] IPSplit = ipAddress.split("\\.");
-        if (IPSplit[0].equals("192") && IPSplit[1].equals("168")) {
-            String first = "";
-            String second = "";
-            String finalFirst = "";
-            String finalSecond = "";
-            int firstNum = Integer.valueOf(IPSplit[2]);
-            int secondNum = Integer.valueOf(IPSplit[3]);
-            first = Integer.toString(firstNum);
-            second = Integer.toString(secondNum);
-            //Final Code
-            totalistic = String.valueOf(firstNum) + "." + secondNum;
-
-
-        } else if (IPSplit[0].equals("10")) {
-            totalistic = "C";
-            for (int looper = 3; looper < ipAddress.length(); looper++) {
-                totalistic = totalistic + ipAddress.charAt(looper);
-            }
-        } else if (IPSplit[0].equals("172")) {
-            totalistic = "A";
-            for (int looper = 4; looper < ipAddress.length(); looper++) {
-                totalistic = totalistic + ipAddress.charAt(looper);
-            }
-        } else {
-            totalistic = "B" + ipAddress;
-        }*/
+        ipAddress = ipAddress.replace(".", "A");
+        long downed = ConvertBasesToCode.convertDown(ipAddress, 11);
+        totalistic = ConvertBasesToCode.convertUp(downed, 62);
         return totalistic;
         //return totalistic;
     }
@@ -160,24 +138,44 @@ public class MafiaNetworkCode extends AppCompatActivity {
     public void permaConnection(int portNumber2) throws IOException, InterruptedException {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        Log.d("ilolveit", "Precall");
         MafiaServerGame.addRolesToList();
-        Log.d("ilolveit", "postcall");
-        int portNumber = portNumber2;
+        portNumber = portNumber2;
         boolean run = true;
-        ServerSocket serverSocket = new ServerSocket(portNumber);
-        Log.d("hostingGame", "PortNumber:" + portNumber);
-        socket = serverSocket.accept();
-        Log.d("hostingGame", "Connected!");
-        hostGame.currentNumOfPlayers++;
-        currentNumOfPlayers++;
-        OutputStream os = socket.getOutputStream();
+        if (SettingsMenu.getDefaults("wan", "false").equals("true")) {
+            IntentFilter filter = new IntentFilter("REGISTERNAME");
+            this.registerReceiver(_updateName, filter);
+        } else if (SettingsMenu.getDefaults("wan", "false").equals("false")) {
+            Log.d("throwitup","Do The Thing2");
+            ServerSocket serverSocket = new ServerSocket(portNumber);
+            Log.d("throwitup","Do The Thing2 2");
+            socket = serverSocket.accept();
+            Log.d("throwitup","Do The Thing2 3");
+            OutputStream os = socket.getOutputStream();
+            Log.d("throwitup","Do The Thing2 4");
+            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            Log.d("throwitup","Do The Thing2 5");
+            out = new PrintWriter(os, true);
+            Log.d("throwitup","Do The Thing2 6");
+            doThingAfterNameConfirmed();
+            Log.d("throwitup","Do The Thing2 7");
+            boolean keepLoopRunning = true;
+            while (keepLoopRunning) {
+                Log.d("throwitup","Do The Thing2 8");
+                receiveMessage(socket);
+                Log.d("throwitup","Do The Thing2 9");
+            }
+        }
+        /*ServerSocket serverSocket = new ServerSocket(portNumber);
+        socket = serverSocket.accept();*/
+        /*hostGame.currentNumOfPlayers++;
+        currentNumOfPlayers++;*/
+        /*OutputStream os = socket.getOutputStream();
         br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        out = new PrintWriter(os, true);
+        out = new PrintWriter(os, true);*/
         //ProgressBar progressBar = findViewById(R.id.progressBar2);
         //progressBar.setMax(Integer.valueOf(totalNumOfPlayers));
         Log.d("helpme", "totalnum:" + totalNumOfPlayers);
-        sendMessage("totalplayers " + totalNumOfPlayers);
+        /*sendMessage("totalplayers " + totalNumOfPlayers);
         boolean loop = true;
         while (loop) {
             Thread.sleep(200);
@@ -192,17 +190,16 @@ public class MafiaNetworkCode extends AppCompatActivity {
                 Log.d("synccheck", "This is when the server timer is started");
                 loop = false;
             }
-        }
-        String setPlayerName = receiveMessage(socket);
+        }*/
+        /*String setPlayerName = receiveMessage(socket);
         MafiaServerGame.players.add(playerName);
         while (MafiaServerGame.sendRole == false) {
             Thread.sleep(250);
-        }
-        Log.d("stealyokid", "playerName:" + playerName);
-        ;
-        int placeOfRoleInList = MafiaServerGame.players.indexOf(playerName);
-        Log.d("random", "PlaceOfRoleInList: " + placeOfRoleInList);
-        Log.d("removeplayers", "Value of Roles before death:" + MafiaServerGame.role);
+        }*/
+        //Log.d("stealyokid", "playerName:" + playerName);
+        /*int placeOfRoleInList = MafiaServerGame.players.indexOf(playerName);*/
+       // Log.d("random", "PlaceOfRoleInList: " + placeOfRoleInList);
+        //Log.d("removeplayers", "Value of Roles before death:" + MafiaServerGame.role);
         int tempMafia = Integer.parseInt(SettingsMenu.getDefaults("mafia", "0"));
         int tempVillager = Integer.parseInt(SettingsMenu.getDefaults("villager", "0"));
         int tempAngel = Integer.parseInt(SettingsMenu.getDefaults("angel", "0"));
@@ -211,7 +208,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
         MafiaServerGame.numOfVillagers = tempVillager;
         MafiaServerGame.addRolesToList();
         Log.d("goingcrazy", "roles accessed");
-        String role = (String) MafiaServerGame.role.get(placeOfRoleInList);
+        //String role = (String) MafiaServerGame.role.get(placeOfRoleInList);
         //sendMessage("Trash");
        /* Log.d("rolecheck", "RoleSentPre");
         sendMessage(role);//Role
@@ -223,17 +220,10 @@ public class MafiaNetworkCode extends AppCompatActivity {
         sendMessage("30");//Seconds for mafia to talk
         sendMessage("10");//Time for guardian angel
         sendMessage("30");//time for village to talk*/
-        boolean keepLoopRunning = true;
+        /*boolean keepLoopRunning = true;
         while (keepLoopRunning) {
-            Log.d("conflict", "receiveMessage called");
-            Log.d("lifecycle", "in loop");
             receiveMessage(socket);
-        }
-    }
-
-    public char convertIntToChar(int number) {
-        char sendBack = (char) (number);
-        return sendBack;
+        }*/
     }
 
     public static String getIPAddress(boolean useIPv4) {
@@ -374,7 +364,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
         } else if (receivedMessage.startsWith("whowonthegame")) {
             sendMessage(whoWon());
         } else if (receivedMessage.startsWith("getroleofperson")) {
-            Log.d("textdebug","Received Message for getrole:" + receivedMessage);
+            Log.d("textdebug", "Received Message for getrole:" + receivedMessage);
             String role = getRoleOfPerson(receivedMessage.split("ङॠ")[1]);
             sendMessage(role);
 
@@ -383,7 +373,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
 
         } else if (receivedMessage.startsWith("setname")) {
             playerName = receivedMessage.split("ङॠ")[1];
-            Log.d("textdebug","Name received:" + playerName);
+            Log.d("textdebug", "Name received:" + playerName);
         }
         return receivedMessage;
     }
@@ -671,9 +661,59 @@ public class MafiaNetworkCode extends AppCompatActivity {
     }
 
     public String getRoleOfPerson(String personToGetRoleOf) {
-        Log.d("textdebug","personTogetRoleOf:" + personToGetRoleOf);
+        Log.d("textdebug", "personTogetRoleOf:" + personToGetRoleOf);
         int place = MafiaServerGame.players.indexOf(personToGetRoleOf);
         String role = MafiaServerGame.role.get(place);
         return role;
+    }
+
+    public class RegisterNameReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String name = intent.getStringExtra("name");
+            String port = intent.getStringExtra("port");
+            try { checkToRegister(name, port); } catch (InterruptedException | IOException e) { e.printStackTrace(); }
+        }
+    }
+
+    public void checkToRegister(String name, String port) throws InterruptedException, IOException {
+        if (portNumber == Integer.parseInt(port)) {
+            playerName = name;
+            doThingAfterNameConfirmed();
+        }
+    }
+    public void doThingAfterNameConfirmed() throws IOException, InterruptedException {
+        Log.d("throwitup","Do The Thing2 10");
+        hostGame.currentNumOfPlayers++;
+        currentNumOfPlayers++;
+        sendMessage("totalplayers " + totalNumOfPlayers);
+        Log.d("throwitup","Do The Thing2 11");
+        boolean loop = true;
+        while (loop) {
+            Log.d("throwitup","Do The Thing2 12");
+            Thread.sleep(200);
+            sendMessage("currentplayers " + String.valueOf(hostGame.currentNumOfPlayers));
+            Log.d("throwitup","Do The Thing2 13");
+            Log.d("petrolkids","currentNum:" + currentNumOfPlayers);
+            Log.d("petrolkids","totalNum:" + totalNumOfPlayers);
+            if (currentNumOfPlayers == totalNumOfPlayers) {
+                Log.d("throwitup","Do The Thing2 14");
+                Log.d("hostGame2", "Loop Is Set To False");
+                // startTimeOfTimer = System.currentTimeMillis();
+                Log.d("synccheck", "This is when the server timer is started");
+                loop = false;
+            }
+            Log.d("throwitup","Do The Thing2 15");
+        }
+        String setPlayerName = receiveMessage(socket);
+        MafiaServerGame.players.add(playerName);
+        Log.d("throwitup","Do The Thing2 16");
+        while (MafiaServerGame.sendRole == false) {
+            Thread.sleep(250);
+        }
+        Log.d("throwitup","Do The Thing2 17");
+        int placeOfRoleInList = MafiaServerGame.players.indexOf(playerName);
+        String role = (String) MafiaServerGame.role.get(placeOfRoleInList);
+        Log.d("throwitup","Do The Thing2 18");
     }
 }
