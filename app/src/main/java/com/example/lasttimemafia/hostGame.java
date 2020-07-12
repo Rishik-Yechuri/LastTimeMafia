@@ -1,5 +1,6 @@
 package com.example.lasttimemafia;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.StrictMode;
 import android.os.Bundle;
@@ -33,7 +34,8 @@ public class hostGame extends AppCompatActivity {
     //Comtinue regular stuff
     public static int totalNumOfPlayers = 2;
     public static int currentNumOfPlayers = 0;
-
+    TextView code;
+    String token = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Looper.prepare();
@@ -44,23 +46,28 @@ public class hostGame extends AppCompatActivity {
         setContentView(R.layout.activity_host_game);
         if (savedInstanceState == null) {
             preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
+            token = MyFirebaseMessagingService.getToken(getApplicationContext());
             Log.d("firstorsecond", "HostGame");
             final ProgressBar progressBar = findViewById(R.id.progressBar2);
             NetwworkCaller c1 = new NetwworkCaller();
             String test = "";
             final MafiaNetworkCode giveUp = new MafiaNetworkCode();
-            if(SettingsMenu.getDefaults("wan","false").equals("true")){
+            if (SettingsMenu.getDefaults("wan", "false").equals("true")) {
                 NetwworkCaller.WANmode = true;
-                MafiaNetworkCode.WANmode = true;;
+                MafiaNetworkCode.WANmode = true;
             }
             try {
-                test = giveUp.convertIP();
+                if (SettingsMenu.getDefaults("wan", "false").equals("true")) {
+                    test = String.valueOf(createGame(MyFirebaseMessagingService.getToken(getApplicationContext())));
+                } else {
+                    test = giveUp.convertIP();
+                }
                 //Log.d("IP", "This is the IP" + test);
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
             try {
-                c1.main();
+                c1.main(getApplicationContext());
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
@@ -84,8 +91,8 @@ public class hostGame extends AppCompatActivity {
             MafiaNetworkCode.totalNumOfPlayers = totalNumOfPlayers;
             progressBar.setMax(Integer.valueOf(totalNumOfPlayers));
             //Log.d("hostGame","Hey: " + ipAdress);
-            TextView code = (TextView) findViewById(R.id.textView13);
-            code.setText(test);
+            code = (TextView) findViewById(R.id.textView13);
+            if (SettingsMenu.getDefaults("wan", "false").equals("false")) { code.setText(test);}
             new Thread() {
                 public void run() {
                     //Looper.prepare();
@@ -113,11 +120,16 @@ public class hostGame extends AppCompatActivity {
         Intent intent = new Intent(this, MafiaServerGame.class);
         startActivity(intent);
     }
-    public void createGame(String message,String token){
+
+
+    public Task<String> createGame(String token) {
         Map<String, Object> data = new HashMap<>();
-        data.put("message", message);
-        data.put("token",token);
-        FirebaseFunctions.getInstance()
+        //data.put("message", message);
+        //data.put("token", MyFirebaseMessagingService.getToken(getApplicationContext()));
+        Log.d("spectacle","value of context:" + getApplicationContext());
+        Log.d("spectacle","value of token:" + MyFirebaseMessagingService.getToken(getApplicationContext()));
+        data.put("token", token);
+        return FirebaseFunctions.getInstance()
                 .getHttpsCallable("createGame")
                 .call(data)
                 .continueWith(new Continuation<HttpsCallableResult, String>() {
@@ -125,8 +137,10 @@ public class hostGame extends AppCompatActivity {
                     public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
                         HashMap result = (HashMap) task.getResult().getData();
                         JSONObject res = new JSONObject(result);
-                        //String message = res.getString("gameID");
-                        return null;
+                        String message = res.getString("gameID");
+                        Log.d("woo","Message pre send:" + message);
+                        code.setText(message);
+                        return message;
                     }
                 });
     }

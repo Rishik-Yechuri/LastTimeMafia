@@ -1,5 +1,6 @@
 package com.example.lasttimemafia;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ProgressBar;
@@ -21,7 +22,7 @@ public class NetwworkCaller extends AppCompatActivity {
         preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
     }
 
-    public static void main() throws UnknownHostException {
+    public static void main(final Context context) throws UnknownHostException {
         Log.d("international", "Networkcaller first");
         final MafiaNetworkCode c1 = new MafiaNetworkCode();
         //String[] totalistic = {"127.0.0.1"};
@@ -44,7 +45,7 @@ public class NetwworkCaller extends AppCompatActivity {
             new Thread() {
                 public void run() {
                     try {
-                        c1.permaConnection(totaler2);
+                        c1.permaConnection(totaler2,context);
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (InterruptedException e) {
