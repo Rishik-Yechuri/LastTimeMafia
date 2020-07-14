@@ -2,6 +2,7 @@ package com.example.lasttimemafia;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.ProgressBar;
 
@@ -45,7 +46,10 @@ public class NetwworkCaller extends AppCompatActivity {
             new Thread() {
                 public void run() {
                     try {
-                        c1.permaConnection(totaler2,context);
+                        Looper.prepare();
+                        final MafiaNetworkCode c2 = new MafiaNetworkCode();
+                        c2.permaConnection(totaler2,context);
+                        //c1.permaConnection(totaler2,context);
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (InterruptedException e) {

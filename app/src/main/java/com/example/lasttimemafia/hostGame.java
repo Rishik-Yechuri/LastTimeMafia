@@ -59,6 +59,7 @@ public class hostGame extends AppCompatActivity {
             try {
                 if (SettingsMenu.getDefaults("wan", "false").equals("true")) {
                     test = String.valueOf(createGame(MyFirebaseMessagingService.getToken(getApplicationContext())));
+                    //KeepTrackOfPorts keepTrack = new KeepTrackOfPorts();
                 } else {
                     test = giveUp.convertIP();
                 }

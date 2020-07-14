@@ -56,6 +56,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Intent intent = null;
         if(remoteMessage.getData().get("purpose").equals("registername")){
             intent = new Intent("REGISTERNAME");
+            intent.putExtra("name",remoteMessage.getData().get("name"));
+            intent.putExtra("port",String.valueOf(MafiaNetworkCode.currentPort));
+            MafiaNetworkCode.currentPort++;
+        }else if(remoteMessage.getData().get("purpose").equals("message")){
+            intent = new Intent(remoteMessage.getData().get("name"));
+            intent.putExtra("message",remoteMessage);
         }
         sendBroadcast(intent);
     }

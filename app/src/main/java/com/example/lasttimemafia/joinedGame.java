@@ -1,6 +1,8 @@
 package com.example.lasttimemafia;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,7 +16,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,6 +32,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 public class joinedGame extends AppCompatActivity {
     boolean loop = true;
@@ -37,13 +49,13 @@ public class joinedGame extends AppCompatActivity {
     ProgressBar progressBar;
     String input = "";
     EditText textCode;
+    Context context;
     public static Handler handler;
     Thread thread;
     //Message mainThreadMessage;
     Message messageOfficial;
     static String host = "";
     public Handler mainThreadHandler;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         StrictMode.ThreadPolicy policy = new
@@ -60,6 +72,8 @@ public class joinedGame extends AppCompatActivity {
                 }
             }
         };
+        context = getApplicationContext();
+        Log.d("comethru","Context set:" + context);
         //if (savedInstanceState == null) {
         String code = "";
         Log.d("formatting", "Made it to JoinedGame1");
@@ -170,55 +184,41 @@ public class joinedGame extends AppCompatActivity {
         totalNumOfPlayers = splitMessage[1];
         Log.d("stacktrace", "presend");
         String kidsNames = "setnameङॠ" + name;
-        Log.d("textdebug","Name sent:" + kidsNames);
+        Log.d("textdebug", "Name sent:" + kidsNames);
         sendMessage(kidsNames);
         Log.d("stacktrace", "postsend");
         //sendMessage("trashInfo");
         start = true;
     }
 
-    public static void runMainCode(String code, joinedGame realActivity) throws IOException, InterruptedException {
-       // String[] codeSplit = code.split("\\.");
-        String totalistic = "";
-        long downed = ConvertBasesToCode.convertDown(code,62);
-        Log.d("downedvalue","downed:" + downed);
-        totalistic = ConvertBasesToCode.convertUp(downed,11);
-        totalistic = totalistic.replace("A",".");
-        /*if (!(code.charAt(0) == 'A' || code.charAt(0) == 'C' || code.charAt(0) == 'B')) {
-            //Final Code
-            totalistic = "192.168" + "." + codeSplit[0] + "." + codeSplit[1];
+    public  void runMainCode(String code, joinedGame realActivity) throws IOException, InterruptedException {
+        // String[] codeSplit = code.split("\\.");
+        if (code.length() > 4) {
+            String totalistic = "";
+            getSharedPreferences("_", MODE_PRIVATE).edit().putString("gametype","wan").apply();
+            long downed = ConvertBasesToCode.convertDown(code, 62);
+            Log.d("downedvalue", "downed:" + downed);
+            totalistic = ConvertBasesToCode.convertUp(downed, 11);
+            totalistic = totalistic.replace("A", ".");
+            host = totalistic;
+            final int portNumber = 4999;
+            boolean run = true;
+            int portToUse = 0;
+            socket = new Socket(host, 4999);
+            Message mainThreadMessage = Message.obtain();
+            mainThreadMessage.obj = "updatesocket";
+            Log.d("handleimport", "Pre message send in mainCode");
+            Log.d("handleimport", "Post message send in mainCode");
+            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(socket.getOutputStream(), true);
 
-        } else if (code.charAt(0) == 'A') {
-            totalistic = "172.";
-            for (int looper = 1; looper < code.length(); looper++) {
-                totalistic = totalistic + code.charAt(looper);
-            }
-        } else if (code.charAt(0) == 'C') {
-            totalistic = "10.";
-            for (int looper = 1; looper < code.length(); looper++) {
-                totalistic = totalistic + code.charAt(looper);
-            }
-        } else {
-            totalistic = "";
-            for (int looper = 1; looper < code.length(); looper++) {
-                totalistic = totalistic + code.charAt(looper);
-            }
-        }*/
-        host = totalistic;
-        final int portNumber = 4999;
-        boolean run = true;
-        int portToUse = 0;
-        socket = new Socket(host, 4999);
-        Message mainThreadMessage = Message.obtain();
-        mainThreadMessage.obj = "updatesocket";
-        Log.d("handleimport", "Pre message send in mainCode");
-        Log.d("handleimport", "Post message send in mainCode");
-        br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        out = new PrintWriter(socket.getOutputStream(), true);
-
-        portToUse = Integer.parseInt(br.readLine());
-        socket.close();
-        finalConnection(host, portToUse, realActivity);
+            portToUse = Integer.parseInt(br.readLine());
+            socket.close();
+            finalConnection(host, portToUse, realActivity);
+        }else if(code.length() == 4){
+            Log.d("comethru","Value of token:" + MyFirebaseMessagingService.getToken(getApplicationContext()));
+            addToken(MyFirebaseMessagingService.getToken(getBaseContext()),code,name);
+        }
     }
 
     public static void sendMessage(String message) {
@@ -268,7 +268,7 @@ public class joinedGame extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private static class networkProcess extends AsyncTask<Integer, Integer, String> {
+    private /*static*/ class networkProcess extends AsyncTask<Integer, Integer, String> {
         WeakReference<joinedGame> activityWeakReference;
 
         networkProcess(joinedGame activity) {
@@ -296,5 +296,24 @@ public class joinedGame extends AppCompatActivity {
             }
             return "finished";
         }
+    }
+    public static void addToken(String token,String gameID,String name) {
+        // Create the arguments to the callable function.
+        Map<String, Object> data = new HashMap<>();
+        data.put("token", token);
+        data.put("gameID",gameID);
+        data.put("name",name);
+        FirebaseFunctions.getInstance()
+                .getHttpsCallable("addToken")
+                .call(data)
+                .continueWith(new Continuation<HttpsCallableResult, String>() {
+                    @Override
+                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        HashMap result = (HashMap) task.getResult().getData();
+                        JSONObject res = new JSONObject(result);
+                        String message = res.getString("lastName");
+                        return null;
+                    }
+                });
     }
 }

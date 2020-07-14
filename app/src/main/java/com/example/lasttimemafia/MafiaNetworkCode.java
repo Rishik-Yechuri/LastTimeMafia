@@ -41,11 +41,15 @@ import static com.example.lasttimemafia.SettingsMenu.preferences;
 
 public class MafiaNetworkCode extends AppCompatActivity {
     public static boolean WANmode = false;
+    public static int currentPort = 5000;
     ProgressBar progressBar;
+    Context context;
     public static int totalNumOfPlayers = 2;
+    SaveWANMessages saveWANMessages;
     int currentNumOfPlayers = 0;
     Socket socket;
     private BroadcastReceiver _updateName = new RegisterNameReceiver();
+    private BroadcastReceiver _getUpdates = new GetPlayerUpdates();
     boolean personKilled = false;
     public static long startTimeOfTimer = System.currentTimeMillis();
     public static long totalTimePassed = 0;
@@ -102,7 +106,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
             //totalistic = String.valueOf(token);
             String kring = String.valueOf(createGame(token));
         }*/
-        Log.d("consolepeasants","totalistic:" + totalistic);
+        Log.d("consolepeasants", "totalistic:" + totalistic);
         return totalistic;
         //return totalistic;
     }
@@ -131,15 +135,18 @@ public class MafiaNetworkCode extends AppCompatActivity {
         }
     }
 
-    public void permaConnection(int portNumber2,Context context) throws IOException, InterruptedException {
+    public void permaConnection(int portNumber2, Context context) throws IOException, InterruptedException {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         MafiaServerGame.addRolesToList();
         portNumber = portNumber2;
+        Log.d("bruh","Connection creater set port number:" + portNumber);
         boolean run = true;
         if (SettingsMenu.getDefaults("wan", "false").equals("true")) {
             IntentFilter filter = new IntentFilter("REGISTERNAME");
             _updateName = new RegisterNameReceiver();
+            saveWANMessages = new SaveWANMessages();
+            this.context = context;
             context.registerReceiver(_updateName, filter);
         } else if (SettingsMenu.getDefaults("wan", "false").equals("false")) {
             Log.d("throwitup", "Do The Thing2");
@@ -265,6 +272,9 @@ public class MafiaNetworkCode extends AppCompatActivity {
     }
 
     public String receiveMessage(Socket socket) throws IOException, InterruptedException {
+        if (!SettingsMenu.getDefaults("wan", "false").equals("true")) {
+
+        }
         Log.d("lifecycle", "in receive message");
         Log.d("insidereceiver", "1");
         if (br == null) {
@@ -667,20 +677,38 @@ public class MafiaNetworkCode extends AppCompatActivity {
     public class RegisterNameReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d("bruh","we got the message!");
             String name = intent.getStringExtra("name");
             String port = intent.getStringExtra("port");
             try {
+                Log.d("bruh","Pre register");
                 checkToRegister(name, port);
             } catch (InterruptedException | IOException e) {
                 e.printStackTrace();
             }
+            Log.d("bruh","Post register");
+        }
+    }
+    public class GetPlayerUpdates extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getExtras().getString("message");
+            saveWANMessages.injectMessage(message);
         }
     }
 
     public void checkToRegister(String name, String port) throws InterruptedException, IOException {
+        Log.d("bruh","Inside register");
+        Log.d("bruh","Value of portNumber:" + portNumber);
+        Log.d("bruh","value of port:" + port);
         if (portNumber == Integer.parseInt(port)) {
+            Log.d("bruh","portNumber is port");
             playerName = name;
+            IntentFilter filter = new IntentFilter(name);
+            _getUpdates = new GetPlayerUpdates();
+            context.registerReceiver(_updateName, filter);
             doThingAfterNameConfirmed();
+            Log.d("bruh","do thing after name confirmed finished");
         }
     }
 
@@ -688,20 +716,20 @@ public class MafiaNetworkCode extends AppCompatActivity {
         Log.d("throwitup", "Do The Thing2 10");
         hostGame.currentNumOfPlayers++;
         currentNumOfPlayers++;
-        sendMessage("totalplayers " + totalNumOfPlayers);
+        //sendMessage("totalplayers " + totalNumOfPlayers);
         Log.d("throwitup", "Do The Thing2 11");
         boolean loop = true;
         while (loop) {
             Log.d("throwitup", "Do The Thing2 12");
             Thread.sleep(200);
-            sendMessage("currentplayers " + String.valueOf(hostGame.currentNumOfPlayers));
+            //sendMessage("currentplayers " + String.valueOf(hostGame.currentNumOfPlayers));
             Log.d("throwitup", "Do The Thing2 13");
             Log.d("petrolkids", "currentNum:" + currentNumOfPlayers);
             Log.d("petrolkids", "totalNum:" + totalNumOfPlayers);
             if (currentNumOfPlayers == totalNumOfPlayers) {
                 Log.d("throwitup", "Do The Thing2 14");
                 Log.d("hostGame2", "Loop Is Set To False");
-                // startTimeOfTimer = System.currentTimeMillis();
+                startTimeOfTimer = System.currentTimeMillis();
                 Log.d("synccheck", "This is when the server timer is started");
                 loop = false;
             }
@@ -718,9 +746,10 @@ public class MafiaNetworkCode extends AppCompatActivity {
         String role = (String) MafiaServerGame.role.get(placeOfRoleInList);
         Log.d("throwitup", "Do The Thing2 18");
     }
-    private Task<String> createGame(String token){
+
+    private Task<String> createGame(String token) {
         Map<String, Object> data = new HashMap<>();
-        data.put("token",token);
+        data.put("token", token);
         return FirebaseFunctions.getInstance()
                 .getHttpsCallable("createGame")
                 .call(data)
@@ -730,7 +759,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
                         HashMap result = (HashMap) task.getResult().getData();
                         JSONObject res = new JSONObject(result);
                         String message = res.getString("gameID");
-                        Log.d("serverresult","gameID:" + message);
+                        Log.d("serverresult", "gameID:" + message);
                         //openShowCode(message);
                         return message;
                     }
