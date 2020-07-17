@@ -1,7 +1,9 @@
 package com.example.lasttimemafia;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
@@ -20,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableResult;
@@ -36,6 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class joinedGame extends AppCompatActivity {
+    private static Object OnFailureListener;
     boolean loop = true;
     public static String name = "";
     public static Socket socket;
@@ -49,13 +53,16 @@ public class joinedGame extends AppCompatActivity {
     ProgressBar progressBar;
     String input = "";
     EditText textCode;
-    Context context;
+    static Context context;
+    private BroadcastReceiver _getMessages = new GetNewMessages();
     public static Handler handler;
-    Thread thread;
     //Message mainThreadMessage;
     Message messageOfficial;
     static String host = "";
+    public static SaveWANMessages saveWANMessages;
     public Handler mainThreadHandler;
+    public static String gameCode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         StrictMode.ThreadPolicy policy = new
@@ -63,6 +70,10 @@ public class joinedGame extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_joined_game);
+        saveWANMessages = new SaveWANMessages();
+        IntentFilter filter = new IntentFilter("NEWMESSAGE");
+        context = getApplicationContext();
+        this.registerReceiver(_getMessages, filter);
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -72,14 +83,15 @@ public class joinedGame extends AppCompatActivity {
                 }
             }
         };
-        context = getApplicationContext();
-        Log.d("comethru","Context set:" + context);
+        Log.d("comethru", "Context set:" + context);
         //if (savedInstanceState == null) {
         String code = "";
         Log.d("formatting", "Made it to JoinedGame1");
         button2 = (Button) findViewById(R.id.button4);
         Log.d("formatting", "Made it to JoinedGame2");
         progressBar = findViewById(R.id.progressBar4);
+        //createGame("test");
+        addToken("king","lol","hi");
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,9 +107,10 @@ public class joinedGame extends AppCompatActivity {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }*/
+                    createGame("test");
                     networkProcess task = new networkProcess(joinedGame.this);
                     task.execute();
-                    button2.setText("connected");
+                    button2.setText("connecting");
                 }
             }
         });
@@ -167,35 +180,34 @@ public class joinedGame extends AppCompatActivity {
     }
 
     public static void finalConnection(String host, int portNumber, joinedGame realActivity) throws IOException, InterruptedException {
-        Log.d("stronktrace", "Here 1");
-        Socket socket = new Socket(host, portNumber);
-        Log.d("stronktrace", "Here 2");
-        br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        Log.d("stronktrace", "Here 3");
-        out = new PrintWriter(socket.getOutputStream(), true);
-        Log.d("stronktrace", "Here 4");
+        if (context.getSharedPreferences("_", MODE_PRIVATE).getString("gametype", "lan").equals("lan")) {
+            Socket socket = new Socket(host, portNumber);
+            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(socket.getOutputStream(), true);
+            Log.d("gamernation","Final connection for lan");
+        }
+        Log.d("gamernation","Final connection after lan");
         //setContentView(R.layout.activity_lobby);
         Thread.sleep(2000);
-        Log.d("stronktrace", "Here 5");
+        Log.d("gamernation","prereceive");
         String receive = receiveMessage(realActivity);
-        Log.d("stronktrace", "Here 6");
+        Log.d("gamernation","post receive");
         String[] splitMessage = receive.split(" ");
-        Log.d("stronktrace", "Here 7");
         totalNumOfPlayers = splitMessage[1];
-        Log.d("stacktrace", "presend");
         String kidsNames = "setnameङॠ" + name;
-        Log.d("textdebug", "Name sent:" + kidsNames);
+        Log.d("gamernation","presend");
         sendMessage(kidsNames);
-        Log.d("stacktrace", "postsend");
+        Log.d("gamernation","postsend");
         //sendMessage("trashInfo");
         start = true;
+
     }
 
-    public  void runMainCode(String code, joinedGame realActivity) throws IOException, InterruptedException {
+    public /*static*/ void runMainCode(String code, joinedGame realActivity) throws IOException, InterruptedException {
         // String[] codeSplit = code.split("\\.");
         if (code.length() > 4) {
             String totalistic = "";
-            getSharedPreferences("_", MODE_PRIVATE).edit().putString("gametype","wan").apply();
+            context.getSharedPreferences("_", MODE_PRIVATE).edit().putString("gametype", "lan").apply();
             long downed = ConvertBasesToCode.convertDown(code, 62);
             Log.d("downedvalue", "downed:" + downed);
             totalistic = ConvertBasesToCode.convertUp(downed, 11);
@@ -215,15 +227,23 @@ public class joinedGame extends AppCompatActivity {
             portToUse = Integer.parseInt(br.readLine());
             socket.close();
             finalConnection(host, portToUse, realActivity);
-        }else if(code.length() == 4){
-            Log.d("comethru","Value of token:" + MyFirebaseMessagingService.getToken(getApplicationContext()));
-            addToken(MyFirebaseMessagingService.getToken(getBaseContext()),code,name);
+        } else if (code.length() == 4) {
+            context.getSharedPreferences("_", MODE_PRIVATE).edit().putString("gametype", "wan").apply();
+            Log.d("gamernation","value of pref:" + context.getSharedPreferences("_",MODE_PRIVATE).getString("gametype","lan"));
+            Log.d("comethru", "Value of token:" + MyFirebaseMessagingService.getToken(/*getApplicationContext())*/context));
+            //addToken(MyFirebaseMessagingService.getToken(context/*getBaseContext()*/), code, name);
+            //String whyme = String.valueOf(createGame("poop"));
+            finalConnection(host, 0, realActivity);
         }
     }
 
     public static void sendMessage(String message) {
-        Log.d("conflict", "Message Sent:" + message);
-        out.println(message);
+        Log.d("howmanytimes","sendMessage");
+        if (context.getSharedPreferences("_", MODE_PRIVATE).getString("gametype", "lan").equals("wan")) {
+            sendMessageFirebase(message, gameCode);
+        } else if (context.getSharedPreferences("_", MODE_PRIVATE).getString("gametype", "lan").equals("lan")) {
+            out.println(message);
+        }
     }
 
     /*public String receiveMessage() throws IOException {
@@ -234,13 +254,20 @@ public class joinedGame extends AppCompatActivity {
     public static String receiveMessage(joinedGame activity) throws IOException, InterruptedException {
         WeakReference<joinedGame> activityWeakReference = new WeakReference<joinedGame>(activity);
         joinedGame activity2 = activityWeakReference.get();
-        boolean loop = true;
         String receivedMessage = "";
-        while (loop) {
-            Thread.sleep(200);
-            receivedMessage = br.readLine();
-            if (receivedMessage != null) {
-                loop = false;
+        Log.d("gamernation", "received message on client");
+        if (context.getSharedPreferences("_", MODE_PRIVATE).getString("gametype", "lan").equals("wan")) {
+            Log.d("gamernation", "wan receive message");
+            receivedMessage = saveWANMessages.returnMessage();
+            Log.d("gamernation", "wan receive message after");
+        } else if (context.getSharedPreferences("_", MODE_PRIVATE).getString("gametype", "lan").equals("lan")) {
+            boolean loop = true;
+            while (loop) {
+                Thread.sleep(200);
+                receivedMessage = br.readLine();
+                if (receivedMessage != null) {
+                    loop = false;
+                }
             }
         }
         if (receivedMessage.startsWith("currentplayers")) {
@@ -288,21 +315,22 @@ public class joinedGame extends AppCompatActivity {
             joinedGame activity = activityWeakReference.get();
             String code = activity.textCode.getText().toString();
             try {
+                Log.d("gamernation", "inside async task");
                 runMainCode(code, activity);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
+            } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
             return "finished";
         }
     }
-    public static void addToken(String token,String gameID,String name) {
+    public static void addToken(String token, String gameID, String name) {
         // Create the arguments to the callable function.
+        gameCode = gameID;
         Map<String, Object> data = new HashMap<>();
         data.put("token", token);
-        data.put("gameID",gameID);
-        data.put("name",name);
+        data.put("gameID", gameID);
+        data.put("name", name);
+        Log.d("comethru","addToken called");
         FirebaseFunctions.getInstance()
                 .getHttpsCallable("addToken")
                 .call(data)
@@ -311,9 +339,69 @@ public class joinedGame extends AppCompatActivity {
                     public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
                         HashMap result = (HashMap) task.getResult().getData();
                         JSONObject res = new JSONObject(result);
-                        String message = res.getString("lastName");
+                        //String message = res.getString("lastName");
                         return null;
                     }
                 });
+        Log.d("comethru","addToken Finished");
+    }
+    public Task<String> createGame(String token) {
+        Map<String, Object> data = new HashMap<>();
+        //data.put("message", message);
+        //data.put("token", MyFirebaseMessagingService.getToken(getApplicationContext()));
+        data.put("token", token);
+        return  FirebaseFunctions.getInstance()
+                .getHttpsCallable("createGame")
+                .call(data)
+                .continueWith(new Continuation<HttpsCallableResult, String>() {
+                    @Override
+                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        HashMap result = (HashMap) task.getResult().getData();
+                        JSONObject res = new JSONObject(result);
+                        return null;
+                    }
+                });
+    }
+
+    public class GetNewMessages extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getExtras().getString("message");
+            Log.d("gamernation","We have injected message");
+            saveWANMessages.injectMessage(message);
+        }
+    }
+
+    public static void sendMessageFirebase(String message, String gameCode) {
+        Log.d("howmanytimes","sendMessageFirebase");
+        Map<String, Object> data = new HashMap<>();
+        data.put("message", message);
+        data.put("purpose", "messagetohost");
+        data.put("gameCode", gameCode);
+        data.put("name", "host");
+        FirebaseFunctions.getInstance()
+                .getHttpsCallable("sendMessage")
+                .call(data)
+                .addOnFailureListener((com.google.android.gms.tasks.OnFailureListener) OnFailureListener)
+                .continueWith(new Continuation<HttpsCallableResult, String>() {
+                    @Override
+                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        HashMap result = (HashMap) task.getResult().getData();
+                        JSONObject res = new JSONObject(result);
+                        //String message = res.getString("gameID");
+                        //Log.d("serverresult","gameID:" + message);
+                        //openShowCode(message);
+                        return null;
+                    }
+                });
+    }
+
+    public static SharedPreferences getSharedPreferences(Context ctxt) {
+        return ctxt.getSharedPreferences("FILE", 0);
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(this._getMessages);
     }
 }

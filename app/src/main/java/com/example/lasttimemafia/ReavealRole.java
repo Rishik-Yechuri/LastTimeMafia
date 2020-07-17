@@ -130,13 +130,17 @@ public class ReavealRole extends AppCompatActivity {
 
     public static String receiveMessage(Socket socket) throws IOException, InterruptedException {
         // br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        boolean loopRecceiveMessage = true;
         String receivedMessage = "";
-        while (loopRecceiveMessage) {
-            Thread.sleep(200);
-            receivedMessage = br.readLine();
-            if (receivedMessage != null) {
-                loopRecceiveMessage = false;
+        if (!SettingsMenu.getDefaults("wan", "false").equals("true")) {
+            receivedMessage = joinedGame.saveWANMessages.returnMessage();
+        } else if (!SettingsMenu.getDefaults("wan", "false").equals("false")) {
+            boolean loopRecceiveMessage = true;
+            while (loopRecceiveMessage) {
+                Thread.sleep(200);
+                receivedMessage = br.readLine();
+                if (receivedMessage != null) {
+                    loopRecceiveMessage = false;
+                }
             }
         }
         if (receivedMessage.startsWith("totalplayers")) {

@@ -2,6 +2,7 @@ package com.example.lasttimemafia;
 
 import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.os.Looper;
 import android.os.StrictMode;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -35,6 +36,7 @@ public class hostGame extends AppCompatActivity {
     public static int totalNumOfPlayers = 2;
     public static int currentNumOfPlayers = 0;
     TextView code;
+    public static String gameCode;
     String token = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,7 @@ public class hostGame extends AppCompatActivity {
             try {
                 if (SettingsMenu.getDefaults("wan", "false").equals("true")) {
                     test = String.valueOf(createGame(MyFirebaseMessagingService.getToken(getApplicationContext())));
+                    joinedGame.addToken(MyFirebaseMessagingService.getToken(getApplicationContext()),test,"bothering");
                     //KeepTrackOfPorts keepTrack = new KeepTrackOfPorts();
                 } else {
                     test = giveUp.convertIP();
@@ -96,7 +99,7 @@ public class hostGame extends AppCompatActivity {
             if (SettingsMenu.getDefaults("wan", "false").equals("false")) { code.setText(test);}
             new Thread() {
                 public void run() {
-                    //Looper.prepare();
+                    Looper.prepare();
                     boolean loop = true;
                     while (loop) {
                         try {
@@ -104,7 +107,9 @@ public class hostGame extends AppCompatActivity {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+                        Log.d("gamercity","Value of currentPlayers in hostGame:" + currentNumOfPlayers);
                         progressBar.setProgress(currentNumOfPlayers);
+                        Log.d("gamercity","progressbar host updated");
                         if (currentNumOfPlayers == totalNumOfPlayers) {
                             loop = false;
                             Log.d("hostGame", "OpenedMafiaGame");
@@ -140,6 +145,7 @@ public class hostGame extends AppCompatActivity {
                         JSONObject res = new JSONObject(result);
                         String message = res.getString("gameID");
                         Log.d("woo","Message pre send:" + message);
+                        gameCode = message;
                         code.setText(message);
                         return message;
                     }

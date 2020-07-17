@@ -53,16 +53,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         return context.getSharedPreferences("_", MODE_PRIVATE).getString("fb", "empty");
     }
     public void processReceivedMessage(RemoteMessage remoteMessage){
+        Log.d("gamernation","Message in Messaging Service");
+        Log.d("gamernation","Message in Messaging Service:" + remoteMessage.getData().get("purpose"));
         Intent intent = null;
         if(remoteMessage.getData().get("purpose").equals("registername")){
             intent = new Intent("REGISTERNAME");
             intent.putExtra("name",remoteMessage.getData().get("name"));
             intent.putExtra("port",String.valueOf(MafiaNetworkCode.currentPort));
             MafiaNetworkCode.currentPort++;
+            Log.d("gamernation","Register name processes finished");
         }else if(remoteMessage.getData().get("purpose").equals("message")){
-            intent = new Intent(remoteMessage.getData().get("name"));
+            intent = new Intent("NEWMESSAGE");
             intent.putExtra("message",remoteMessage);
+            Log.d("realer","purpose equals message");
+        }else if(remoteMessage.getData().get("purpose").equals("messagetohost")){
+            intent = new Intent("NEWMESSAGETOHOST");
         }
         sendBroadcast(intent);
+        Log.d("gamernation","Broadcast sent");
     }
 }
