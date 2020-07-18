@@ -36,6 +36,9 @@ public class hostGame extends AppCompatActivity {
     public static int currentNumOfPlayers = 0;
     TextView code;
     String token = "";
+    long time = 0;
+    long startTime = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Looper.prepare();
@@ -93,7 +96,9 @@ public class hostGame extends AppCompatActivity {
             progressBar.setMax(Integer.valueOf(totalNumOfPlayers));
             //Log.d("hostGame","Hey: " + ipAdress);
             code = (TextView) findViewById(R.id.textView13);
-            if (SettingsMenu.getDefaults("wan", "false").equals("false")) { code.setText(test);}
+            if (SettingsMenu.getDefaults("wan", "false").equals("false")) {
+                code.setText(test);
+            }
             new Thread() {
                 public void run() {
                     //Looper.prepare();
@@ -127,8 +132,8 @@ public class hostGame extends AppCompatActivity {
         Map<String, Object> data = new HashMap<>();
         //data.put("message", message);
         //data.put("token", MyFirebaseMessagingService.getToken(getApplicationContext()));
-        Log.d("spectacle","value of context:" + getApplicationContext());
-        Log.d("spectacle","value of token:" + MyFirebaseMessagingService.getToken(getApplicationContext()));
+        Log.d("spectacle", "value of context:" + getApplicationContext());
+        Log.d("spectacle", "value of token:" + MyFirebaseMessagingService.getToken(getApplicationContext()));
         data.put("token", token);
         return FirebaseFunctions.getInstance()
                 .getHttpsCallable("createGame")
@@ -139,7 +144,7 @@ public class hostGame extends AppCompatActivity {
                         HashMap result = (HashMap) task.getResult().getData();
                         JSONObject res = new JSONObject(result);
                         String message = res.getString("gameID");
-                        Log.d("woo","Message pre send:" + message);
+                        Log.d("woo", "Message pre send:" + message);
                         code.setText(message);
                         return message;
                     }

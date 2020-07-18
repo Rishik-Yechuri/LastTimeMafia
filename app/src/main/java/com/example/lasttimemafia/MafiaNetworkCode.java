@@ -138,6 +138,12 @@ public class MafiaNetworkCode extends AppCompatActivity {
     public void permaConnection(int portNumber2, Context context) throws IOException, InterruptedException {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+        int tempMafia = Integer.parseInt(SettingsMenu.getDefaults("mafia", "0"));
+        int tempVillager = Integer.parseInt(SettingsMenu.getDefaults("villager", "0"));
+        int tempAngel = Integer.parseInt(SettingsMenu.getDefaults("angel", "0"));
+        MafiaServerGame.numOfAngels = tempAngel;
+        MafiaServerGame.numOfMafia = tempMafia;
+        MafiaServerGame.numOfVillagers = tempVillager;
         MafiaServerGame.addRolesToList();
         portNumber = portNumber2;
         Log.d("bruh","Connection creater set port number:" + portNumber);
@@ -204,14 +210,14 @@ public class MafiaNetworkCode extends AppCompatActivity {
         /*int placeOfRoleInList = MafiaServerGame.players.indexOf(playerName);*/
         // Log.d("random", "PlaceOfRoleInList: " + placeOfRoleInList);
         //Log.d("removeplayers", "Value of Roles before death:" + MafiaServerGame.role);
-        int tempMafia = Integer.parseInt(SettingsMenu.getDefaults("mafia", "0"));
+       /* int tempMafia = Integer.parseInt(SettingsMenu.getDefaults("mafia", "0"));
         int tempVillager = Integer.parseInt(SettingsMenu.getDefaults("villager", "0"));
         int tempAngel = Integer.parseInt(SettingsMenu.getDefaults("angel", "0"));
         MafiaServerGame.numOfAngels = tempAngel;
         MafiaServerGame.numOfMafia = tempMafia;
-        MafiaServerGame.numOfVillagers = tempVillager;
-        MafiaServerGame.addRolesToList();
-        Log.d("goingcrazy", "roles accessed");
+        MafiaServerGame.numOfVillagers = tempVillager;*/
+        //MafiaServerGame.addRolesToList();
+        //Log.d("goingcrazy", "roles accessed");
         //String role = (String) MafiaServerGame.role.get(placeOfRoleInList);
         //sendMessage("Trash");
        /* Log.d("rolecheck", "RoleSentPre");
@@ -716,13 +722,13 @@ public class MafiaNetworkCode extends AppCompatActivity {
         Log.d("throwitup", "Do The Thing2 10");
         hostGame.currentNumOfPlayers++;
         currentNumOfPlayers++;
-        //sendMessage("totalplayers " + totalNumOfPlayers);
+        sendMessage("totalplayers " + totalNumOfPlayers);
         Log.d("throwitup", "Do The Thing2 11");
         boolean loop = true;
         while (loop) {
             Log.d("throwitup", "Do The Thing2 12");
             Thread.sleep(200);
-            //sendMessage("currentplayers " + String.valueOf(hostGame.currentNumOfPlayers));
+            sendMessage("currentplayers " + String.valueOf(hostGame.currentNumOfPlayers));
             Log.d("throwitup", "Do The Thing2 13");
             Log.d("petrolkids", "currentNum:" + currentNumOfPlayers);
             Log.d("petrolkids", "totalNum:" + totalNumOfPlayers);

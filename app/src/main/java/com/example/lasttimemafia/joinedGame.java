@@ -87,6 +87,7 @@ public class joinedGame extends AppCompatActivity {
                     Log.d("progressbarfinal", "Value of progressBar:" + progressBar);
                     textCode = findViewById(R.id.editText3);
                     nameText = findViewById(R.id.nameText);
+                    Log.d("formatting", "Made it to JoinedGame3");
                     name = nameText.getText().toString();
                         /*try {
                             runMainCode(code);
@@ -101,11 +102,13 @@ public class joinedGame extends AppCompatActivity {
                 }
             }
         });
+        Log.d("formatting", "Made it to JoinedGame4");
         new Thread() {
             public void run() {
                 start = false;
                 Looper.prepare();
                 while (loop2) {
+                    Log.d("formatting", "Made it to JoinedGame5");
                     try {
                         Thread.sleep(200);
                     } catch (InterruptedException e) {
@@ -140,6 +143,7 @@ public class joinedGame extends AppCompatActivity {
                     //Log.d("clientGame","We Made It Here!");
                     String currentNumOfPlayers = "";
                     String[] currentNumOfPlayers2 = {};
+                    Log.d("heffna","Value of input:" + input);
                     if (input != null) {
                         currentNumOfPlayers2 = input.split(" ");
 
@@ -147,7 +151,9 @@ public class joinedGame extends AppCompatActivity {
                         if (currentNumOfPlayers2[0].equals("currentplayers")) {
                             currentNumOfPlayers = currentNumOfPlayers2[1];
                         }
+                        Log.d("heffna","Progress:" + currentNumOfPlayers.length());
                         if (currentNumOfPlayers.length() > 0) {
+                            Log.d("heffna","Set progress");
                             progressBar.setProgress(Integer.valueOf(currentNumOfPlayers));
                         }
                     }
@@ -236,6 +242,7 @@ public class joinedGame extends AppCompatActivity {
         joinedGame activity2 = activityWeakReference.get();
         boolean loop = true;
         String receivedMessage = "";
+        Log.d("stronktrace","receive pre loop");
         while (loop) {
             Thread.sleep(200);
             receivedMessage = br.readLine();
@@ -243,6 +250,7 @@ public class joinedGame extends AppCompatActivity {
                 loop = false;
             }
         }
+        Log.d("stronktrace","receive post loop");
         if (receivedMessage.startsWith("currentplayers")) {
             Log.d("thingset", "please");
             activity2.progressBar.setProgress(Integer.parseInt(receivedMessage.split(" ")[1]));
