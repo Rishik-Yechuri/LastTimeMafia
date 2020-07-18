@@ -62,6 +62,7 @@ public class joinedGame extends AppCompatActivity {
     public static SaveWANMessages saveWANMessages;
     public Handler mainThreadHandler;
     public static String gameCode;
+    String token = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +72,7 @@ public class joinedGame extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_joined_game);
         saveWANMessages = new SaveWANMessages();
+        token = MyFirebaseMessagingService.getToken(getApplicationContext());
         IntentFilter filter = new IntentFilter("NEWMESSAGE");
         context = getApplicationContext();
         this.registerReceiver(_getMessages, filter);
@@ -91,7 +93,8 @@ public class joinedGame extends AppCompatActivity {
         Log.d("formatting", "Made it to JoinedGame2");
         progressBar = findViewById(R.id.progressBar4);
         //createGame("test");
-        addToken("king","lol","hi");
+        //addToken("king","lol","hi");
+        bandageFunction();
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,7 +110,6 @@ public class joinedGame extends AppCompatActivity {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }*/
-                    createGame("test");
                     networkProcess task = new networkProcess(joinedGame.this);
                     task.execute();
                     button2.setText("connecting");
@@ -203,7 +205,7 @@ public class joinedGame extends AppCompatActivity {
 
     }
 
-    public /*static*/ void runMainCode(String code, joinedGame realActivity) throws IOException, InterruptedException {
+    public static void runMainCode(String code, joinedGame realActivity) throws IOException, InterruptedException {
         // String[] codeSplit = code.split("\\.");
         if (code.length() > 4) {
             String totalistic = "";
@@ -231,7 +233,7 @@ public class joinedGame extends AppCompatActivity {
             context.getSharedPreferences("_", MODE_PRIVATE).edit().putString("gametype", "wan").apply();
             Log.d("gamernation","value of pref:" + context.getSharedPreferences("_",MODE_PRIVATE).getString("gametype","lan"));
             Log.d("comethru", "Value of token:" + MyFirebaseMessagingService.getToken(/*getApplicationContext())*/context));
-            //addToken(MyFirebaseMessagingService.getToken(context/*getBaseContext()*/), code, name);
+            addToken(MyFirebaseMessagingService.getToken(context/*getBaseContext()*/), code, name);
             //String whyme = String.valueOf(createGame("poop"));
             finalConnection(host, 0, realActivity);
         }
@@ -295,7 +297,7 @@ public class joinedGame extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private /*static*/ class networkProcess extends AsyncTask<Integer, Integer, String> {
+    private static class networkProcess extends AsyncTask<Integer, Integer, String> {
         WeakReference<joinedGame> activityWeakReference;
 
         networkProcess(joinedGame activity) {
@@ -403,5 +405,22 @@ public class joinedGame extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         this.unregisterReceiver(this._getMessages);
+    }
+    public static void bandageFunction() {
+        FirebaseFunctions.getInstance()
+                .getHttpsCallable("bandageFunction")
+                .call()
+                .addOnFailureListener((com.google.android.gms.tasks.OnFailureListener) OnFailureListener)
+                .continueWith(new Continuation<HttpsCallableResult, String>() {
+                    @Override
+                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        HashMap result = (HashMap) task.getResult().getData();
+                        JSONObject res = new JSONObject(result);
+                        //String message = res.getString("gameID");
+                        //Log.d("serverresult","gameID:" + message);
+                        //openShowCode(message);
+                        return null;
+                    }
+                });
     }
 }
