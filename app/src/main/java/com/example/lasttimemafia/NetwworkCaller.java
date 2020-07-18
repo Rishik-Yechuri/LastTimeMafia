@@ -45,8 +45,8 @@ public class NetwworkCaller extends AppCompatActivity {
             final int totaler2 = 5000 + o;
             new Thread() {
                 public void run() {
+                    Looper.prepare();
                     try {
-                        Looper.prepare();
                         final MafiaNetworkCode c2 = new MafiaNetworkCode();
                         c2.permaConnection(totaler2,context);
                         //c1.permaConnection(totaler2,context);
