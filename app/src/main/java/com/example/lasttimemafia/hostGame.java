@@ -47,6 +47,7 @@ public class hostGame extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host_game);
         if (savedInstanceState == null) {
+            joinedGame.bandageFunction();
             preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
             token = MyFirebaseMessagingService.getToken(getApplicationContext());
             Log.d("firstorsecond", "HostGame");
@@ -60,8 +61,10 @@ public class hostGame extends AppCompatActivity {
             }
             try {
                 if (SettingsMenu.getDefaults("wan", "false").equals("true")) {
+                    Log.d("theone","Value of token:" + MyFirebaseMessagingService.getToken(getApplicationContext()));
                     test = String.valueOf(createGame(MyFirebaseMessagingService.getToken(getApplicationContext())));
-                    joinedGame.addToken(MyFirebaseMessagingService.getToken(getApplicationContext()),test,"bothering");
+                    //MafiaNetworkCode.sendMessageFirebase("king");
+                    //joinedGame.addToken(MyFirebaseMessagingService.getToken(getApplicationContext()),test,"bothering");
                     //KeepTrackOfPorts keepTrack = new KeepTrackOfPorts();
                 } else {
                     test = giveUp.convertIP();
@@ -148,6 +151,19 @@ public class hostGame extends AppCompatActivity {
                         gameCode = message;
                         code.setText(message);
                         return message;
+                    }
+                });
+    }
+    public static Task<String> bandageHost() {
+        return FirebaseFunctions.getInstance()
+                .getHttpsCallable("bandageFunctionHost")
+                .call()
+                .continueWith(new Continuation<HttpsCallableResult, String>() {
+                    @Override
+                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        HashMap result = (HashMap) task.getResult().getData();
+                        JSONObject res = new JSONObject(result);
+                        return null;
                     }
                 });
     }

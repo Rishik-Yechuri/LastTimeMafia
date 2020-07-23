@@ -234,6 +234,7 @@ public class joinedGame extends AppCompatActivity {
             Log.d("gamernation","value of pref:" + context.getSharedPreferences("_",MODE_PRIVATE).getString("gametype","lan"));
             Log.d("comethru", "Value of token:" + MyFirebaseMessagingService.getToken(/*getApplicationContext())*/context));
             addToken(MyFirebaseMessagingService.getToken(context/*getBaseContext()*/), code, name);
+            sendMessageFirebase("none","registername");
             //String whyme = String.valueOf(createGame("poop"));
             finalConnection(host, 0, realActivity);
         }
@@ -242,7 +243,7 @@ public class joinedGame extends AppCompatActivity {
     public static void sendMessage(String message) {
         Log.d("howmanytimes","sendMessage");
         if (context.getSharedPreferences("_", MODE_PRIVATE).getString("gametype", "lan").equals("wan")) {
-            sendMessageFirebase(message, gameCode);
+            sendMessageFirebase(message,"messagetohost");
         } else if (context.getSharedPreferences("_", MODE_PRIVATE).getString("gametype", "lan").equals("lan")) {
             out.println(message);
         }
@@ -369,18 +370,20 @@ public class joinedGame extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String message = intent.getExtras().getString("message");
-            Log.d("gamernation","We have injected message");
+            Log.d("toucher","We have injected message");
             saveWANMessages.injectMessage(message);
         }
     }
 
-    public static void sendMessageFirebase(String message, String gameCode) {
+    public static void sendMessageFirebase(String message,String purpose) {
         Log.d("howmanytimes","sendMessageFirebase");
+        Log.d("conspiracytheories","Message Sent:" + message);
         Map<String, Object> data = new HashMap<>();
         data.put("message", message);
-        data.put("purpose", "messagetohost");
+        data.put("purpose", purpose);
+        data.put("clientname",name);
         data.put("gameCode", gameCode);
-        data.put("name", "host");
+        data.put("token", "host");
         FirebaseFunctions.getInstance()
                 .getHttpsCallable("sendMessage")
                 .call(data)

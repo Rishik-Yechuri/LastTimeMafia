@@ -1,6 +1,7 @@
 package com.example.lasttimemafia;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
@@ -23,7 +24,7 @@ public class NetwworkCaller extends AppCompatActivity {
         preferences = getSharedPreferences(GAME_PREFERENCES, MODE_PRIVATE);
     }
 
-    public static void main(final Context context) throws UnknownHostException {
+    public void main(final Context context) throws UnknownHostException {
         Log.d("international", "Networkcaller first");
         final MafiaNetworkCode c1 = new MafiaNetworkCode();
         //String[] totalistic = {"127.0.0.1"};

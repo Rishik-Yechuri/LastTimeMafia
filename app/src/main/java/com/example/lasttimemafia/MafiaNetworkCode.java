@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.StrictMode;
 import android.util.Log;
 import android.widget.ProgressBar;
@@ -56,6 +57,9 @@ public class MafiaNetworkCode extends AppCompatActivity {
     public static long alarmLength = 0;
     public static long alarmEndTime = 0;
     public static long lastAlarmEndTime = 0;
+    ArrayList<String> storeSends = new ArrayList<>();
+    int locInStoreSends = 0;
+    boolean sendMessage = false;
     String playerName;
     int portNumber;
     //Code for storing text messages and info
@@ -83,6 +87,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
             progressBar.setMax(Integer.valueOf(totalNumOfPlayers));
             progressBar.setProgress(2);
             holdVotingInfo = new HashMap<>();
+            joinedGame.bandageFunction();
             //textMessageHistory = new ArrayList();
             //textMessageHistorySender = new ArrayList();
             Log.d("hostingGame", "It Works!");
@@ -114,7 +119,6 @@ public class MafiaNetworkCode extends AppCompatActivity {
     public void connectionCreater(int portNumber2, int numPeople) throws IOException {
         int portNumber = portNumber2;
         boolean run = true;
-
         ServerSocket serverSocket = new ServerSocket(/*portNumber*/4999);
         Socket socket;
         while (run) {
@@ -138,6 +142,28 @@ public class MafiaNetworkCode extends AppCompatActivity {
     public void permaConnection(int portNumber2, Context context) throws IOException, InterruptedException {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+        new Thread() {
+            public void run() {
+                hostGame.bandageHost();
+                sendMessageFirebase("hurry");
+                int counter = 0;
+                while (counter < 1299999999) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (sendMessage) {
+                        Log.d("conspiracytheories","send message true");
+                        sendMessageFirebase("hurry");
+                        sendMessageFirebase(storeSends.get(locInStoreSends));
+                        locInStoreSends++;
+                        sendMessage = false;
+                    }
+                    counter++;
+                }
+            }
+        }.start();
         int tempMafia = Integer.parseInt(SettingsMenu.getDefaults("mafia", "0"));
         int tempVillager = Integer.parseInt(SettingsMenu.getDefaults("villager", "0"));
         int tempAngel = Integer.parseInt(SettingsMenu.getDefaults("angel", "0"));
@@ -146,7 +172,7 @@ public class MafiaNetworkCode extends AppCompatActivity {
         MafiaServerGame.numOfVillagers = tempVillager;
         MafiaServerGame.addRolesToList();
         portNumber = portNumber2;
-        Log.d("bruh","Connection creater set port number:" + portNumber);
+        Log.d("bruh", "Connection creater set port number:" + portNumber);
         boolean run = true;
         if (SettingsMenu.getDefaults("wan", "false").equals("true")) {
             IntentFilter filter = new IntentFilter("REGISTERNAME");
@@ -272,39 +298,37 @@ public class MafiaNetworkCode extends AppCompatActivity {
         return String.valueOf(currentNumOfPlayers);
     }
 
-    public static void sendMessage(String message) {
-        Log.d("conflict", "Sent Message:" + message);
-        out.println(message);
+    public void sendMessage(String message) {
+        Log.d("howmanytimes", "sendMesssage");
+        if (SettingsMenu.getDefaults("wan", "false").equals("true")) {
+            storeSends.add(message);
+            sendMessage = true;
+            //sendMessageFirebase(message);
+        } else if (SettingsMenu.getDefaults("wan", "false").equals("false")) {
+            out.println(message);
+        }
     }
 
     public String receiveMessage(Socket socket) throws IOException, InterruptedException {
-        if (!SettingsMenu.getDefaults("wan", "false").equals("true")) {
-
-        }
-        Log.d("lifecycle", "in receive message");
-        Log.d("insidereceiver", "1");
-        if (br == null) {
-            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        }
-        Log.d("insidereceiver", "2");
-        boolean loopRecceiveMessage = true;
         String receivedMessage = "nothing";
-        Log.d("insidereceiver", "3");
-        while (loopRecceiveMessage) {
-            Log.d("insidereceiver", "4");
-            Thread.sleep(200);
-            Log.d("insidereceiver", "5");
-            Log.d("insidereceiver", "Reader Check:" + br.ready());
-            receivedMessage = br.readLine();
-            Log.d("insidereceiver", "6");
-            if (receivedMessage != null) {
-                Log.d("insidereceiver", "7");
-                loopRecceiveMessage = false;
-                Log.d("insidereceiver", "8");
+        if (SettingsMenu.getDefaults("wan", "false").equals("true")) {
+            receivedMessage = saveWANMessages.returnMessage();
+        } else if (SettingsMenu.getDefaults("wan", "false").equals("false")) {
+            if (br == null) {
+                br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             }
-            Log.d("insidereceiver", "9");
+            boolean loopRecceiveMessage = true;
+            Log.d("insidereceiver", "3");
+            while (loopRecceiveMessage) {
+                Thread.sleep(200);
+                receivedMessage = br.readLine();
+                if (receivedMessage != null) {
+                    loopRecceiveMessage = false;
+                }
+                Log.d("insidereceiver", "9");
+            }
         }
-        Log.d("conflict", "Received Message:" + receivedMessage);
+        //Log.d("conspiracytheories","Message Received:" + receivedMessage);
         if (receivedMessage.startsWith("time")) {
             sendMessage(String.valueOf(returnTime()));
             receivedMessage = "nothing";
@@ -683,18 +707,19 @@ public class MafiaNetworkCode extends AppCompatActivity {
     public class RegisterNameReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("bruh","we got the message!");
+            Log.d("bruh", "we got the message!");
             String name = intent.getStringExtra("name");
             String port = intent.getStringExtra("port");
             try {
-                Log.d("bruh","Pre register");
+                Log.d("bruh", "Pre register");
                 checkToRegister(name, port);
             } catch (InterruptedException | IOException e) {
                 e.printStackTrace();
             }
-            Log.d("bruh","Post register");
+            Log.d("bruh", "Post register");
         }
     }
+
     public class GetPlayerUpdates extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -704,18 +729,47 @@ public class MafiaNetworkCode extends AppCompatActivity {
     }
 
     public void checkToRegister(String name, String port) throws InterruptedException, IOException {
-        Log.d("bruh","Inside register");
-        Log.d("bruh","Value of portNumber:" + portNumber);
-        Log.d("bruh","value of port:" + port);
+        Log.d("bruh", "Inside register");
+        Log.d("bruh", "Value of portNumber:" + portNumber);
+        Log.d("bruh", "value of port:" + port);
         if (portNumber == Integer.parseInt(port)) {
-            Log.d("bruh","portNumber is port");
+            Log.d("bruh", "portNumber is port");
             playerName = name;
             IntentFilter filter = new IntentFilter(name);
             _getUpdates = new GetPlayerUpdates();
-            context.registerReceiver(_updateName, filter);
+            context.registerReceiver(_getUpdates, filter);
             doThingAfterNameConfirmed();
-            Log.d("bruh","do thing after name confirmed finished");
+            Log.d("bruh", "do thing after name confirmed finished");
         }
+    }
+
+    public void sendMessageFirebase(String message) {
+        Log.d("howmanytimes", "sendMessageFirebase");
+        Map<String, Object> data = new HashMap<>();
+        data.put("message", message);
+        data.put("purpose", "message");
+        data.put("clientname", "none");
+        data.put("gameCode", hostGame.gameCode);
+        if (message.equals("hurry")) {
+            data.put("token", "ङॠ");
+        } else {
+            data.put("token", playerName);
+        }
+        FirebaseFunctions.getInstance()
+                .getHttpsCallable("sendMessage")
+                .call(data)
+                .continueWith(new Continuation<HttpsCallableResult, String>() {
+                    @Override
+                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        HashMap result = (HashMap) task.getResult().getData();
+                        JSONObject res = new JSONObject(result);
+                        //String message = res.getString("gameID");
+                        //Log.d("serverresult","gameID:" + message);
+                        //openShowCode(message);
+                        return null;
+                    }
+                });
+        Log.d("conspiracytheories", "Sent message:" + message);
     }
 
     public void doThingAfterNameConfirmed() throws IOException, InterruptedException {
@@ -753,22 +807,4 @@ public class MafiaNetworkCode extends AppCompatActivity {
         Log.d("throwitup", "Do The Thing2 18");
     }
 
-    private Task<String> createGame(String token) {
-        Map<String, Object> data = new HashMap<>();
-        data.put("token", token);
-        return FirebaseFunctions.getInstance()
-                .getHttpsCallable("createGame")
-                .call(data)
-                .continueWith(new Continuation<HttpsCallableResult, String>() {
-                    @Override
-                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
-                        HashMap result = (HashMap) task.getResult().getData();
-                        JSONObject res = new JSONObject(result);
-                        String message = res.getString("gameID");
-                        Log.d("serverresult", "gameID:" + message);
-                        //openShowCode(message);
-                        return message;
-                    }
-                });
-    }
 }

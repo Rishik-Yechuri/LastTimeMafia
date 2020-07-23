@@ -53,8 +53,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         return context.getSharedPreferences("_", MODE_PRIVATE).getString("fb", "empty");
     }
     public void processReceivedMessage(RemoteMessage remoteMessage){
-        Log.d("gamernation","Message in Messaging Service");
-        Log.d("gamernation","Message in Messaging Service:" + remoteMessage.getData().get("purpose"));
+        /*Log.d("mmrvaccine","Message in Messaging Service");
+        Log.d("mmrvaccine","Message in Messaging Service:" + remoteMessage.getData().get("purpose"));*/
+        Log.d("conspiracytheories","Message received");
+        Log.d("conspiracytheories","Message received:" + remoteMessage.getData().get("purpose"));
         Intent intent = null;
         if(remoteMessage.getData().get("purpose").equals("registername")){
             intent = new Intent("REGISTERNAME");
@@ -62,12 +64,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             intent.putExtra("port",String.valueOf(MafiaNetworkCode.currentPort));
             MafiaNetworkCode.currentPort++;
             Log.d("gamernation","Register name processes finished");
+        }else if(remoteMessage.getData().get("purpose").equals("messagetohost")){
+            intent = new Intent(remoteMessage.getData().get("name"));
+            intent.putExtra("message",remoteMessage.getData().get("message"));
         }else if(remoteMessage.getData().get("purpose").equals("message")){
             intent = new Intent("NEWMESSAGE");
-            intent.putExtra("message",remoteMessage);
-            Log.d("realer","purpose equals message");
-        }else if(remoteMessage.getData().get("purpose").equals("messagetohost")){
-            intent = new Intent("NEWMESSAGETOHOST");
+            intent.putExtra("message",remoteMessage.getData().get("message"));
         }
         sendBroadcast(intent);
         Log.d("gamernation","Broadcast sent");
