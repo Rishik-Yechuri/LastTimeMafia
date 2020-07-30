@@ -1,9 +1,7 @@
 package com.example.lasttimemafia;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -11,24 +9,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Space;
-import android.widget.TextView;
-
-import static com.example.lasttimemafia.joinedGame.sendMessage;
-import static com.example.lasttimemafia.ReavealRole.receiveMessage;
-import static com.example.lasttimemafia.joinedGame.socket;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.lasttimemafia.R;
-import com.google.android.material.tabs.TabLayout;
-
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import static com.example.lasttimemafia.ReavealRole.receiveMessage;
+import static com.example.lasttimemafia.joinedGame.sendMessage;
+import static com.example.lasttimemafia.joinedGame.socket;
 
 
 public class Frag1 extends Fragment {
